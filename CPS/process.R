@@ -10,7 +10,8 @@ cps.raw <- read.table("cps.csv", sep = ',', header = TRUE)
 #"NCHILD","ASPOUSE","AGE","SEX","RACE","MARST","BPL","EDUC","EDDIPGED",
 #"EMPSTAT","OCCLY","UHRSWORK","HIMCAID","GOTWIC","FREVER","FRBIRTHM","FRBIRTHY"
 
-# Report which statistics are available in which time periods
+# Report which statistics are available in which time periods and partition
+## dataset into time period groups
 which.available <- function(month, year) {
   uniq.data <- unique(!is.na(cps.raw[cps.raw$YEAR == year & cps.raw$MONTH == month,]), MARGIN = 1)
   if(dim(uniq.data)[1] != 1) {
@@ -22,13 +23,59 @@ which.available <- function(month, year) {
 }
 
 march.2008.labels <- which.available(3, 2008)
+march.2008 <- cps.raw[cps.raw$YEAR == 2008 & cps.raw$MONTH == 3,][,march.2008.labels]
 march.2009.labels <- which.available(3, 2009)
+march.2009 <- cps.raw[cps.raw$YEAR == 2009 & cps.raw$MONTH == 3,][,march.2009.labels]
 march.2010.labels <- which.available(3,2010)
+march.2010 <- cps.raw[cps.raw$YEAR == 2010 & cps.raw$MONTH == 3,][,march.2010.labels]
 
 june.2008.labels <- which.available(6,2008)
+june.2008 <- cps.raw[cps.raw$YEAR == 2008 & cps.raw$MONTH == 6,][,june.2008.labels]
 june.2009.labels <- which.available(6,2009)
+june.2009 <- cps.raw[cps.raw$YEAR == 2009 & cps.raw$MONTH == 6,][,june.2009.labels]
 june.2010.labels <- which.available(6,2010)
+june.2010 <- cps.raw[cps.raw$YEAR == 2010 & cps.raw$MONTH == 6,][,june.2010.labels]
 
 # Coding whether an individual is working and what his/her employment status is
+## Codes (EMPLOY):
+######## 0 = Unemployed
+######## 1 = Part-time
+######## 2 = Full-time
+work.code.row <- function(row,n,m) {
+  if(row[n] < 20) {
+    if(row[n] != 0) {
+      if(row[m] < 35) {
+        if(row[m] != 0) {
+          return(1)
+        } else {return(NA)}
+      } else {return(2)}
+    } else {return(NA)}
+  } else return(0)
+}
 
-work.code <- function 
+work.code <- function(data) {
+  if("EMPSTAT" %in% names(data)){
+    if("UHRSWORK" %in% names(data)) {
+      n <- grep("EMPSTAT", names(data))
+      m <- grep("UHRSWORK", names(data))
+      result <- apply(data, MARGIN = 1, work.code.row, n=n, m=m)
+      return(result)
+    } else {
+      print("Oops! We are missing the UHRSWORK data. Check the time period.")
+    }
+  } else print("Oops! We are missing the EMPSTAT data. Check the time period.")
+}
+
+## Now we add the results into our data
+march.2008.labels <- c(march.2008.labels,"EMPLOY")
+EMPLOY <- work.code(march.2008)
+march.2008 <- cbind(march.2008, EMPLOY)
+
+march.2009.labels <- c(march.2009.labels,"EMPLOY")
+EMPLOY <- work.code(march.2009)
+march.2009 <- cbind(march.2009, EMPLOY)
+
+march.2010.labels <- c(march.2010.labels,"EMPLOY")
+EMPLOY <- work.code(march.2010)
+march.2010 <- cbind(march.2010, EMPLOY)
+
