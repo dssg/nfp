@@ -36,6 +36,7 @@ This data can be freely downloaded from [IPUMS](http://cps.ipums.org). When down
 + FREVER (Number of live births a woman has had)
 + FRBIRTHM (Birth month of youngest child)
 + FRBIRTHY (Birth year of youngest child)
++ STEPMOM (Presence of a stepmother in the household)
 
 Preprocessing
 --------
