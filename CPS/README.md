@@ -37,8 +37,9 @@ This data can be freely downloaded from [IPUMS](http://cps.ipums.org). When down
 + FRBIRTHM (Birth month of youngest child)
 + FRBIRTHY (Birth year of youngest child)
 + STEPMOM (Presence of a stepmother in the household)
-+ PERNUM (A person's number in the household)
++ PERNUM (Person's number in the household)
 + RELATE (Relationship to head of household)
++ SPLOC (Spouse's person number)
 
 Preprocessing
 --------
