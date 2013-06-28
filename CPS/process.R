@@ -4,7 +4,7 @@ setwd("/Users/Fishface/Documents/DSSG/nfp/CPS")
 # Import Raw Data
 cps.raw <- read.table("cps.csv", sep = ',', header = TRUE)
 
-# Note that the labels for this data set will be equal to 
+# Note that the labels for this data set will be equal to
  # "YEAR","SERIAL","HWTFINL","HWTSUPP","METRO","COUNTY","HHINCOME","PUBHOUS",
 # "RENTSUB","FOODSTMP","STAMPVAL","MONTH","WTSUPP","WTFINL","MOMLOC","POPLOC",
 #"NCHILD","ASPOUSE","AGE","SEX","RACE","MARST","BPL","EDUC","EDDIPGED",
@@ -35,6 +35,33 @@ june.2009.labels <- which.available(6,2009)
 june.2009 <- cps.raw[cps.raw$YEAR == 2009 & cps.raw$MONTH == 6,][,june.2009.labels]
 june.2010.labels <- which.available(6,2010)
 june.2010 <- cps.raw[cps.raw$YEAR == 2010 & cps.raw$MONTH == 6,][,june.2010.labels]
+
+# Remove households that have no children under 3
+no.young.child <- function(data) {
+  young.serials <- unique(data[data$AGE<3,]$SERIAL)
+  KeepData <- data[which(is.element(data$SERIAL, young.serials)),]
+  return(KeepData)
+}
+
+march.2008 <-no.young.child(march.2008)
+march.2009 <- no.young.child(march.2009)
+march.2010 <- no.young.child(march.2010)
+
+june.2008 <- no.young.child(june.2008)
+june.2009 <- no.young.child(june.2009)
+june.2010 <- no.young.child(june.2010)
+
+# Add column with combination serial and MOMLOC
+mom.col <- function(data) {
+  MOMID <- mapply(paste,data$SERIAL, data$MOMLOC, sep = "-")
+  return(cbind(data,MOMID))
+}
+
+march.2008 <- mom.col(march.2008)
+march.2009 <- mom.col(march.2009)
+march.2010 <- mom.col(march.2010)
+
+
 
 # Coding whether an individual is working and what his/her employment status is
 ## Codes (EMPLOY):
