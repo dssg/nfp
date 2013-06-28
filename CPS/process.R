@@ -61,7 +61,20 @@ march.2008 <- mom.col(march.2008)
 march.2009 <- mom.col(march.2009)
 march.2010 <- mom.col(march.2010)
 
+# Determine whether any children younger than three have older siblings
+## Eliminate families where all young kids have older siblings
 
+no.sibs <- function(data) {
+  young.momids <- unique(data[data$AGE<3,]$MOMID)
+  sibling.momids <- unique(data[!data$AGE<3,][which(is.element(data[!data$AGE<3,]$MOMID, young.momids)),]$MOMID)
+  keep.momids <- young.momids[-which(is.element(young.momids,sibling.momids))]
+  keep.serials <- data[data$AGE<3,][which(is.element(data[data$AGE<3,]$MOMID,keep.momids)),]$SERIAL
+  return(data[which(is.element(data$SERIAL, keep.serials)),])
+}
+
+march.2008 <- no.sibs(march.2008)
+march.2009 <- no.sibs(march.2009)
+march.2010 <- no.sibs(march.2010)
 
 # Coding whether an individual is working and what his/her employment status is
 ## Codes (EMPLOY):
