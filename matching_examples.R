@@ -54,10 +54,8 @@ k <- 5
 difference <- matrix(NA, nrow(data1), k)  
 
 for(i in 1:nrow(data1)){
-  #find k matches on x1 and x2 from sample 2
-  match_y <- sample(data2[,3][data2[,2]==data1[i,2]],  #data2[,1]!=data1[i,1] & 
-                    size=k, replace=TRUE)
-  #if(data1[i,1]==0) difference[i,] <- match_y - data1[i,3]  else  difference[i,] <- data[i,3] - match_y
+  #find k matches on x2 from sample 2
+  match_y <- sample(data2[,3][data2[,2]==data1[i,2]], size=k, replace=TRUE)
   difference[i,] <- data1[i,3] - match_y
 }
 mean(difference)  #point estimate for effect of x1 on y
@@ -102,8 +100,39 @@ ATE
 
 data <- cbind(x1,x2,y)
 #split into two samples
-#r <- sample(1:1000,500,replace=FALSE)
-#samples
+data1 <- subset(data, x1==1)   #data[r,]
+data2 <- subset(data, x1==0)   #data[-r,]
+
+# number of matched cases for each observation
+k <- 25
+
+###match sample 1 observations with sample 2 observations
+
+#this is where we'll store the observed difference between the sample and the match
+difference <- matrix(NA, nrow(data1), k)  
+
+for(i in 1:nrow(data1)){
+  #find k matches on x2 from sample 2
+  match_y <- sample(data2[,3][data2[,2]==data1[i,2]], size=k, replace=TRUE)0
+  difference[i,] <- data1[i,3] - match_y
+}
+mean(difference)  #point estimate for effect of x1 on y
+
+
+
+
+
+# Propensity score matching
+
+p.hat <- 1 / (1 + exp(-predict(glm(x1~x2, family='binomial'))))
+hist(p.hat)
+
+
+# Matching pairs one or more observations 
+#Match on x2
+
+data <- cbind(x1,x2,y,p.hat)
+#split into two samples
 data1 <- subset(data, x1==1)   #data[r,]
 data2 <- subset(data, x1==0)   #data[-r,]
 
@@ -115,13 +144,9 @@ k <- 25
 difference <- matrix(NA, nrow(data1), k)  
 
 for(i in 1:nrow(data1)){
-  #find k matches on x1 and x2 from sample 2
-  match_y <- sample(data2[,3][data2[,2]==data1[i,2]],  #data2[,1]!=data1[i,1] & 
-                    size=k, replace=TRUE)
-  #if(data1[i,1]==0) difference[i,] <- match_y - data1[i,3]  else  difference[i,] <- data[i,3] - match_y
+  #find k matches on p.hat from sample 2
+  match_y <- sample(data2[,3][data2[,4]==data1[i,4]], size=k, replace=TRUE)
   difference[i,] <- data1[i,3] - match_y
 }
+lm(y~x1+x2)
 mean(difference)  #point estimate for effect of x1 on y
-
-
-
