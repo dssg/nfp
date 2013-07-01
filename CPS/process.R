@@ -72,10 +72,33 @@ no.sibs <- function(data) {
   return(data[which(is.element(data$SERIAL, keep.serials)),])
 }
 
-march.2008 <- no.sibs(march.2008)
-march.2009 <- no.sibs(march.2009)
-march.2010 <- no.sibs(march.2010)
+march.2008 <- droplevels(no.sibs(march.2008))
+march.2009 <- droplevels(no.sibs(march.2009))
+march.2010 <- droplevels(no.sibs(march.2010))
 
+# Here we add a code for whether a child under three 
+## is the oldest child
+mark.oldest <- function(data) {
+  n = 0
+  result = NULL
+  line.no.first = matrix(c(1,2,3,4), nrow = 2)
+  LINE = 1:dim(data)[1]
+  newdata <- cbind(data, LINE)
+  while(dim(line.no.first)[1] > 0) {
+    n = n+1
+    line.no.first <- ddply(newdata, .(MOMID), 
+        function(df) {return(df$LINE[df$AGE == max(df$AGE) & df$AGE < 3][n])})
+    line.no.first <- line.no.first[-which(is.na(line.no.first[,2])),]
+    result = rbind(result, line.no.first)
+  }
+  OLDEST = rep(0,dim(data)[1])
+  OLDEST[result[,2]] = 1
+  return(cbind(data, OLDEST))
+}
+
+march.2008 <- mark.oldest(march.2008)
+march.2009 <- mark.oldest(march.2009)
+march.2010 <- mark.oldest(march.2010)
 # Coding whether an individual is working and what his/her employment status is
 ## Codes (EMPLOY):
 ######## 0 = Unemployed
@@ -119,3 +142,7 @@ march.2010.labels <- c(march.2010.labels,"EMPLOY")
 EMPLOY <- work.code(march.2010)
 march.2010 <- cbind(march.2010, EMPLOY)
 
+#Adds label for high school attainment
+##Labels are as follows:
+######## 0 = No High School/GED
+######## 1 = 
