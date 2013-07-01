@@ -3,87 +3,125 @@
 ##            Matching Examples          ##
 ###########################################
 
-##Baby Matching (simplest matching example possible, build on this)
+##Baby Matching (simple matching example, build on this)
 
 e <- rnorm(1000)
-x <- round(runif(1000, -2, 2))
-y <- 5 - 2*x + e
+x1 <- round(runif(1000,0,1))
+x2 <- round(runif(1000,-1,0))
+y <- -3 - 2*x1 + x2 + e
 
-#We know that OLS works well
-summary(lm(y~x))
-
-######################
-#Stratify
-Xneg2 <- x==-2
-Xneg1 <- x==-1
-X0 <- x==0
-X1 <- x==1
-X2 <- x==2
-
-ATEneg2 <- mean(y[Xneg2]) * length(y[Xneg2])/length(y)
-ATEneg1 <- mean(y[Xneg1]) * length(y[Xneg1])/length(y)
-ATE0 <- mean(y[X0]) * length(y[X0])/length(y)
-ATE1 <- mean(y[X1]) * length(y[X1])/length(y)
-ATE2 <- mean(y[X2]) * length(y[X2])/length(y)
-
-#Here's the point estimate for the intercept
-ATE <- ATEneg2 + ATEneg1 + ATE0 + ATE1 + ATE2
+#we know that OLS works well
+summary(lm(y~x1))
+summary(lm(y~x1+x2))
 
 
+##############
+## estimate coefficient for x1
 
-######################
-#Let's try matching!
+# Because x2 is a discrete variable, it can only take a finite number of values (in this case, 2).
+# There are also lots of observations for each combination of x1 and x2.
+# Stratification works well in this case.
+# Stratification creates blocks of data that are equal on confounding variables.
+# Estimates are then generated for each strata, and usually those estimates are weighted across strata.
 
-###put x and y into a matrix because it's easier to sample from
-data <- cbind(x,y)
-#split into two samples
-r <- sample(1:1000,500,replace=FALSE)
-#samples
-data1 <- data[r,]
-data2 <- data[-r,]
+x0neg1 <- x1==0 & x2==-1
+x00 <- x1==0 & x2==0
+x1neg1 <- x1==1 & x2==-1
+x10 <- x1==1 & x2==0
 
+ATE2neg1 <- (mean(y[x1neg1])-mean(y[x0neg1])) * length(y[x2==-1])/length(y)
+ATE20 <- (mean(y[x10])-mean(y[x00])) * length(y[x2==0])/length(y)
 
-###match sample 1 observations with sample 2 observations
-
-#how many matches?  (i.e. k?)
-k=5
-
-#this is where we'll store the observed difference between the sample and the match
-difference <- matrix(NA,500,k)  
-
-for(i in 1:nrow(data1)){
-  #find five matches on x from sample 2
-  match_y <- sample(data2[,2][data2[,1]==data1[i,1]], size=k, replace=TRUE)
-  difference[i,] <- match_y
-}
-mean(difference)  #ATE
-#As with stratification, we get a decent estimate of the intercept here.
+ATE <- ATE2neg1 + ATE20   #point estimate 
+ATE
 
 
-################################
-#What about if we have two independent variables? We're interested in the effect of x2.
-e <- rnorm(1000)
-x1 <- round(runif(1000,-2,1))
-x2 <- round(runif(1000,-1,3))
-y <- -3 + x1 + x2 + e
+# Matching pairs one or more observations 
+#Match on x2
 
 data <- cbind(x1,x2,y)
 #split into two samples
-r <- sample(1:1000,500,replace=FALSE)
+#r <- sample(1:1000,500,replace=FALSE)
 #samples
-data1 <- data[r,]
-data2 <- data[-r,]
+data1 <- subset(data, x1==1)   #data[r,]
+data2 <- subset(data, x1==0)   #data[-r,]
 
-
+# number of matched cases for each observation
+k <- 5
 ###match sample 1 observations with sample 2 observations
 
 #this is where we'll store the observed difference between the sample and the match
-difference <- matrix(NA,500,k)  
+difference <- matrix(NA, nrow(data1), k)  
 
 for(i in 1:nrow(data1)){
-  #find five matches on x1 and x2 from sample 2
-  match_y <- sample(data2[,3][data2[,1]==data1[i,1] & data2[,2]==data1[i,2]], 
+  #find k matches on x1 and x2 from sample 2
+  match_y <- sample(data2[,3][data2[,2]==data1[i,2]],  #data2[,1]!=data1[i,1] & 
                     size=k, replace=TRUE)
-  difference[i,] <- match_y
+  #if(data1[i,1]==0) difference[i,] <- match_y - data1[i,3]  else  difference[i,] <- data[i,3] - match_y
+  difference[i,] <- data1[i,3] - match_y
 }
-mean(difference)  #ATE
+mean(difference)  #point estimate for effect of x1 on y
+
+
+
+
+###########################################
+## x2 causes x1 and y
+
+e <- rnorm(1000)
+x2 <- round(runif(1000,-1,0))
+x1 <- rep(NA, 1000)
+x1[x2==-1] <- rbinom(length(x1[x2==-1]),1,.7)
+x1[x2==0] <- rbinom(length(x1[x2==0]),1,.3)
+y <- -3 - 2*x1 + x2 + e
+
+# regressing on x1 without x2 leads to a biased estimate
+lm(y~x1)
+lm(y~x1 + x2)
+
+
+##############
+## estimate coefficient for x1
+
+# Stratification
+
+x0neg1 <- x1==0 & x2==-1
+x00 <- x1==0 & x2==0
+x1neg1 <- x1==1 & x2==-1
+x10 <- x1==1 & x2==0
+
+ATE2neg1 <- (mean(y[x1neg1])-mean(y[x0neg1])) * length(y[x2==-1])/length(y)
+ATE20 <- (mean(y[x10])-mean(y[x00])) * length(y[x2==0])/length(y)
+
+ATE <- ATE2neg1 + ATE20   #point estimate 
+ATE
+
+
+# Matching pairs one or more observations 
+#Match on x2
+
+data <- cbind(x1,x2,y)
+#split into two samples
+#r <- sample(1:1000,500,replace=FALSE)
+#samples
+data1 <- subset(data, x1==1)   #data[r,]
+data2 <- subset(data, x1==0)   #data[-r,]
+
+# number of matched cases for each observation
+k <- 25
+###match sample 1 observations with sample 2 observations
+
+#this is where we'll store the observed difference between the sample and the match
+difference <- matrix(NA, nrow(data1), k)  
+
+for(i in 1:nrow(data1)){
+  #find k matches on x1 and x2 from sample 2
+  match_y <- sample(data2[,3][data2[,2]==data1[i,2]],  #data2[,1]!=data1[i,1] & 
+                    size=k, replace=TRUE)
+  #if(data1[i,1]==0) difference[i,] <- match_y - data1[i,3]  else  difference[i,] <- data[i,3] - match_y
+  difference[i,] <- data1[i,3] - match_y
+}
+mean(difference)  #point estimate for effect of x1 on y
+
+
+
