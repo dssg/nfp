@@ -51,6 +51,24 @@ june.2008 <- no.young.child(june.2008)
 june.2009 <- no.young.child(june.2009)
 june.2010 <- no.young.child(june.2010)
 
+# Add column with combination serial and PERNUM
+per.col <- function(data) {
+  PERID <- mapply(paste, data$SERIAL, data$PERNUM, sep = "-")
+  return(cbind(data,PERID))
+}
+
+#Add column with combination serial and SPLOC
+sp.col <- function(data) {
+  SPID <- mapply(paste, data$SERIAL, data$SPLOC, sep = "-")
+  return(cbind(data,SPID))
+}
+
+#Add column with combination serial and POPLOC
+pop.id <- function(data) {
+  POPID <- mapply(paste, data$SERIAL, data$POPLOC, sep = "-")
+  return(cbind(data, POPID))
+}
+
 # Add column with combination serial and MOMLOC
 mom.col <- function(data) {
   MOMID <- mapply(paste,data$SERIAL, data$MOMLOC, sep = "-")
@@ -144,5 +162,16 @@ march.2010 <- cbind(march.2010, EMPLOY)
 
 #Adds label for high school attainment
 ##Labels are as follows:
-######## 0 = No High School/GED
-######## 1 = 
+######## 1 = HS
+######## 2 = GED
+######## 3 = No High School/GED
+hs.ged = function(data) {
+  HSGED = rep(3,dim(data)[1])
+  HSGED[data$EDDIPGED == 1,] = 1
+  HSGED[data$EDDIPGED == 2,] = 2
+  return(cbind(data,HSGED))}
+
+march.2008 <- hs.ged(march.2008)
+march.2009 <- hs.ged(march.2009)
+march.2010 <- hs.ged(march.2010)
+
