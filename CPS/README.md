@@ -36,8 +36,16 @@ This data can be freely downloaded from [IPUMS](http://cps.ipums.org). When down
 + FREVER (Number of live births a woman has had)
 + FRBIRTHM (Birth month of youngest child)
 + FRBIRTHY (Birth year of youngest child)
++ STEPMOM (Presence of a stepmother in the household)
++ PERNUM (Person's number in the household)
++ RELATE (Relationship to head of household)
++ SPLOC (Spouse's person number)
 
 Preprocessing
 --------
 
-We selected data for March and June of 2008-2010 (inclusive). We first removed all women that are not mothers. We added extra codes for Employment status, whether full time, part time, or unemployed. We added a flag for child under age of 3 (to aid in comparison to the Nurse Family Partnership data), whether a child was the mother's only child, and whether the father was present. Along with that munging, we also recoding the educational data to express whether a mother graduated high school, received a GED, or neither.
+We selected data for March and June of 2008-2010 (inclusive). 
+We first removed all households without a child under the age of three.
+We then removed all households where all of the children under the age of three had a sibling over the age of three.
+We added extra codes for Employment status, whether full time, part time, or unemployed. 
+Along with that munging, we also recoding the educational data to express whether a mother graduated high school, received a GED, or neither.
