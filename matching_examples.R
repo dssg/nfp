@@ -61,6 +61,9 @@ for(i in 1:nrow(data1)){
 mean(difference)  #point estimate for effect of x1 on y
 
 
+library(Matching)
+match1 <- Match(Y=y, Tr=x1, X=x2, estimand="ATE", M=k, ties=FALSE)
+summary(match1)
 
 
 ###########################################
@@ -113,10 +116,15 @@ difference <- matrix(NA, nrow(data1), k)
 
 for(i in 1:nrow(data1)){
   #find k matches on x2 from sample 2
-  match_y <- sample(data2[,3][data2[,2]==data1[i,2]], size=k, replace=TRUE)0
+  match_y <- sample(data2[,3][data2[,2]==data1[i,2]], size=k, replace=TRUE)
   difference[i,] <- data1[i,3] - match_y
 }
 mean(difference)  #point estimate for effect of x1 on y
+
+
+# R package Matching
+match2 <- Match(Y=y, Tr=x1, X=x2, estimand="ATE", M=k, ties=FALSE)
+summary(match2)
 
 
 
@@ -137,7 +145,7 @@ data1 <- subset(data, x1==1)   #data[r,]
 data2 <- subset(data, x1==0)   #data[-r,]
 
 # number of matched cases for each observation
-k <- 25
+k <- 5
 ###match sample 1 observations with sample 2 observations
 
 #this is where we'll store the observed difference between the sample and the match
@@ -150,3 +158,9 @@ for(i in 1:nrow(data1)){
 }
 lm(y~x1+x2)
 mean(difference)  #point estimate for effect of x1 on y
+
+
+
+#library Matching
+match3 <- Match(Y=y, Tr=x1, X=p.hat, estimand="ATE", M=k, ties=FALSE)
+summary(match3)
