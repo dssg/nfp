@@ -217,23 +217,6 @@ march.2010.labels <- c(march.2010.labels,"EMPLOY")
 EMPLOY <- work.code(march.2010)
 march.2010 <- cbind(march.2010, EMPLOY)
 
-#Adds label for high school attainment
-##Labels are as follows:
-######## 1 = HS
-######## 2 = GED
-######## 3 = No High School/GED
-hs.ged = function(data) {
-  HSGED = rep(3,dim(data)[1])
-  HSGED[data$EDDIPGED == 1] = 1
-  HSGED[data$EDDIPGED == 2] = 2
-  return(cbind(data,HSGED))}
-
-march.2008.labels <- c(march.2008.labels,"HSGED")
-march.2008 <- hs.ged(march.2008)
-march.2009.labels <- c(march.2009.labels,"HSGED")
-march.2009 <- hs.ged(march.2009)
-march.2010.labels <- c(march.2010.labels,"HSGED")
-march.2010 <- hs.ged(march.2010)
 
 write.table(march.2008, file = "cps.march.2008.csv", append = FALSE, quote = FALSE, sep = ',', row.names = FALSE)
 write.table(march.2009, file = "cps.march.2009.csv", append = FALSE, quote = FALSE, sep = ',', row.names = FALSE)
