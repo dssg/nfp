@@ -4,6 +4,12 @@ setwd("/Users/Fishface/Documents/DSSG/nfp/CPS")
 # Import Raw Data
 cps.raw <- read.table("cps.csv", sep = ',', header = TRUE)
 
+# The variables we are including (for March of 2008, 2009, and 2010) are:
+### "YEAR"     "SERIAL"   "HWTSUPP"  "METRO"    "HHINCOME" "PUBHOUS"  "RENTSUB"  "FOODSTMP"
+### "STAMPVAL" "MONTH"    "PERNUM"   "WTSUPP"   "MOMLOC"   "STEPMOM"  "POPLOC"   "SPLOC"   
+### "NCHILD"   "ASPOUSE"  "RELATE"   "AGE"      "SEX"      "RACE"     "MARST"    "BPL"     
+### "EDUC"     "EMPSTAT"  "OCCLY"    "UHRSWORK" "HIMCAID"  "GOTWIC"   "PERID"    "SPID"    
+### "POPID"    "MOMID"    "OLDEST"   "EMPLOY"   "HSGED"    "HSGED"   
 
 # Report which statistics are available in which time periods and partition
 ## dataset into time period groups
@@ -229,3 +235,6 @@ march.2009 <- hs.ged(march.2009)
 march.2010.labels <- c(march.2010.labels,"HSGED")
 march.2010 <- hs.ged(march.2010)
 
+write.table(march.2008, file = "cps.march.2008.csv", append = FALSE, quote = FALSE, sep = ',', row.names = FALSE)
+write.table(march.2009, file = "cps.march.2009.csv", append = FALSE, quote = FALSE, sep = ',', row.names = FALSE)
+write.table(march.2010, file = "cps.march.2010.csv", append = FALSE, quote = FALSE, sep = ',', row.names = FALSE)
