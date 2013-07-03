@@ -1,8 +1,6 @@
-Nurse Family Partnership Impact Evaluation
-===
+# Nurse Family Partnership Impact Evaluation
  
-Introduction
-===
+## Introduction
  
 As part of the Data Science for Social Good Fellowship (http://dssg.io), we have been tasked with evaluating the effectiveness of 
 the Nurse-Family Partnership (NFP), a home-visitation program that pairs a nurse with an at-risk first-time mother for 
@@ -27,8 +25,7 @@ experimental evaluations impractical or impossible
 situations and techniques that seem to reduce those risks.  This knowledge will inform NFP's ongoing quality improvement processes.
 
 
-Methodology
-===
+## Methodology
 
 Our intention is to conduct an impact evaluation using propensity score matching.  An initial overview of the matching process in R is available in the script PSM_Script.R.
 
@@ -48,8 +45,7 @@ Mother's Life Course:
 - Pregnancy interval
 - Smoking/substance abuse
 
-Comparison Data Sets
-===
+## Comparison Data Sets
 
 We have identified the following comparison datasets:
 
