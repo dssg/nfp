@@ -6,16 +6,19 @@
 ##        Adam Fishman          ##
 ##################################
 
+setwd("/mnt/data/NIS/modified_data/")
 
 ## NIS provides R scripts to prepare the data for analysis.  Run each and make a few modifications.
-## I'm commenting out the source lines because 1) once they're run they don't need to run again and 2) they take too long to run.
+## I'm commenting out the source lines that call NIS-provided code because 
+## 1) once they're run they don't need to run again and 2) they take too long to run.
 
 ############
 # 2008 NIS data
-source("/mnt/data/NIS/original_data/nispuf08.r")
+#source("/mnt/data/NIS/original_data/nispuf08.r")
+load("NISPUF08.RData")
 
 # eliminate observations missing adequate provider data
-NISPUF08 <- subset(NISPUF08, PDAT=="CHILD HAS ADEQUATE PROVIDER DATA OR ZERO VACCINATIONS")
+NISPUF08 <- subset(NISPUF08, PDAT==1)  #PDAT=="CHILD HAS ADEQUATE PROVIDER DATA OR ZERO VACCINATIONS")
 n_2008 <- nrow(NISPUF08)
 
 # HepB immunizations up to date
