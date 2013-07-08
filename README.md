@@ -38,11 +38,13 @@ Mother's Life Course:
 - Pregnancy interval
 - Smoking/substance abuse
 
+Note that we have included a script to convert the National Vital Statistics Survey from a fixed width format into a comma-separated value (CSV) format. While we are not using this code in our analysis, it would be helpful in evaluating the outcomes at birth.
+
 ## Comparison Data Sets
 
 We have identified the following comparison datasets:
 
-1. Current Population Survey (CPS)
+1. Current Population Survey (CPS): The CPS is a joint venture between the Census Bureau and the Bureau of Labor Statistics. As such, it includes extensive information about American households. Participating households are followed over a sixteen month period. They are interviewed monthly for the first four months and for the last four months. The households followed represent physical addresses that may or may not change residents during the period in sample. For information, see the README in the cps folder.
 
 2. National Survey of Children's Health (NSCH): The NSCH is conducted by the National Center for Health Statistics at the Centers for Disease Control.  It includes information on breastfeeding and child weight (though height is not available for children under age 10).  It also includes a variety of demographic data points that can be used to match individuals in the survey to comparable individuals in NFP's data set.  To read more about the NSCH and request a copy of the data, visit www.childhealthdata.org.  More detail about which variables we are using from the NSCH and how we are recoding them is available in the cleaning script, NSCH_Prep.R.
 
