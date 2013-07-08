@@ -20,10 +20,10 @@
 # Load NIS data for recoding and preparation
 
 setwd("/mnt/data/NIS/modified_data")
-NIS08 <- load("NISPUF08.RData")
-NIS09 <- load("NISPUF09.RData")
-NIS10 <- load("NISPUF10.RData")
-NIS11 <- load("NISPUF11.RData")
+load("NISPUF08.RData")
+load("NISPUF09.RData")
+load("NISPUF10.RData")
+load("NISPUF11.RData")
 
 # Variable Recodes - NIS
 
