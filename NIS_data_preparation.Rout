@@ -1,0 +1,966 @@
+
+R version 2.14.1 (2011-12-22)
+Copyright (C) 2011 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> #################################
+> ##    Data Preparation File    ##
+> ##         Joe Walsh           ##
+> #################################
+> 
+> 
+> ## NIS provides R scripts to prepare the data for analysis.  Run each and make a few modifications.
+> ## I'm commenting out the source lines because 1) once they're run they don't need to run again and 2) they take too long to run.
+> 
+> # 2008
+> source("/mnt/data/NIS/original_data/nispuf08.r")
+Loading required package: survival
+Loading required package: splines
+Hmisc library by Frank E Harrell Jr
+
+Type library(help='Hmisc'), ?Overview, or ?Hmisc.Overview')
+to see overall documentation.
+
+NOTE:Hmisc no longer redefines [.factor to drop unused levels when
+subsetting.  To get the old behavior of Hmisc type dropUnusedLevels().
+
+
+Attaching package: ‘Hmisc’
+
+The following object(s) are masked from ‘package:survival’:
+
+    untangle.specials
+
+The following object(s) are masked from ‘package:base’:
+
+    format.pval, round.POSIXt, trunc.POSIXt, units
+
+                                                                              Labels
+SEQNUMC                                                                             
+SEQNUMHH                                                                            
+PDAT                                                                                
+PROVWT     WEIGHT FOR CHILDREN WITH ADEQUATE PROVIDER DATA AND UNVACCINATED CHILDREN
+RDDWT                                                HH-PHASE CHILD INTERVIEW WEIGHT
+YEAR                                                               YEAR OF INTERVIEW
+AGECPOXR                                                                            
+SC_431                                                                              
+SC_4313                                                                             
+SC_43133                                                                            
+SC_DTP                                                                              
+SC_HEPB                                                                             
+SC_HIB                                                                              
+SC_MCV                                                                              
+SC_POL                                                                              
+SC_VRC                                                                              
+HH_DTP                                                                              
+HH_FLU                                                                              
+HH_HEPB                                                                             
+HH_HIB                                                                              
+HH_MCV                                                                              
+HH_POL                                                                              
+HH_VRC                                                                              
+HAD_CPOX                                                                            
+SHOTCARD                                                                            
+AGEGRP                                                                              
+BF_ENDR06                               DURATION OF BREAST FEEDING IN DAYS (TOPCODE)
+BF_EXCLR06            DURATION OF EXCLUSIVE BREAST/FORMULA FEEDING IN DAYS (TOPCODE)
+BF_FORMR08                                                                          
+BFENDFL06                                                                           
+BFFORMFL06                                                                          
+C1R                                                                                 
+C5R                                                                                 
+CBF_01                                                                              
+CEN_REG                                                                             
+CHILDNM                                                                             
+CWIC_01                                                                             
+CWIC_02                                                                             
+EDUC1                                                                               
+FRSTBRN                                                                             
+I_HISP_K                                                                            
+INCPORAR                               INCOME TO POVERTY RATIO (TOP- AND BOTTOMCODE)
+INCPOV1                                                                             
+INCQ298A                                                                            
+INOPHONR                                                                            
+INTRP                                                                               
+LANGUAGE                                                                            
+M_AGEGRP                                                                            
+MARITAL                                                                             
+MOBIL_I                                                                             
+RACE_K                                                                              
+RACEETHK                                                                            
+SEX                                                                                 
+ESTIAP08                                                                            
+STATE                                                                               
+D6R                                                                                 
+D7                                                                                  
+DISPCODE                                                                            
+N_PRVR                                                                              
+PROV_FAC                                                                            
+REGISTRY                                                                            
+VFC_ORDER                                                                           
+HEP_BRTH                                                                            
+HEP_FLAG                                                                            
+P_NUHEPX                                                                            
+P_NUHIBX                                                                            
+P_NUHPHB                                                                            
+P_NUMDAH                                                                            
+P_NUMDHB                                                                            
+P_NUMDHI                                                                            
+P_NUMDHM                                                                            
+P_NUMDTA                                                                            
+P_NUMDTM                                                                            
+P_NUMDTP                                                                            
+P_NUMFLU                                                                            
+P_NUMFLUL                                                                           
+P_NUMFLUM                                                                           
+P_NUMFLUN                                                                           
+P_NUMHEA                                                                            
+P_NUMHEN                                                                            
+P_NUMHEP                                                                            
+P_NUMHIB                                                                            
+P_NUMHIN                                                                            
+P_NUMIPV                                                                            
+P_NUMMCN                                                                            
+P_NUMMMR                                                                            
+P_NUMMMRX                                                                           
+P_NUMMMX                                                                            
+P_NUMMP                                                                             
+P_NUMMPR                                                                            
+P_NUMMRV                                                                            
+P_NUMMS                                                                             
+P_NUMMSM                                                                            
+P_NUMMSR                                                                            
+P_NUMOLN                                                                            
+P_NUMOPV                                                                            
+P_NUMPCC                                                                            
+P_NUMPCN                                                                            
+P_NUMPCP                                                                            
+P_NUMPCV                                                                            
+P_NUMPOL                                                                            
+P_NUMRB                                                                             
+P_NUMROT                                                                            
+P_NUMTPM                                                                            
+P_NUMTPN                                                                            
+P_NUMVRC                                                                            
+P_NUMVRN                                                                            
+P_NUMVRX                                                                            
+P_U12VRC                                                                            
+P_UTD331                                                                            
+P_UTD431                                                                            
+P_UTDFL1                                                                            
+P_UTDFL2                                                                            
+P_UTDFL3                                                                            
+P_UTDHEP                                                                            
+P_UTDHIB                                                                            
+P_UTDMCV                                                                            
+P_UTDMMX                                                                            
+P_UTDPC3                                                                            
+P_UTDPCV                                                                            
+P_UTDPOL                                                                            
+P_UTDTP3                                                                            
+P_UTDTP4                                                                            
+PU431331                                                                            
+PU4313313                                                                           
+PU4313314                                                                           
+PUT43133                                                                            
+PUTD4313                                                                            
+DDTP1                                AGE IN DAYS OF PROV-REPTD DT-CONTAINING SHOT #1
+DDTP2                                AGE IN DAYS OF PROV-REPTD DT-CONTAINING SHOT #2
+DDTP3                                AGE IN DAYS OF PROV-REPTD DT-CONTAINING SHOT #3
+DDTP4                                AGE IN DAYS OF PROV-REPTD DT-CONTAINING SHOT #4
+DDTP5                                AGE IN DAYS OF PROV-REPTD DT-CONTAINING SHOT #5
+DDTP6                                AGE IN DAYS OF PROV-REPTD DT-CONTAINING SHOT #6
+DDTP7                                AGE IN DAYS OF PROV-REPTD DT-CONTAINING SHOT #7
+DDTP8                                AGE IN DAYS OF PROV-REPTD DT-CONTAINING SHOT #8
+DDTP9                                AGE IN DAYS OF PROV-REPTD DT-CONTAINING SHOT #9
+DFLU1                        AGE IN DAYS OF PROV-REPTD FLU-CONTAINING VACCINATION #1
+DFLU2                        AGE IN DAYS OF PROV-REPTD FLU-CONTAINING VACCINATION #2
+DFLU3                        AGE IN DAYS OF PROV-REPTD FLU-CONTAINING VACCINATION #3
+DFLU4                        AGE IN DAYS OF PROV-REPTD FLU-CONTAINING VACCINATION #4
+DFLU5                        AGE IN DAYS OF PROV-REPTD FLU-CONTAINING VACCINATION #5
+DFLU6                        AGE IN DAYS OF PROV-REPTD FLU-CONTAINING VACCINATION #6
+DFLU7                        AGE IN DAYS OF PROV-REPTD FLU-CONTAINING VACCINATION #7
+DFLU8                        AGE IN DAYS OF PROV-REPTD FLU-CONTAINING VACCINATION #8
+DFLU9                        AGE IN DAYS OF PROV-REPTD FLU-CONTAINING VACCINATION #9
+DHEPA1                      AGE IN DAYS OF PROV-REPTD HEPATITIS A-CONTAINING SHOT #1
+DHEPA2                      AGE IN DAYS OF PROV-REPTD HEPATITIS A-CONTAINING SHOT #2
+DHEPA3                      AGE IN DAYS OF PROV-REPTD HEPATITIS A-CONTAINING SHOT #3
+DHEPA4                      AGE IN DAYS OF PROV-REPTD HEPATITIS A-CONTAINING SHOT #4
+DHEPA5                      AGE IN DAYS OF PROV-REPTD HEPATITIS A-CONTAINING SHOT #5
+DHEPA6                      AGE IN DAYS OF PROV-REPTD HEPATITIS A-CONTAINING SHOT #6
+DHEPA7                      AGE IN DAYS OF PROV-REPTD HEPATITIS A-CONTAINING SHOT #7
+DHEPA8                      AGE IN DAYS OF PROV-REPTD HEPATITIS A-CONTAINING SHOT #8
+DHEPA9                      AGE IN DAYS OF PROV-REPTD HEPATITIS A-CONTAINING SHOT #9
+DHEPB1                      AGE IN DAYS OF PROV-REPTD HEPATITIS B-CONTAINING SHOT #1
+DHEPB2                      AGE IN DAYS OF PROV-REPTD HEPATITIS B-CONTAINING SHOT #2
+DHEPB3                      AGE IN DAYS OF PROV-REPTD HEPATITIS B-CONTAINING SHOT #3
+DHEPB4                      AGE IN DAYS OF PROV-REPTD HEPATITIS B-CONTAINING SHOT #4
+DHEPB5                      AGE IN DAYS OF PROV-REPTD HEPATITIS B-CONTAINING SHOT #5
+DHEPB6                      AGE IN DAYS OF PROV-REPTD HEPATITIS B-CONTAINING SHOT #6
+DHEPB7                      AGE IN DAYS OF PROV-REPTD HEPATITIS B-CONTAINING SHOT #7
+DHEPB8                      AGE IN DAYS OF PROV-REPTD HEPATITIS B-CONTAINING SHOT #8
+DHEPB9                      AGE IN DAYS OF PROV-REPTD HEPATITIS B-CONTAINING SHOT #9
+DHIB1                               AGE IN DAYS OF PROV-REPTD HIB-CONTAINING SHOT #1
+DHIB2                               AGE IN DAYS OF PROV-REPTD HIB-CONTAINING SHOT #2
+DHIB3                               AGE IN DAYS OF PROV-REPTD HIB-CONTAINING SHOT #3
+DHIB4                               AGE IN DAYS OF PROV-REPTD HIB-CONTAINING SHOT #4
+DHIB5                               AGE IN DAYS OF PROV-REPTD HIB-CONTAINING SHOT #5
+DHIB6                               AGE IN DAYS OF PROV-REPTD HIB-CONTAINING SHOT #6
+DHIB7                               AGE IN DAYS OF PROV-REPTD HIB-CONTAINING SHOT #7
+DHIB8                               AGE IN DAYS OF PROV-REPTD HIB-CONTAINING SHOT #8
+DHIB9                               AGE IN DAYS OF PROV-REPTD HIB-CONTAINING SHOT #9
+DMMR1                           AGE IN DAYS OF PROV-REPTD MEASLES-CONTAINING SHOT #1
+DMMR2                           AGE IN DAYS OF PROV-REPTD MEASLES-CONTAINING SHOT #2
+DMMR3                           AGE IN DAYS OF PROV-REPTD MEASLES-CONTAINING SHOT #3
+DMMR4                           AGE IN DAYS OF PROV-REPTD MEASLES-CONTAINING SHOT #4
+DMMR5                           AGE IN DAYS OF PROV-REPTD MEASLES-CONTAINING SHOT #5
+DMMR6                           AGE IN DAYS OF PROV-REPTD MEASLES-CONTAINING SHOT #6
+DMMR7                           AGE IN DAYS OF PROV-REPTD MEASLES-CONTAINING SHOT #7
+DMMR8                           AGE IN DAYS OF PROV-REPTD MEASLES-CONTAINING SHOT #8
+DMMR9                           AGE IN DAYS OF PROV-REPTD MEASLES-CONTAINING SHOT #9
+DMP1                                    AGE IN DAYS OF PROV-REPTD MUMPS-ONLY SHOT #1
+DMP2                                    AGE IN DAYS OF PROV-REPTD MUMPS-ONLY SHOT #2
+DMP3                                    AGE IN DAYS OF PROV-REPTD MUMPS-ONLY SHOT #3
+DMP4                                    AGE IN DAYS OF PROV-REPTD MUMPS-ONLY SHOT #4
+DMP5                                    AGE IN DAYS OF PROV-REPTD MUMPS-ONLY SHOT #5
+DMP6                                    AGE IN DAYS OF PROV-REPTD MUMPS-ONLY SHOT #6
+DMP7                                    AGE IN DAYS OF PROV-REPTD MUMPS-ONLY SHOT #7
+DMP8                                    AGE IN DAYS OF PROV-REPTD MUMPS-ONLY SHOT #8
+DMP9                                    AGE IN DAYS OF PROV-REPTD MUMPS-ONLY SHOT #9
+DMPRB1                        AGE IN DAYS OF PROV-REPTD (MUMPS/RUBELLA)-ONLY SHOT #1
+DMPRB2                        AGE IN DAYS OF PROV-REPTD (MUMPS/RUBELLA)-ONLY SHOT #2
+DMPRB3                        AGE IN DAYS OF PROV-REPTD (MUMPS/RUBELLA)-ONLY SHOT #3
+DMPRB4                        AGE IN DAYS OF PROV-REPTD (MUMPS/RUBELLA)-ONLY SHOT #4
+DMPRB5                        AGE IN DAYS OF PROV-REPTD (MUMPS/RUBELLA)-ONLY SHOT #5
+DMPRB6                        AGE IN DAYS OF PROV-REPTD (MUMPS/RUBELLA)-ONLY SHOT #6
+DMPRB7                        AGE IN DAYS OF PROV-REPTD (MUMPS/RUBELLA)-ONLY SHOT #7
+DMPRB8                        AGE IN DAYS OF PROV-REPTD (MUMPS/RUBELLA)-ONLY SHOT #8
+DMPRB9                        AGE IN DAYS OF PROV-REPTD (MUMPS/RUBELLA)-ONLY SHOT #9
+DPCV1                      AGE IN DAYS OF PROV-REPTD PNEUMOCOCCAL-CONTAINING SHOT #1
+DPCV2                      AGE IN DAYS OF PROV-REPTD PNEUMOCOCCAL-CONTAINING SHOT #2
+DPCV3                      AGE IN DAYS OF PROV-REPTD PNEUMOCOCCAL-CONTAINING SHOT #3
+DPCV4                      AGE IN DAYS OF PROV-REPTD PNEUMOCOCCAL-CONTAINING SHOT #4
+DPCV5                      AGE IN DAYS OF PROV-REPTD PNEUMOCOCCAL-CONTAINING SHOT #5
+DPCV6                      AGE IN DAYS OF PROV-REPTD PNEUMOCOCCAL-CONTAINING SHOT #6
+DPCV7                      AGE IN DAYS OF PROV-REPTD PNEUMOCOCCAL-CONTAINING SHOT #7
+DPCV8                      AGE IN DAYS OF PROV-REPTD PNEUMOCOCCAL-CONTAINING SHOT #8
+DPCV9                      AGE IN DAYS OF PROV-REPTD PNEUMOCOCCAL-CONTAINING SHOT #9
+DPOLIO1                           AGE IN DAYS OF PROV-REPTD POLIO-CONTAINING SHOT #1
+DPOLIO2                           AGE IN DAYS OF PROV-REPTD POLIO-CONTAINING SHOT #2
+DPOLIO3                           AGE IN DAYS OF PROV-REPTD POLIO-CONTAINING SHOT #3
+DPOLIO4                           AGE IN DAYS OF PROV-REPTD POLIO-CONTAINING SHOT #4
+DPOLIO5                           AGE IN DAYS OF PROV-REPTD POLIO-CONTAINING SHOT #5
+DPOLIO6                           AGE IN DAYS OF PROV-REPTD POLIO-CONTAINING SHOT #6
+DPOLIO7                           AGE IN DAYS OF PROV-REPTD POLIO-CONTAINING SHOT #7
+DPOLIO8                           AGE IN DAYS OF PROV-REPTD POLIO-CONTAINING SHOT #8
+DPOLIO9                           AGE IN DAYS OF PROV-REPTD POLIO-CONTAINING SHOT #9
+DRB1                                  AGE IN DAYS OF PROV-REPTD RUBELLA-ONLY SHOT #1
+DRB2                                  AGE IN DAYS OF PROV-REPTD RUBELLA-ONLY SHOT #2
+DRB3                                  AGE IN DAYS OF PROV-REPTD RUBELLA-ONLY SHOT #3
+DRB4                                  AGE IN DAYS OF PROV-REPTD RUBELLA-ONLY SHOT #4
+DRB5                                  AGE IN DAYS OF PROV-REPTD RUBELLA-ONLY SHOT #5
+DRB6                                  AGE IN DAYS OF PROV-REPTD RUBELLA-ONLY SHOT #6
+DRB7                                  AGE IN DAYS OF PROV-REPTD RUBELLA-ONLY SHOT #7
+DRB8                                  AGE IN DAYS OF PROV-REPTD RUBELLA-ONLY SHOT #8
+DRB9                                  AGE IN DAYS OF PROV-REPTD RUBELLA-ONLY SHOT #9
+DROT1                         AGE IN DAYS OF PROV-REPTD ROTAVIRUS-CONTAINING SHOT #1
+DROT2                         AGE IN DAYS OF PROV-REPTD ROTAVIRUS-CONTAINING SHOT #2
+DROT3                         AGE IN DAYS OF PROV-REPTD ROTAVIRUS-CONTAINING SHOT #3
+DROT4                         AGE IN DAYS OF PROV-REPTD ROTAVIRUS-CONTAINING SHOT #4
+DROT5                         AGE IN DAYS OF PROV-REPTD ROTAVIRUS-CONTAINING SHOT #5
+DROT6                         AGE IN DAYS OF PROV-REPTD ROTAVIRUS-CONTAINING SHOT #6
+DROT7                         AGE IN DAYS OF PROV-REPTD ROTAVIRUS-CONTAINING SHOT #7
+DROT8                         AGE IN DAYS OF PROV-REPTD ROTAVIRUS-CONTAINING SHOT #8
+DROT9                         AGE IN DAYS OF PROV-REPTD ROTAVIRUS-CONTAINING SHOT #9
+DTP1_AGE                           AGE IN MONTHS OF PROV-REPTD DT-CONTAINING SHOT #1
+DTP2_AGE                           AGE IN MONTHS OF PROV-REPTD DT-CONTAINING SHOT #2
+DTP3_AGE                           AGE IN MONTHS OF PROV-REPTD DT-CONTAINING SHOT #3
+DTP4_AGE                           AGE IN MONTHS OF PROV-REPTD DT-CONTAINING SHOT #4
+DTP5_AGE                           AGE IN MONTHS OF PROV-REPTD DT-CONTAINING SHOT #5
+DTP6_AGE                           AGE IN MONTHS OF PROV-REPTD DT-CONTAINING SHOT #6
+DTP7_AGE                           AGE IN MONTHS OF PROV-REPTD DT-CONTAINING SHOT #7
+DTP8_AGE                           AGE IN MONTHS OF PROV-REPTD DT-CONTAINING SHOT #8
+DTP9_AGE                           AGE IN MONTHS OF PROV-REPTD DT-CONTAINING SHOT #9
+DVRC1                         AGE IN DAYS OF PROV-REPTD VARICELLA-CONTAINING SHOT #1
+DVRC2                         AGE IN DAYS OF PROV-REPTD VARICELLA-CONTAINING SHOT #2
+DVRC3                         AGE IN DAYS OF PROV-REPTD VARICELLA-CONTAINING SHOT #3
+DVRC4                         AGE IN DAYS OF PROV-REPTD VARICELLA-CONTAINING SHOT #4
+DVRC5                         AGE IN DAYS OF PROV-REPTD VARICELLA-CONTAINING SHOT #5
+DVRC6                         AGE IN DAYS OF PROV-REPTD VARICELLA-CONTAINING SHOT #6
+DVRC7                         AGE IN DAYS OF PROV-REPTD VARICELLA-CONTAINING SHOT #7
+DVRC8                         AGE IN DAYS OF PROV-REPTD VARICELLA-CONTAINING SHOT #8
+DVRC9                         AGE IN DAYS OF PROV-REPTD VARICELLA-CONTAINING SHOT #9
+FLU1_AGE                   AGE IN MONTHS OF PROV-REPTD FLU-CONTAINING VACCINATION #1
+FLU2_AGE                   AGE IN MONTHS OF PROV-REPTD FLU-CONTAINING VACCINATION #2
+FLU3_AGE                   AGE IN MONTHS OF PROV-REPTD FLU-CONTAINING VACCINATION #3
+FLU4_AGE                   AGE IN MONTHS OF PROV-REPTD FLU-CONTAINING VACCINATION #4
+FLU5_AGE                   AGE IN MONTHS OF PROV-REPTD FLU-CONTAINING VACCINATION #5
+FLU6_AGE                   AGE IN MONTHS OF PROV-REPTD FLU-CONTAINING VACCINATION #6
+FLU7_AGE                   AGE IN MONTHS OF PROV-REPTD FLU-CONTAINING VACCINATION #7
+FLU8_AGE                   AGE IN MONTHS OF PROV-REPTD FLU-CONTAINING VACCINATION #8
+FLU9_AGE                   AGE IN MONTHS OF PROV-REPTD FLU-CONTAINING VACCINATION #9
+HEA1_AGE                  AGE IN MONTHS OF PROV-REPTD HEPATITIS A-CONTAINING SHOT #1
+HEA2_AGE                  AGE IN MONTHS OF PROV-REPTD HEPATITIS A-CONTAINING SHOT #2
+HEA3_AGE                  AGE IN MONTHS OF PROV-REPTD HEPATITIS A-CONTAINING SHOT #3
+HEA4_AGE                  AGE IN MONTHS OF PROV-REPTD HEPATITIS A-CONTAINING SHOT #4
+HEA5_AGE                  AGE IN MONTHS OF PROV-REPTD HEPATITIS A-CONTAINING SHOT #5
+HEA6_AGE                  AGE IN MONTHS OF PROV-REPTD HEPATITIS A-CONTAINING SHOT #6
+HEA7_AGE                  AGE IN MONTHS OF PROV-REPTD HEPATITIS A-CONTAINING SHOT #7
+HEA8_AGE                  AGE IN MONTHS OF PROV-REPTD HEPATITIS A-CONTAINING SHOT #8
+HEA9_AGE                  AGE IN MONTHS OF PROV-REPTD HEPATITIS A-CONTAINING SHOT #9
+HEP1_AGE                  AGE IN MONTHS OF PROV-REPTD HEPATITIS B-CONTAINING SHOT #1
+HEP2_AGE                  AGE IN MONTHS OF PROV-REPTD HEPATITIS B-CONTAINING SHOT #2
+HEP3_AGE                  AGE IN MONTHS OF PROV-REPTD HEPATITIS B-CONTAINING SHOT #3
+HEP4_AGE                  AGE IN MONTHS OF PROV-REPTD HEPATITIS B-CONTAINING SHOT #4
+HEP5_AGE                  AGE IN MONTHS OF PROV-REPTD HEPATITIS B-CONTAINING SHOT #5
+HEP6_AGE                  AGE IN MONTHS OF PROV-REPTD HEPATITIS B-CONTAINING SHOT #6
+HEP7_AGE                  AGE IN MONTHS OF PROV-REPTD HEPATITIS B-CONTAINING SHOT #7
+HEP8_AGE                  AGE IN MONTHS OF PROV-REPTD HEPATITIS B-CONTAINING SHOT #8
+HEP9_AGE                  AGE IN MONTHS OF PROV-REPTD HEPATITIS B-CONTAINING SHOT #9
+HIB1_AGE                          AGE IN MONTHS OF PROV-REPTD HIB-CONTAINING SHOT #1
+HIB2_AGE                          AGE IN MONTHS OF PROV-REPTD HIB-CONTAINING SHOT #2
+HIB3_AGE                          AGE IN MONTHS OF PROV-REPTD HIB-CONTAINING SHOT #3
+HIB4_AGE                          AGE IN MONTHS OF PROV-REPTD HIB-CONTAINING SHOT #4
+HIB5_AGE                          AGE IN MONTHS OF PROV-REPTD HIB-CONTAINING SHOT #5
+HIB6_AGE                          AGE IN MONTHS OF PROV-REPTD HIB-CONTAINING SHOT #6
+HIB7_AGE                          AGE IN MONTHS OF PROV-REPTD HIB-CONTAINING SHOT #7
+HIB8_AGE                          AGE IN MONTHS OF PROV-REPTD HIB-CONTAINING SHOT #8
+HIB9_AGE                          AGE IN MONTHS OF PROV-REPTD HIB-CONTAINING SHOT #9
+MMR1_AGE                      AGE IN MONTHS OF PROV-REPTD MEASLES-CONTAINING SHOT #1
+MMR2_AGE                      AGE IN MONTHS OF PROV-REPTD MEASLES-CONTAINING SHOT #2
+MMR3_AGE                      AGE IN MONTHS OF PROV-REPTD MEASLES-CONTAINING SHOT #3
+MMR4_AGE                      AGE IN MONTHS OF PROV-REPTD MEASLES-CONTAINING SHOT #4
+MMR5_AGE                      AGE IN MONTHS OF PROV-REPTD MEASLES-CONTAINING SHOT #5
+MMR6_AGE                      AGE IN MONTHS OF PROV-REPTD MEASLES-CONTAINING SHOT #6
+MMR7_AGE                      AGE IN MONTHS OF PROV-REPTD MEASLES-CONTAINING SHOT #7
+MMR8_AGE                      AGE IN MONTHS OF PROV-REPTD MEASLES-CONTAINING SHOT #8
+MMR9_AGE                      AGE IN MONTHS OF PROV-REPTD MEASLES-CONTAINING SHOT #9
+MP1_AGE                               AGE IN MONTHS OF PROV-REPTD MUMPS-ONLY SHOT #1
+MP2_AGE                               AGE IN MONTHS OF PROV-REPTD MUMPS-ONLY SHOT #2
+MP3_AGE                               AGE IN MONTHS OF PROV-REPTD MUMPS-ONLY SHOT #3
+MP4_AGE                               AGE IN MONTHS OF PROV-REPTD MUMPS-ONLY SHOT #4
+MP5_AGE                               AGE IN MONTHS OF PROV-REPTD MUMPS-ONLY SHOT #5
+MP6_AGE                               AGE IN MONTHS OF PROV-REPTD MUMPS-ONLY SHOT #6
+MP7_AGE                               AGE IN MONTHS OF PROV-REPTD MUMPS-ONLY SHOT #7
+MP8_AGE                               AGE IN MONTHS OF PROV-REPTD MUMPS-ONLY SHOT #8
+MP9_AGE                               AGE IN MONTHS OF PROV-REPTD MUMPS-ONLY SHOT #9
+MPR1_AGE                    AGE IN MONTHS OF PROV-REPTD (MUMPS/RUBELLA)-ONLY SHOT #1
+MPR2_AGE                    AGE IN MONTHS OF PROV-REPTD (MUMPS/RUBELLA)-ONLY SHOT #2
+MPR3_AGE                    AGE IN MONTHS OF PROV-REPTD (MUMPS/RUBELLA)-ONLY SHOT #3
+MPR4_AGE                    AGE IN MONTHS OF PROV-REPTD (MUMPS/RUBELLA)-ONLY SHOT #4
+MPR5_AGE                    AGE IN MONTHS OF PROV-REPTD (MUMPS/RUBELLA)-ONLY SHOT #5
+MPR6_AGE                    AGE IN MONTHS OF PROV-REPTD (MUMPS/RUBELLA)-ONLY SHOT #6
+MPR7_AGE                    AGE IN MONTHS OF PROV-REPTD (MUMPS/RUBELLA)-ONLY SHOT #7
+MPR8_AGE                    AGE IN MONTHS OF PROV-REPTD (MUMPS/RUBELLA)-ONLY SHOT #8
+MPR9_AGE                    AGE IN MONTHS OF PROV-REPTD (MUMPS/RUBELLA)-ONLY SHOT #9
+PCV1_AGE                 AGE IN MONTHS OF PROV-REPTD PNEUMOCOCCAL-CONTAINING SHOT #1
+PCV2_AGE                 AGE IN MONTHS OF PROV-REPTD PNEUMOCOCCAL-CONTAINING SHOT #2
+PCV3_AGE                 AGE IN MONTHS OF PROV-REPTD PNEUMOCOCCAL-CONTAINING SHOT #3
+PCV4_AGE                 AGE IN MONTHS OF PROV-REPTD PNEUMOCOCCAL-CONTAINING SHOT #4
+PCV5_AGE                 AGE IN MONTHS OF PROV-REPTD PNEUMOCOCCAL-CONTAINING SHOT #5
+PCV6_AGE                 AGE IN MONTHS OF PROV-REPTD PNEUMOCOCCAL-CONTAINING SHOT #6
+PCV7_AGE                 AGE IN MONTHS OF PROV-REPTD PNEUMOCOCCAL-CONTAINING SHOT #7
+PCV8_AGE                 AGE IN MONTHS OF PROV-REPTD PNEUMOCOCCAL-CONTAINING SHOT #8
+PCV9_AGE                 AGE IN MONTHS OF PROV-REPTD PNEUMOCOCCAL-CONTAINING SHOT #9
+POL1_AGE                        AGE IN MONTHS OF PROV-REPTD POLIO-CONTAINING SHOT #1
+POL2_AGE                        AGE IN MONTHS OF PROV-REPTD POLIO-CONTAINING SHOT #2
+POL3_AGE                        AGE IN MONTHS OF PROV-REPTD POLIO-CONTAINING SHOT #3
+POL4_AGE                        AGE IN MONTHS OF PROV-REPTD POLIO-CONTAINING SHOT #4
+POL5_AGE                        AGE IN MONTHS OF PROV-REPTD POLIO-CONTAINING SHOT #5
+POL6_AGE                        AGE IN MONTHS OF PROV-REPTD POLIO-CONTAINING SHOT #6
+POL7_AGE                        AGE IN MONTHS OF PROV-REPTD POLIO-CONTAINING SHOT #7
+POL8_AGE                        AGE IN MONTHS OF PROV-REPTD POLIO-CONTAINING SHOT #8
+POL9_AGE                        AGE IN MONTHS OF PROV-REPTD POLIO-CONTAINING SHOT #9
+RB1_AGE                             AGE IN MONTHS OF PROV-REPTD RUBELLA-ONLY SHOT #1
+RB2_AGE                             AGE IN MONTHS OF PROV-REPTD RUBELLA-ONLY SHOT #2
+RB3_AGE                             AGE IN MONTHS OF PROV-REPTD RUBELLA-ONLY SHOT #3
+RB4_AGE                             AGE IN MONTHS OF PROV-REPTD RUBELLA-ONLY SHOT #4
+RB5_AGE                             AGE IN MONTHS OF PROV-REPTD RUBELLA-ONLY SHOT #5
+RB6_AGE                             AGE IN MONTHS OF PROV-REPTD RUBELLA-ONLY SHOT #6
+RB7_AGE                             AGE IN MONTHS OF PROV-REPTD RUBELLA-ONLY SHOT #7
+RB8_AGE                             AGE IN MONTHS OF PROV-REPTD RUBELLA-ONLY SHOT #8
+RB9_AGE                             AGE IN MONTHS OF PROV-REPTD RUBELLA-ONLY SHOT #9
+ROT1_AGE                    AGE IN MONTHS OF PROV-REPTD ROTAVIRUS-CONTAINING SHOT #1
+ROT2_AGE                    AGE IN MONTHS OF PROV-REPTD ROTAVIRUS-CONTAINING SHOT #2
+ROT3_AGE                    AGE IN MONTHS OF PROV-REPTD ROTAVIRUS-CONTAINING SHOT #3
+ROT4_AGE                    AGE IN MONTHS OF PROV-REPTD ROTAVIRUS-CONTAINING SHOT #4
+ROT5_AGE                    AGE IN MONTHS OF PROV-REPTD ROTAVIRUS-CONTAINING SHOT #5
+ROT6_AGE                    AGE IN MONTHS OF PROV-REPTD ROTAVIRUS-CONTAINING SHOT #6
+ROT7_AGE                    AGE IN MONTHS OF PROV-REPTD ROTAVIRUS-CONTAINING SHOT #7
+ROT8_AGE                    AGE IN MONTHS OF PROV-REPTD ROTAVIRUS-CONTAINING SHOT #8
+ROT9_AGE                    AGE IN MONTHS OF PROV-REPTD ROTAVIRUS-CONTAINING SHOT #9
+VRC1_AGE                    AGE IN MONTHS OF PROV-REPTD VARICELLA-CONTAINING SHOT #1
+VRC2_AGE                    AGE IN MONTHS OF PROV-REPTD VARICELLA-CONTAINING SHOT #2
+VRC3_AGE                    AGE IN MONTHS OF PROV-REPTD VARICELLA-CONTAINING SHOT #3
+VRC4_AGE                    AGE IN MONTHS OF PROV-REPTD VARICELLA-CONTAINING SHOT #4
+VRC5_AGE                    AGE IN MONTHS OF PROV-REPTD VARICELLA-CONTAINING SHOT #5
+VRC6_AGE                    AGE IN MONTHS OF PROV-REPTD VARICELLA-CONTAINING SHOT #6
+VRC7_AGE                    AGE IN MONTHS OF PROV-REPTD VARICELLA-CONTAINING SHOT #7
+VRC8_AGE                    AGE IN MONTHS OF PROV-REPTD VARICELLA-CONTAINING SHOT #8
+VRC9_AGE                    AGE IN MONTHS OF PROV-REPTD VARICELLA-CONTAINING SHOT #9
+XDTPTY1                                                                             
+XDTPTY2                                                                             
+XDTPTY3                                                                             
+XDTPTY4                                                                             
+XDTPTY5                                                                             
+XDTPTY6                                                                             
+XDTPTY7                                                                             
+XDTPTY8                                                                             
+XDTPTY9                                                                             
+XFLUTY1                                                                             
+XFLUTY2                                                                             
+XFLUTY3                                                                             
+XFLUTY4                                                                             
+XFLUTY5                                                                             
+XFLUTY6                                                                             
+XFLUTY7                                                                             
+XFLUTY8                                                                             
+XFLUTY9                                                                             
+XHEPTY1                                                                             
+XHEPTY2                                                                             
+XHEPTY3                                                                             
+XHEPTY4                                                                             
+XHEPTY5                                                                             
+XHEPTY6                                                                             
+XHEPTY7                                                                             
+XHEPTY8                                                                             
+XHEPTY9                                                                             
+XHIBTY1                                                                             
+XHIBTY2                                                                             
+XHIBTY3                                                                             
+XHIBTY4                                                                             
+XHIBTY5                                                                             
+XHIBTY6                                                                             
+XHIBTY7                                                                             
+XHIBTY8                                                                             
+XHIBTY9                                                                             
+XMMRTY1                                                                             
+XMMRTY2                                                                             
+XMMRTY3                                                                             
+XMMRTY4                                                                             
+XMMRTY5                                                                             
+XMMRTY6                                                                             
+XMMRTY7                                                                             
+XMMRTY8                                                                             
+XMMRTY9                                                                             
+XPCVTY1                                                                             
+XPCVTY2                                                                             
+XPCVTY3                                                                             
+XPCVTY4                                                                             
+XPCVTY5                                                                             
+XPCVTY6                                                                             
+XPCVTY7                                                                             
+XPCVTY8                                                                             
+XPCVTY9                                                                             
+XPOLTY1                                                                             
+XPOLTY2                                                                             
+XPOLTY3                                                                             
+XPOLTY4                                                                             
+XPOLTY5                                                                             
+XPOLTY6                                                                             
+XPOLTY7                                                                             
+XPOLTY8                                                                             
+XPOLTY9                                                                             
+XVRCTY1                                                                             
+XVRCTY2                                                                             
+XVRCTY3                                                                             
+XVRCTY4                                                                             
+XVRCTY5                                                                             
+XVRCTY6                                                                             
+XVRCTY7                                                                             
+XVRCTY8                                                                             
+XVRCTY9                                                                             
+INS_1                                                                               
+INS_2                                                                               
+INS_3                                                                               
+INS_3A                                                                              
+INS_4                                                                               
+INS_5                                                                               
+INS_6                                                                               
+INS_11                                                                              
+           Levels Storage   NAs
+SEQNUMC         1 integer 25948
+SEQNUMHH        1 integer 25948
+PDAT            2 integer     0
+PROVWT          0  double  7518
+RDDWT           0  double     0
+YEAR            0 integer     0
+AGECPOXR        4 integer 25429
+SC_431          5 integer 18506
+SC_4313         5 integer 18506
+SC_43133        5 integer 18506
+SC_DTP          5 integer 18506
+SC_HEPB         5 integer 18506
+SC_HIB          5 integer 18506
+SC_MCV          5 integer 18506
+SC_POL          5 integer 18506
+SC_VRC          5 integer 18506
+HH_DTP          5 integer     0
+HH_FLU          5 integer     0
+HH_HEPB         5 integer     0
+HH_HIB          5 integer     0
+HH_MCV          5 integer     0
+HH_POL          5 integer     0
+HH_VRC          5 integer     0
+HAD_CPOX        4 integer     1
+SHOTCARD        2 integer     0
+AGEGRP          3 integer     0
+BF_ENDR06       0  double  6733
+BF_EXCLR06      0  double  6417
+BF_FORMR08      1 integer 22732
+BFENDFL06       1 integer 25948
+BFFORMFL06      1 integer 25948
+C1R             8 integer     0
+C5R             6 integer     0
+CBF_01          4 integer     1
+CEN_REG         4 integer     0
+CHILDNM         5 integer     0
+CWIC_01         5 integer     0
+CWIC_02         4 integer 15144
+EDUC1           6 integer     0
+FRSTBRN         4 integer     0
+I_HISP_K        5 integer     0
+INCPORAR        0  double  2312
+INCPOV1         4 integer     0
+INCQ298A       14 integer     0
+INOPHONR        3 integer 24290
+INTRP           4 integer     0
+LANGUAGE        3 integer     0
+M_AGEGRP        5 integer     0
+MARITAL         3 integer     0
+MOBIL_I         4 integer     0
+RACE_K          3 integer     0
+RACEETHK        4 integer     0
+SEX             4 integer     0
+ESTIAP08       67 integer     0
+STATE          56 integer     0
+D6R             4 integer   761
+D7              2 integer  4791
+DISPCODE       11 integer  7584
+N_PRVR          4 integer     0
+PROV_FAC        7 integer  7584
+REGISTRY        4 integer  7584
+VFC_ORDER       4 integer  7584
+HEP_BRTH        2 integer  7784
+HEP_FLAG        2 integer 25843
+P_NUHEPX        3 integer 25948
+P_NUHIBX        3 integer 25948
+P_NUHPHB        3 integer 25948
+P_NUMDAH        3 integer 25948
+P_NUMDHB        3 integer 25948
+P_NUMDHI        3 integer 25948
+P_NUMDHM        3 integer 25948
+P_NUMDTA        3 integer 25948
+P_NUMDTM        3 integer 25948
+P_NUMDTP        3 integer 25948
+P_NUMFLU        3 integer 25948
+P_NUMFLUL       3 integer 25948
+P_NUMFLUM       3 integer 25948
+P_NUMFLUN       3 integer 25948
+P_NUMHEA        3 integer 25948
+P_NUMHEN        3 integer 25948
+P_NUMHEP        3 integer 25948
+P_NUMHIB        3 integer 25948
+P_NUMHIN        3 integer 25948
+P_NUMIPV        3 integer 25948
+P_NUMMCN        3 integer 25948
+P_NUMMMR        3 integer 25948
+P_NUMMMRX       3 integer 25948
+P_NUMMMX        3 integer 25948
+P_NUMMP         3 integer 25948
+P_NUMMPR        3 integer 25948
+P_NUMMRV        3 integer 25948
+P_NUMMS         3 integer 25948
+P_NUMMSM        3 integer 25948
+P_NUMMSR        3 integer 25948
+P_NUMOLN        3 integer 25948
+P_NUMOPV        3 integer 25948
+P_NUMPCC        3 integer 25948
+P_NUMPCN        3 integer 25948
+P_NUMPCP        3 integer 25948
+P_NUMPCV        3 integer 25948
+P_NUMPOL        3 integer 25948
+P_NUMRB         3 integer 25948
+P_NUMROT        3 integer 25948
+P_NUMTPM        3 integer 25948
+P_NUMTPN        3 integer 25948
+P_NUMVRC        3 integer 25948
+P_NUMVRN        3 integer 25948
+P_NUMVRX        3 integer 25948
+P_U12VRC        2 integer  7433
+P_UTD331        2 integer  7433
+P_UTD431        2 integer  7433
+P_UTDFL1        3 integer  7433
+P_UTDFL2        3 integer  7433
+P_UTDFL3        3 integer  7433
+P_UTDHEP        2 integer  7433
+P_UTDHIB        2 integer  7433
+P_UTDMCV        2 integer  7433
+P_UTDMMX        2 integer  7433
+P_UTDPC3        2 integer  7433
+P_UTDPCV        2 integer  7433
+P_UTDPOL        2 integer  7433
+P_UTDTP3        2 integer  7433
+P_UTDTP4        2 integer  7433
+PU431331        2 integer  7433
+PU4313313       2 integer  7433
+PU4313314       2 integer  7433
+PUT43133        2 integer  7433
+PUTD4313        2 integer  7433
+DDTP1           0 integer  7785
+DDTP2           0 integer  7971
+DDTP3           0 integer  8195
+DDTP4           0 integer  9982
+DDTP5           0 integer 25694
+DDTP6           0 integer 25932
+DDTP7           0 integer 25946
+DDTP8           0 integer 25947
+DDTP9           0 logical 25948
+DFLU1           0 integer 14883
+DFLU2           0 integer 18057
+DFLU3           0 integer 21982
+DFLU4           0 integer 25237
+DFLU5           0 integer 25932
+DFLU6           0 integer 25947
+DFLU7           0 logical 25948
+DFLU8           0 logical 25948
+DFLU9           0 logical 25948
+DHEPA1          0 integer 13062
+DHEPA2          0 integer 17762
+DHEPA3          0 integer 25884
+DHEPA4          0 logical 25948
+DHEPA5          0 logical 25948
+DHEPA6          0 logical 25948
+DHEPA7          0 logical 25948
+DHEPA8          0 logical 25948
+DHEPA9          0 logical 25948
+DHEPB1          0 integer  7784
+DHEPB2          0 integer  8077
+DHEPB3          0 integer  8618
+DHEPB4          0 integer 19593
+DHEPB5          0 integer 25507
+DHEPB6          0 integer 25926
+DHEPB7          0 integer 25946
+DHEPB8          0 logical 25948
+DHEPB9          0 logical 25948
+DHIB1           0 integer  7836
+DHIB2           0 integer  8098
+DHIB3           0 integer  9233
+DHIB4           0 integer 17193
+DHIB5           0 integer 25803
+DHIB6           0 integer 25939
+DHIB7           0 integer 25945
+DHIB8           0 integer 25947
+DHIB9           0 logical 25948
+DMMR1           0 integer  8724
+DMMR2           0 integer 25653
+DMMR3           0 integer 25943
+DMMR4           0 logical 25948
+DMMR5           0 logical 25948
+DMMR6           0 logical 25948
+DMMR7           0 logical 25948
+DMMR8           0 logical 25948
+DMMR9           0 logical 25948
+DMP1            0 integer 25922
+DMP2            0 logical 25948
+DMP3            0 logical 25948
+DMP4            0 logical 25948
+DMP5            0 logical 25948
+DMP6            0 logical 25948
+DMP7            0 logical 25948
+DMP8            0 logical 25948
+DMP9            0 logical 25948
+DMPRB1          0 integer 25947
+DMPRB2          0 logical 25948
+DMPRB3          0 logical 25948
+DMPRB4          0 logical 25948
+DMPRB5          0 logical 25948
+DMPRB6          0 logical 25948
+DMPRB7          0 logical 25948
+DMPRB8          0 logical 25948
+DMPRB9          0 logical 25948
+DPCV1           0 integer  8140
+DPCV2           0 integer  8431
+DPCV3           0 integer  8870
+DPCV4           0 integer 10911
+DPCV5           0 integer 25791
+DPCV6           0 integer 25942
+DPCV7           0 integer 25946
+DPCV8           0 integer 25947
+DPCV9           0 logical 25948
+DPOLIO1         0 integer  7873
+DPOLIO2         0 integer  8054
+DPOLIO3         0 integer  8585
+DPOLIO4         0 integer 24847
+DPOLIO5         0 integer 25901
+DPOLIO6         0 integer 25938
+DPOLIO7         0 integer 25947
+DPOLIO8         0 logical 25948
+DPOLIO9         0 logical 25948
+DRB1            0 integer 25922
+DRB2            0 logical 25948
+DRB3            0 logical 25948
+DRB4            0 logical 25948
+DRB5            0 logical 25948
+DRB6            0 logical 25948
+DRB7            0 logical 25948
+DRB8            0 logical 25948
+DRB9            0 logical 25948
+DROT1           0 integer 22433
+DROT2           0 integer 22815
+DROT3           0 integer 23351
+DROT4           0 integer 25936
+DROT5           0 logical 25948
+DROT6           0 logical 25948
+DROT7           0 logical 25948
+DROT8           0 logical 25948
+DROT9           0 logical 25948
+DTP1_AGE        0 integer  7785
+DTP2_AGE        0 integer  7971
+DTP3_AGE        0 integer  8195
+DTP4_AGE        0 integer  9982
+DTP5_AGE        0 integer 25694
+DTP6_AGE        0 integer 25932
+DTP7_AGE        0 integer 25946
+DTP8_AGE        0 integer 25947
+DTP9_AGE        0 logical 25948
+DVRC1           0 integer  9151
+DVRC2           0 integer 25638
+DVRC3           0 integer 25944
+DVRC4           0 logical 25948
+DVRC5           0 logical 25948
+DVRC6           0 logical 25948
+DVRC7           0 logical 25948
+DVRC8           0 logical 25948
+DVRC9           0 logical 25948
+FLU1_AGE        0 integer 14883
+FLU2_AGE        0 integer 18057
+FLU3_AGE        0 integer 21982
+FLU4_AGE        0 integer 25237
+FLU5_AGE        0 integer 25932
+FLU6_AGE        0 integer 25947
+FLU7_AGE        0 logical 25948
+FLU8_AGE        0 logical 25948
+FLU9_AGE        0 logical 25948
+HEA1_AGE        0 integer 13062
+HEA2_AGE        0 integer 17762
+HEA3_AGE        0 integer 25884
+HEA4_AGE        0 logical 25948
+HEA5_AGE        0 logical 25948
+HEA6_AGE        0 logical 25948
+HEA7_AGE        0 logical 25948
+HEA8_AGE        0 logical 25948
+HEA9_AGE        0 logical 25948
+HEP1_AGE        0 integer  7784
+HEP2_AGE        0 integer  8077
+HEP3_AGE        0 integer  8618
+HEP4_AGE        0 integer 19593
+HEP5_AGE        0 integer 25507
+HEP6_AGE        0 integer 25926
+HEP7_AGE        0 integer 25946
+HEP8_AGE        0 logical 25948
+HEP9_AGE        0 logical 25948
+HIB1_AGE        0 integer  7836
+HIB2_AGE        0 integer  8098
+HIB3_AGE        0 integer  9233
+HIB4_AGE        0 integer 17193
+HIB5_AGE        0 integer 25803
+HIB6_AGE        0 integer 25939
+HIB7_AGE        0 integer 25945
+HIB8_AGE        0 integer 25947
+HIB9_AGE        0 logical 25948
+MMR1_AGE        0 integer  8724
+MMR2_AGE        0 integer 25653
+MMR3_AGE        0 integer 25943
+MMR4_AGE        0 logical 25948
+MMR5_AGE        0 logical 25948
+MMR6_AGE        0 logical 25948
+MMR7_AGE        0 logical 25948
+MMR8_AGE        0 logical 25948
+MMR9_AGE        0 logical 25948
+MP1_AGE         0 integer 25922
+MP2_AGE         0 logical 25948
+MP3_AGE         0 logical 25948
+MP4_AGE         0 logical 25948
+MP5_AGE         0 logical 25948
+MP6_AGE         0 logical 25948
+MP7_AGE         0 logical 25948
+MP8_AGE         0 logical 25948
+MP9_AGE         0 logical 25948
+MPR1_AGE        0 integer 25947
+MPR2_AGE        0 logical 25948
+MPR3_AGE        0 logical 25948
+MPR4_AGE        0 logical 25948
+MPR5_AGE        0 logical 25948
+MPR6_AGE        0 logical 25948
+MPR7_AGE        0 logical 25948
+MPR8_AGE        0 logical 25948
+MPR9_AGE        0 logical 25948
+PCV1_AGE        0 integer  8140
+PCV2_AGE        0 integer  8431
+PCV3_AGE        0 integer  8870
+PCV4_AGE        0 integer 10911
+PCV5_AGE        0 integer 25791
+PCV6_AGE        0 integer 25942
+PCV7_AGE        0 integer 25946
+PCV8_AGE        0 integer 25947
+PCV9_AGE        0 logical 25948
+POL1_AGE        0 integer  7873
+POL2_AGE        0 integer  8054
+POL3_AGE        0 integer  8585
+POL4_AGE        0 integer 24847
+POL5_AGE        0 integer 25901
+POL6_AGE        0 integer 25938
+POL7_AGE        0 integer 25947
+POL8_AGE        0 logical 25948
+POL9_AGE        0 logical 25948
+RB1_AGE         0 integer 25922
+RB2_AGE         0 logical 25948
+RB3_AGE         0 logical 25948
+RB4_AGE         0 logical 25948
+RB5_AGE         0 logical 25948
+RB6_AGE         0 logical 25948
+RB7_AGE         0 logical 25948
+RB8_AGE         0 logical 25948
+RB9_AGE         0 logical 25948
+ROT1_AGE        0 integer 22433
+ROT2_AGE        0 integer 22815
+ROT3_AGE        0 integer 23351
+ROT4_AGE        0 integer 25936
+ROT5_AGE        0 logical 25948
+ROT6_AGE        0 logical 25948
+ROT7_AGE        0 logical 25948
+ROT8_AGE        0 logical 25948
+ROT9_AGE        0 logical 25948
+VRC1_AGE        0 integer  9151
+VRC2_AGE        0 integer 25638
+VRC3_AGE        0 integer 25944
+VRC4_AGE        0 logical 25948
+VRC5_AGE        0 logical 25948
+VRC6_AGE        0 logical 25948
+VRC7_AGE        0 logical 25948
+VRC8_AGE        0 logical 25948
+VRC9_AGE        0 logical 25948
+XDTPTY1        45 integer 25948
+XDTPTY2        45 integer 25948
+XDTPTY3        45 integer 25948
+XDTPTY4        45 integer 25948
+XDTPTY5        45 integer 25948
+XDTPTY6        45 integer 25948
+XDTPTY7        45 integer 25948
+XDTPTY8        45 integer 25948
+XDTPTY9        45 integer 25948
+XFLUTY1        45 integer 14883
+XFLUTY2        45 integer 18057
+XFLUTY3        45 integer 21982
+XFLUTY4        45 integer 25237
+XFLUTY5        45 integer 25932
+XFLUTY6        45 integer 25947
+XFLUTY7        45 integer 25948
+XFLUTY8        45 integer 25948
+XFLUTY9        45 integer 25948
+XHEPTY1        45 integer  7784
+XHEPTY2        45 integer  8077
+XHEPTY3        45 integer  8618
+XHEPTY4        45 integer 19593
+XHEPTY5        45 integer 25507
+XHEPTY6        45 integer 25938
+XHEPTY7        45 integer 25948
+XHEPTY8        45 integer 25948
+XHEPTY9        45 integer 25948
+XHIBTY1        45 integer  7836
+XHIBTY2        45 integer  8098
+XHIBTY3        45 integer  9233
+XHIBTY4        45 integer 17193
+XHIBTY5        45 integer 25803
+XHIBTY6        45 integer 25940
+XHIBTY7        45 integer 25945
+XHIBTY8        45 integer 25947
+XHIBTY9        45 integer 25948
+XMMRTY1        45 integer  8724
+XMMRTY2        45 integer 25653
+XMMRTY3        45 integer 25943
+XMMRTY4        45 integer 25948
+XMMRTY5        45 integer 25948
+XMMRTY6        45 integer 25948
+XMMRTY7        45 integer 25948
+XMMRTY8        45 integer 25948
+XMMRTY9        45 integer 25948
+XPCVTY1        45 integer  8140
+XPCVTY2        45 integer  8431
+XPCVTY3        45 integer  8870
+XPCVTY4        45 integer 10911
+XPCVTY5        45 integer 25791
+XPCVTY6        45 integer 25942
+XPCVTY7        45 integer 25946
+XPCVTY8        45 integer 25947
+XPCVTY9        45 integer 25948
+XPOLTY1        45 integer 17498
+XPOLTY2        45 integer 16964
+XPOLTY3        45 integer 17748
+XPOLTY4        45 integer 25403
+XPOLTY5        45 integer 25920
+XPOLTY6        45 integer 25942
+XPOLTY7        45 integer 25947
+XPOLTY8        45 integer 25948
+XPOLTY9        45 integer 25948
+XVRCTY1        45 integer  9151
+XVRCTY2        45 integer 25638
+XVRCTY3        45 integer 25944
+XVRCTY4        45 integer 25948
+XVRCTY5        45 integer 25948
+XVRCTY6        45 integer 25948
+XVRCTY7        45 integer 25948
+XVRCTY8        45 integer 25948
+XVRCTY9        45 integer 25948
+INS_1           4 integer  4206
+INS_2           4 integer 13642
+INS_3           4 integer 13650
+INS_3A          4 integer 16546
+INS_4           4 integer  4258
+INS_5           4 integer  4267
+INS_6           4 integer  4271
+INS_11          4 integer  5338
+               Frequency Percent Cumulative Frequency Cumulative Percent
+19 - 23 MONTHS      7694   29.65                 7694              29.65
+24 - 29 MONTHS      9074   34.97                16768              64.62
+30 - 35 MONTHS      9180   35.38                25948             100.00
+               Frequency Percent Cumulative Frequency Cumulative Percent
+19 - 23 MONTHS   1893609   30.70              1893609              30.70
+24 - 29 MONTHS   2107246   34.16              4000855              64.86
+30 - 35 MONTHS   2167166   35.14              6168021             100.00
+Warning message:
+In `levels<-`(`*tmp*`, value = if (nl == nL) as.character(labels) else paste(labels,  :
+  duplicated levels will not be allowed in factors anymore
+> #NISPUF08 <- subset(NISPUF08, PDAT==1)
+> #save("NISPUF08", "/mnt/data/NIS/modified_data/NISPUF08.RData")
+> 
+> 
+> #source("/mnt/data/NIS/original_data/nispuf09.r")
+> #source("/mnt/data/NIS/original_data/nispuf10.r")
+> #source("/mnt/data/NIS/original_data/nispuf11.r")
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+261.560  91.137 353.342 
