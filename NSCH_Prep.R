@@ -20,20 +20,32 @@ nfpdemo$NFP_ID <- nfpdemo$CL_EN_GEN_ID
 nfpdemo$male[nfpdemo$Childgender=="Female"] <- 0 # Recode factor variable
 nfpdemo$male[nfpdemo$Childgender=="Male"] <- 1 
 
+
 # Race recodes: note that NSCH has only child's race and NFP has only mother's race.
 # Must assume for matching purposes that they are the same.
-nsch$race <- nsch$RACER # Need codebook
-nsch$ethnicity < - nsch$HISPANIC # Need codebook
-nfpdemo$race <- nfpdemo$Maternal_Race_Raw # Needs clean up
-nfpdemo$ethnicity <- nfpdemo$Maternal_Ethinicty # Needs clean up
+# Using convention of NFP's MomsRE variable - factor with five levels: 
+# 1) BlackNH, 2) WhiteNH, 3) Hispanic or Latina, 4) Other, 5) Declined or msg
+
+# RACER/HISPANIC recoded from NSCH per directions in SPSS Codebook p.147
+nsch$RE <- NA
+nsch$RE[nsch$HISPANIC==1] <- "Hispanic"
+nsch$RE[nsch$HISPANIC==0 & nsch$RACER==1] <- "WhiteNH"
+nsch$RE[nsch$HISPANIC==0 & nsch$RACER==2] <- "BlackNH"
+nsch$RE[nsch$HISPANIC==0 & nsch$RACER==3] <- "Other"
+
+nfpdemo$RE <- as.character(nfpdemo$MomsRE) # Renaming variable
+nfpdemo$RE[nfpdemo$RE=="Hispanic or Latina"] <- "Hispanic" # Shortening description
+nfpdemo$RE[nfpdemo$RE=="Declined or msg"] <- NA 
+nfpdemo$RE <- factor(nfpdemo$RE) # Return to factor format with adjusted levels
+
 
 
 # Remove extra NSCH columns and obs for families with no children < age 2.
-NSCH_Columns <- subset(nsch, select = c(NSCH_ID, male, premature, lbw, race, ethnicity))
+NSCH_Columns <- subset(nsch, select = c(NSCH_ID, male, premature, lbw, RE))
 NSCH_Final <- subset(nsch) # Subset here by child's age
 
 # Remove extra NFP columns.
-NFP_Demo_Set <- subset(nfpdemo, select = c(NFP_ID, male, premature, lbw, race, ethnicity))
+NFP_Demo_Set <- subset(nfpdemo, select = c(NFP_ID, male, premature, lbw, RE))
 NFP_Location <- subset(nfpcenter)
 NFP_Final <- merge(NFP_Demo_Set, NFP_Locaton) # Merge on location information
 
