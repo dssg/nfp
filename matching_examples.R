@@ -3,164 +3,371 @@
 ##            Matching Examples          ##
 ###########################################
 
-##Baby Matching (simple matching example, build on this)
+# We want to work through toy examples using various matching algorithms 
+# to make sure that understand them.  We start with a really simple 
+# data-generating process (DGP), where the two explanatory variables (D and X)
+# are dichotomous and exogenously and independently determined, and 
+# exact-matching, where we match observations that have equal values on 
+# the explanatory variable not of interest.
 
-e <- rnorm(1000)
-x1 <- round(runif(1000,0,1))
-x2 <- round(runif(1000,-1,0))
-y <- -3 - 2*x1 + x2 + e
+n <- 1000  #number of observations to test
 
-#we know that OLS works well
-summary(lm(y~x1))
-summary(lm(y~x1+x2))
+## generate sample data
+e <- rnorm(n)                 # error term
+d <- rbinom(n,size=1,p=.5)    # treatment (1=yes, 0=no)
+x <- rbinom(n,size=1,p=.5)-1  # other independent cause of Y
+y <- -3 - 2*d + x + e       # DGP
+
 
 
 ##############
-## estimate coefficient for x1
+# Naive estimator
 
-# Because x2 is a discrete variable, it can only take a finite number of values (in this case, 2).
-# There are also lots of observations for each combination of x1 and x2.
-# Stratification works well in this case.
+# The naive estimator takes the average outcome for the treatment group and subtracts
+# the average outcome for the control group.  It works in this case because we don't 
+# need to control for other variables.
+mean(y[d==1]) - mean(y[d==0])
+
+
+
+##############
+# OLS 
+lm(y~d+x)
+# OLS estimates d well even if we exclude x (because D and X are independent)
+lm(y~d)
+
+
+
+##############
+## Stratification
+
 # Stratification creates blocks of data that are equal on confounding variables.
-# Estimates are then generated for each strata, and usually those estimates are weighted across strata.
+# Estimates are then generated for each strata (by OLS, differences in means, or
+# something else).  To get the average treatment effect (ATE) unconditional on
+# strata, weight those estimates across strata.
 
-x0neg1 <- x1==0 & x2==-1
-x00 <- x1==0 & x2==0
-x1neg1 <- x1==1 & x2==-1
-x10 <- x1==1 & x2==0
+D0Xneg1 <- d==0 & x==-1
+D0X0    <- d==0 & x== 0
+D1Xneg1 <- d==1 & x==-1
+D1X0    <- d==1 & x== 0
 
-ATE2neg1 <- (mean(y[x1neg1])-mean(y[x0neg1])) * length(y[x2==-1])/length(y)
-ATE20 <- (mean(y[x10])-mean(y[x00])) * length(y[x2==0])/length(y)
+# ATE conditional on X=-1
+ateXneg1 <- mean(y[D1Xneg1]) - mean(y[D0Xneg1])
+# ATE conditional on X=0
+ateX0    <- mean(y[D1X0]) - mean(y[D0X0])
 
-ATE <- ATE2neg1 + ATE20   #point estimate 
+# ATE unconditional on X
+prob.X0 <- sum(x==0)/length(x)  # sample proportion where x=0
+ATE <- ateXneg1*(1-prob.X0) + ateX0*(prob.X0)
 ATE
 
 
-# Matching pairs one or more observations 
-#Match on x2
 
-data <- cbind(x1,x2,y)
+##############
+## Matching
+
+# Matching is a type of stratification.  The difference is in how many units are being
+# compared at once.  With stratification we look at the difference in outcomes between
+# the treatment group and the control group at one time for all observations where X=x,
+# but with matching we look at the difference in outcomes at one time between one observation 
+# where X=x and k members of the control group where X=x.
+
+# it is easier to sample from a matrix for this example
+data <- cbind(d,x,y)
 #split into two samples
-#r <- sample(1:1000,500,replace=FALSE)
-#samples
-data1 <- subset(data, x1==1)   #data[r,]
-data2 <- subset(data, x1==0)   #data[-r,]
+data1 <- subset(data, d==1)   #treatment group
+data2 <- subset(data, d==0)   #control group
 
-# number of matched cases for each observation
+# number of matched cases for each observation.  Simplest is 1 to 1, but we can match to several
 k <- 5
-###match sample 1 observations with sample 2 observations
 
-#this is where we'll store the observed difference between the sample and the match
+# We will match k observations from the control group to 1 observation from the 
+# treatment group.  To do that, I store k differences in outcomes for each observation
+# in the treatment group.
 difference <- matrix(NA, nrow(data1), k)  
 
+# cycle through each treatment observation
 for(i in 1:nrow(data1)){
-  #find k matches on x2 from sample 2
+  # find k matches on x from sample 2
+  # because there are more than k matches, I randomly select k matches with replacement
   match_y <- sample(data2[,3][data2[,2]==data1[i,2]], size=k, replace=TRUE)
+
+  # store the differences in outcomes between the treatment observation and the control obs.
   difference[i,] <- data1[i,3] - match_y
 }
-mean(difference)  #point estimate for effect of x1 on y
+mean(difference)  #point estimate for effect of d on y
 
 
+# R's Matching package gives similar results.  The results are unlikely to be exactly
+# the same because we each randomly select observations from the control group.
 library(Matching)
-match1 <- Match(Y=y, Tr=x1, X=x2, estimand="ATE", M=k, ties=FALSE)
+match1 <- Match(Y=y, Tr=d, X=x, estimand="ATE", M=k, ties=FALSE)
 summary(match1)
 
 
-###########################################
-## x2 causes x1 and y
-
-e <- rnorm(1000)
-x2 <- round(runif(1000,-1,0))
-x1 <- rep(NA, 1000)
-x1[x2==-1] <- rbinom(length(x1[x2==-1]),1,.7)
-x1[x2==0] <- rbinom(length(x1[x2==0]),1,.3)
-y <- -3 - 2*x1 + x2 + e
-
-# regressing on x1 without x2 leads to a biased estimate
-lm(y~x1)
-lm(y~x1 + x2)
-
 
 ##############
-## estimate coefficient for x1
+# Propensity Score Matching
 
-# Stratification
+# Our previous matching example used exact matching, where observations were matched on
+# identical values of x.  Unfortunately, exact matching often fails for continuous X or
+# X with many categories (because there will be few, if any, cases to match with).  One
+# way to deal with that sparseness is to match on propensity score.  The propensity score
+# is the probability that an individual receives the treatment.  So, for example, 
+#
+#   1) if income, age, and education determine the probability of a pregnant woman 
+#      enrolling in NFP;
+#   2) an enrolled 20-year-old woman with a high-school diploma and an income of $50,000 
+#      had a probability of 0.70 of enrolling; and 
+#   3) a non-enrolled 30-year-old with a college education and an income of $35,000 had
+#      a probability of 0.70 of enrolling,
+#
+# we could get a good estimate by matching them.
+#
+# Here's PSM using the same example.
 
-x0neg1 <- x1==0 & x2==-1
-x00 <- x1==0 & x2==0
-x1neg1 <- x1==1 & x2==-1
-x10 <- x1==1 & x2==0
-
-ATE2neg1 <- (mean(y[x1neg1])-mean(y[x0neg1])) * length(y[x2==-1])/length(y)
-ATE20 <- (mean(y[x10])-mean(y[x00])) * length(y[x2==0])/length(y)
-
-ATE <- ATE2neg1 + ATE20   #point estimate 
-ATE
-
+# Predicted probability of treatment for each person using logistic regression,
+# where we regress treatment on x
+treatment_regression <- glm(d~x, family=binomial(link="logit"))
+p.hat <- 1 / (1 + exp(-predict(treatment_regression)))
+hist(p.hat)
 
 # Matching pairs one or more observations 
-#Match on x2
-
-data <- cbind(x1,x2,y)
+data <- cbind(d,x,y,p.hat)
 #split into two samples
-data1 <- subset(data, x1==1)   #data[r,]
-data2 <- subset(data, x1==0)   #data[-r,]
-
-# number of matched cases for each observation
-k <- 25
-
-###match sample 1 observations with sample 2 observations
+data1 <- subset(data, d==1)   # treatment group
+data2 <- subset(data, d==0)   # control group
 
 #this is where we'll store the observed difference between the sample and the match
 difference <- matrix(NA, nrow(data1), k)  
 
+# cycle through each observation in the treatment group
 for(i in 1:nrow(data1)){
-  #find k matches on x2 from sample 2
-  match_y <- sample(data2[,3][data2[,2]==data1[i,2]], size=k, replace=TRUE)
+  # find k matches on p.hat from the control group
+  # because there are more than k potential matches, we randomly select k of them
+  match_y <- sample(data2[,3][data2[,4]==data1[i,4]], size=k, replace=TRUE)
+  
+  # store the differences
   difference[i,] <- data1[i,3] - match_y
 }
 mean(difference)  #point estimate for effect of x1 on y
 
 
-# R package Matching
-match2 <- Match(Y=y, Tr=x1, X=x2, estimand="ATE", M=k, ties=FALSE)
+# R's Matching library doing PSM
+match3 <- Match(Y=y, Tr=d, X=p.hat, estimand="ATE", M=k, ties=FALSE)
+summary(match3)
+
+
+
+
+
+
+###########################################
+## More Complicated Data-Generating Process
+
+# In the previous DGP, treatment (D) was assigned independently from X, but that's
+# rarely true for observational data.  In this example X causes D and Y.
+
+e <- rnorm(n)                     # error term
+x <- rbinom(n, size=1, p=.5)-1    # sample X
+d <- rep(NA, n)                   # probability of treatment varies with X
+d[x==-1] <- rbinom(length(d[x==-1]),1,.7)
+d[x== 0] <- rbinom(length(d[x== 0]),1,.3)
+y <- -3 - 2*d + x + e           # DGP
+
+
+
+
+##############
+# Naive estimator
+
+# The naive estimator doesn't work well here because it does not control for X,
+# a common cause of D and Y.
+mean(y[d==1]) - mean(y[d==0])
+
+
+
+
+##############
+# OLS 
+lm(y~d+x)
+# Regressing only on d leads to a biased estimate.  Need to control for x
+lm(y~d)
+
+
+
+
+##############
+# Stratification
+
+D0Xneg1 <- d==0 & x==-1
+D0X0    <- d==0 & x== 0
+D1Xneg1 <- d==1 & x==-1
+D1X0    <- d==1 & x== 0
+
+# ATE conditional on X=-1
+ateXneg1 <- mean(y[D1Xneg1]) - mean(y[D0Xneg1])
+# ATE conditional on X=0
+ateX0    <- mean(y[D1X0]) - mean(y[D0X0])
+
+# ATE unconditional on X
+prob.X0 <- sum(x==0)/length(x)  # sample proportion where x=0
+ATE <- ateXneg1*(1-prob.X0) + ateX0*(prob.X0)
+ATE
+
+
+
+
+##############
+# Matching
+
+data <- cbind(d,x,y)
+# split into two samples
+data1 <- subset(data, d==1)
+data2 <- subset(data, d==0) 
+
+# number of matched cases for each observation
+k <- 5
+
+# this is where we'll store the observed difference between the sample and the match
+difference <- matrix(NA, nrow(data1), k)  
+
+# cycle through each observation in the treatment group
+for(i in 1:nrow(data1)){
+  # find k matches on x from sample 2
+  # because we have more than k possible matches, we randomly select k of them
+  match_y <- sample(data2[,3][data2[,2]==data1[i,2]], size=k, replace=TRUE)
+
+  # store the difference
+  difference[i,] <- data1[i,3] - match_y
+}
+mean(difference)  #point estimate for effect of d on y
+
+
+# compare to R's Matching results
+match2 <- Match(Y=y, Tr=d, X=x, estimand="ATE", M=k, ties=FALSE)
 summary(match2)
 
 
 
 
 
-# Propensity score matching
+##############
+# Propensity Score Matching
 
-p.hat <- 1 / (1 + exp(-predict(glm(x1~x2, family='binomial'))))
+treatment_regression <- glm(d~x, family=binomial(link='logit'))
+p.hat <- 1 / (1 + exp(-predict(treatment_regression)))
 hist(p.hat)
 
-
-# Matching pairs one or more observations 
-#Match on x2
-
-data <- cbind(x1,x2,y,p.hat)
+# Again, it's easier to sample from a matrix than from multiple vectors
+data <- cbind(d,x,y,p.hat)
 #split into two samples
-data1 <- subset(data, x1==1)   #data[r,]
-data2 <- subset(data, x1==0)   #data[-r,]
+data1 <- subset(data, d==1)   # treatment group
+data2 <- subset(data, d==0)   # control group
 
 # number of matched cases for each observation
 k <- 5
-###match sample 1 observations with sample 2 observations
 
 #this is where we'll store the observed difference between the sample and the match
 difference <- matrix(NA, nrow(data1), k)  
 
+# cycle through each treatment observation
 for(i in 1:nrow(data1)){
-  #find k matches on p.hat from sample 2
+  # find k matches on p.hat from the control group
+  # because there are more than k potential matches, we randomly select k of them
   match_y <- sample(data2[,3][data2[,4]==data1[i,4]], size=k, replace=TRUE)
+
+  # store the differences
   difference[i,] <- data1[i,3] - match_y
 }
-lm(y~x1+x2)
-mean(difference)  #point estimate for effect of x1 on y
+mean(difference)  #point estimate for effect of d on y
 
 
-
-#library Matching
-match3 <- Match(Y=y, Tr=x1, X=p.hat, estimand="ATE", M=k, ties=FALSE)
+# compare to R's Matching library
+match3 <- Match(Y=y, Tr=d, X=p.hat, estimand="ATE", M=k, ties=FALSE)
 summary(match3)
+
+
+
+
+
+######################################
+## Average treatment effect for the treated (ATET) and control (ATEC)
+# So far we have assumed the same treatment effect for the treatment and control groups.
+# However, the treatment effect may vary differ for those groups.  For example, only those
+# who would benefit the most from college enroll.  It is also possible that we do not feel
+# comfortable making all the assumptions necessary to estimate the ATE.
+#
+# Here is the new data-generating process, where the treatment effect varies and those
+# who have a positive treatment effect are more likely to enroll.
+
+e <- rnorm(n)
+x <- rbinom(n, size=1, prob=.5)-1
+beta <- rbinom(n, size=1, prob=.4)  #effect for some is positive 1, for others -2
+  beta[beta==0] <- -2
+d <- rbinom(n, size=1, prob=.8)  #ppl with positive effect more likely to enroll
+  d[beta==-2] <- rbinom(length(d[beta==-2]), size=1, prob=.3)
+y <- -3 + beta*d + 5*x + e  # DGP
+data <- as.data.frame(cbind(d,x,beta,y))
+
+
+
+
+##############
+# Naive estimator: doesn't tell us much about what's going on
+mean(y[d==1]) - mean(y[d==0])
+
+
+
+
+##############
+# OLS: doesn't help much, even when controlling for x!
+lm(y~d+x)
+
+
+
+
+# In these cases we might be interested in the average treatment effect for the treated
+# (ATET) and average treatment effect for the control (ATEC).
+#
+# Note that we cannot estimate the ATET by looking at the treated group only
+d.treated <- coef(lm(y~d+x, data=subset(data,d==1)))[2]
+d.treated
+
+# Nor can we estimate the ATEC by looking at the control group only
+d.control <- coef(lm(y~d+x, data=subset(data,d==0)))[2]
+d.control
+
+# How to calculate ATET when we don't observe untreated outcomes for the treated observations?
+# "Progress can be made by assuming that selection into treatment depends on observable 
+# covariates X" (http://sekhon.berkeley.edu/papers/MatchingJSS.pdf)
+#
+# Assume that conditioning on X creates exchangability, i.e.
+# E[Y(1)|X,D=1] = E[Y(1)|X,D=0]  and  E[Y(0)|X,D=1] = E[Y(0)|X,D=0]
+
+# E[Y|X=-1,D=0]
+mean(y[x==-1 & d==0])
+# E[Y|X=-1,D=1]
+mean(y[x==-1 & d==1])
+# E[Y|X=0,D=0]
+mean(y[x== 0 & d==0])
+# E[Y|X=0,D=1]
+mean(y[x== 0 & d==1])
+
+# Pr(X=-1|D=0)
+sum(x==-1 & d==0)/sum(d==0)
+# Pr(X= 0|D=0)
+sum(x== 0 & d==0)/sum(d==0)
+
+
+# ATET: E[Y(1)-Y(0)|D=1] = E[Y(1)|D=1] - E[Y(0)|D=1]
+# w/ ignorability:       = E[Y(1)|D=1] - E[Y(0)|D=0]
+#                        = (E[Y(1)|X=-1,D=1] - E[Y(0)|X=-1,D=0])*(1-Pr[X=-1|D=0]) + 
+#                            (E[Y|X= 0,D=1] - E[Y|X= 0,D=0])*(1-Pr[X= 0|D=0])
+(mean(y[x==-1 & d==1]) - mean(y[x==-1 & d==0])) * (1-sum(x==-1 & d==0)/sum(d==0)) +
+(mean(y[x== 0 & d==1]) - mean(y[x== 0 & d==0])) * (1-sum(x== 0 & d==0)/sum(d==0))
+
+# The Matching package gives similar results
+library(Matching)
+match4 <- Match(Y=y, Tr=d, X=p.hat, estimand="ATT", M=k, ties=FALSE)
+summary(match4)
