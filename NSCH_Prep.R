@@ -29,11 +29,11 @@ nfpdemo$ethnicity <- nfpdemo$Maternal_Ethinicty # Needs clean up
 
 
 # Remove extra NSCH columns and obs for families with no children < age 2.
-NSCH_Columns <- subset(nsch, select = c(NSCH_ID, male, premature, lbw, race, ethnicity)
+NSCH_Columns <- subset(nsch, select = c(NSCH_ID, male, premature, lbw, race, ethnicity))
 NSCH_Final <- subset(nsch) # Subset here by child's age
 
 # Remove extra NFP columns.
-NFP_Demo_Set <- subset(nfpdemo, select = c(NFP_ID, male, premature, lbw, race, ethnicity)
+NFP_Demo_Set <- subset(nfpdemo, select = c(NFP_ID, male, premature, lbw, race, ethnicity))
 NFP_Location <- subset(nfpcenter)
 NFP_Final <- merge(NFP_Demo_Set, NFP_Locaton) # Merge on location information
 
