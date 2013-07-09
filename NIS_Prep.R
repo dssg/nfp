@@ -137,10 +137,10 @@ NIS$income_recode[which(is.element(NIS$INCQ298A, c(7,8)))] = 4 # Binning 20k-30k
 NIS$income_recode[which(is.element(NIS$INCQ298A, c(9,10)))] = 5 # Binning 30k-40k in the same was as nfp
 NIS$income_recode[which(is.element(NIS$INCQ298A, c(11,12,13,14)))] = 6
 
-# In NFP, must combine income brackets 2 and 3 ($7500-20K) to match NIS buckets.
+### In NFP, must combine income brackets 2 and 3 ($7500-20K) to match NIS buckets.
 nfp_demographics$nfp_income_recode = nfp_demographics$INCOME
 nfp_demographics$nfp_income_recode[nfp_demographics$nfp_income_recode == 3] <- 2
-# Note that in the NFP dataset an income code of 7 indicates a mother living off her parents.
+### Note that in the NFP dataset an income code of 7 indicates a mother living off her parents.
 
 
 
@@ -223,7 +223,7 @@ nfp_demographics$nfp_state_recode[nfp_demographics$State == 'WI'] = 55
 nfp_demographics$nfp_state_recode[nfp_demographics$State == 'WY'] = 56
 
 
-# Language - note that we are comparing primary language (NFP) to language in which interview was conducted (NIS)
+## Language - note that we are comparing primary language (NFP) to language in which interview was conducted (NIS)
 NIS$Primary_language[NIS$LANGUAGE==1] <- "English"
 NIS$Primary_language[NIS$LANGUAGE==2] <- "Spanish"
 NIS$Primary_language[NIS$LANGUAGE==3] <- "Other"
@@ -233,9 +233,9 @@ nfp_demographics$language <- as.character(nfp_demographics$Primary_language)
 nfp_demographics$language[nfp_demographics$Primary_language==""] <- NA
 nfp_demographics$language <- factor(nfp_demographics$language)
 
-# Mother's Age - Bucketed in NIS data as <=19, 20-29, >=30. 
-# True comparison to NFP MomsAgeBirth would be mother's age minus child's age in NIS, but both data points are bucketed.
-# Explore ways to make this comparison more accurate, but start by ignoring this distinction.
+## Mother's Age - Bucketed in NIS data as <=19, 20-29, >=30. 
+### True comparison to NFP MomsAgeBirth would be mother's age minus child's age in NIS, but both data points are bucketed.
+### Explore ways to make this comparison more accurate, but start by ignoring this distinction.
 
 nfp_demographics$MAge[nfp_demographics$MomsAgeBirth <= 19] <- 1
 nfp_demographics$MAge[20 <= nfp_demographics$MomsAgeBirth & nfp_demographics$MomsAgeBirth <= 29] <- 2
@@ -244,8 +244,8 @@ nfp_demographics$MAge <- factor(nfp_demographics$MAge, labels = c("<=19 Years", 
 NIS$MAge <- factor(NIS$M_AGEGRP, labels = c("<=19 Years", "20-29 Years", ">=30 Years"))
 
 
-# Race - Only child's race is available from NIS and only mother's race from NFP.
-# Must assume these are the same.
+## Race - Only child's race is available from NIS and only mother's race from NFP.
+### Must assume these are the same.
 
 NIS$RE <- factor(NIS$RACEETHK, labels = c("Hispanic", "WhiteNH", "BlackNH", "Other"))
 nfp_demographics$RE <- as.character(nfp_demographics$MomsRE) # Renaming variable
@@ -254,7 +254,7 @@ nfp_demographics$RE[nfp_demographics$RE=="Declined or msg"] <- NA
 nfp_demographics$RE <- factor(nfp_demographics$RE) # Return to factor format with adjusted levels
 
 
-# Child's gender: Create a binary dummy variable for "male"
+## Child's gender: Create a binary dummy variable for "male"
 
 NIS$male[NIS$SEX==1] <- 1
 NIS$male[NIS$SEX==2] <- 0
@@ -262,15 +262,20 @@ nfp_demographics$male[nfp_demographics$Childgender=="Female"] <- 0 # Recode fact
 nfp_demographics$male[nfp_demographics$Childgender=="Male"] <- 1 
 
 
-# Mother's marital status
-# NIS provides only married v. never married/widowed/divorced/separated/deceased
-### This is listed as MARITAL2 in the codebook, but only MARITAL is in dataset, and it has a third value.  Need to find codes!
-# We have more detail for NFP, but NFP also provided a binary (nfp_demographics$marital_status) equivalent to this value.
+## Mother's marital status
+### Two variables in NIS: MARITAL, in early years (2008 codebook), distinguishes 1) widowed/divorced/separated/deceased, 
+### 2) never married, and 3) married.  MARITAL2 (2010 codebook) distinguishes only married v. not married.
+### We have more detail for NFP, but NFP also provided a binary (nfp_demographics$marital_status) equivalent to MARITAL2.
 
 nfp_demographics$married <- nfp_demographics$marital_status # Rename variable so meaning of 1/0 is more evident
-NIS$married <- NIS$MARITAL # Need to investigate codes and recode appropriately
+NIS$married[NIS$MARITAL==3] <- 1
+NIS$married[NIS$MARITAL==2] <- 0
+NIS$married[NIS$MARITAL==1] <- 0
+NIS$married[NIS$MARITAL2==1] <- 1
+NIS$married[NIS$MARITAL2==2] <- 0
+
+## Mother's education
 
 
-# Mother's education
-## TBA.
 
+# Matching variables TBD: WIC/Medicaid recipient status and insurance coverage.
