@@ -31,7 +31,7 @@ for tr in rows:
 			else:
 				code = int(text)
 	try:
-		print "nfp_state_recode[which(nfp_centers$State == '%s')] = %d" % (state,code)
+		print "nfp_demographics$nfp_state_recode[nfp_centers$State == '%s'] = %d" % (state,code)
 	except:
 		continue
 
