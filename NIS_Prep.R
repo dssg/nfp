@@ -117,50 +117,8 @@ save("NISPUF08", "/mnt/data/NIS/modified_data/NISPUF08.RData")
 
 
 
-# Variable Recodes - NIS
-nis_income_recode08 = rep(0,dim(NISPUF08)[1])
-nis_income_recode09 = rep(0,dim(NISPUF09)[1])
-nis_income_recode10 = rep(0, dim(NISPUF10)[1])
-nis_income_recode11 = rep(0, dim(NISPUF11)[1])
-
-
-# Although the lowest bins don't match exactly (6000 upper limit in nfp and 7500 in NIS,
-#### we will treat them as the same)
-nis_income_recode08[which(is.element(NISPUF08$STATE, c(3))] == 1
-nis_income_recode09[which(is.element(NISPUF09$STATE, c(3))] == 1
-nis_income_recode10[which(is.element(NISPUF10$STATE, c(3))] == 1
-nis_income_recode11[which(is.element(NISPUF11$STATE, c(3))] == 1
-
-
-# Binning 7500-20000/year together in both sets
-nis_income_recode08[which(is.element(NISPUF08$STATE, c(4,5,6))] == 2
-nis_income_recode09[which(is.element(NISPUF09$STATE, c(4,5,6))] == 2
-nis_income_recode10[which(is.element(NISPUF10$STATE, c(4,5,6))] == 2
-nis_income_recode11[which(is.element(NISPUF11$STATE, c(4,5,6))] == 2
-
-
-# Binning 20k-30k as in nfp
-
-nis_income_recode08[which(is.element(NISPUF08$STATE, c(7,8))] == 4
-nis_income_recode09[which(is.element(NISPUF09$STATE, c(7,8))] == 4
-nis_income_recode10[which(is.element(NISPUF10$STATE, c(7,8))] == 4
-nis_income_recode11[which(is.element(NISPUF11$STATE, c(7,8))] == 4
-
-# Binning 30k-40k in the same was as nfp
-
-nis_income_recode08[which(is.element(NISPUF08$STATE, c(9,10))] == 5
-nis_income_recode09[which(is.element(NISPUF09$STATE, c(9,10))] == 5
-nis_income_recode10[which(is.element(NISPUF10$STATE, c(9,10))] == 5
-nis_income_recode11[which(is.element(NISPUF11$STATE, c(9,10))] == 5
-
-nis_income_recode08[which(is.element(NISPUF08$STATE, c(11,12,13,14))] == 6
-nis_income_recode09[which(is.element(NISPUF09$STATE, c(11,12,13,14))] == 6
-nis_income_recode10[which(is.element(NISPUF10$STATE, c(11,12,13,14))] == 6
-nis_income_recode11[which(is.element(NISPUF11$STATE, c(11,12,13,14))] == 6
-
-# We may want to dump all families with codes of 77 or 99 since these are either don't know or refused
-
-# Eventually we'll merge all four years of NIS data.  For now, just working with 2008 data.
+# Variable Recodes
+## Eventually we'll merge all four years of NIS data.  For now, just working with 2008 data.
 NIS <- NISPUF08
 
 # Load NFP data for recoding and preparation
@@ -168,105 +126,113 @@ setwd("/mnt/data/csv_data")
 nfp_demographics <- read.csv("nfp_demographics_expanded.csv")
 nfp_centers <- read.csv("agency.csv")
 
-# Variable Recodes - NFP
-nfp_state_recode = rep(0,dim(nfp_demographics)[1])
 
-nfp_state_recode[which(nfp_demographics$State == 'WY')] = 56
-nfp_state_recode[which(nfp_demographics$State == 'AL')] = 1
-nfp_state_recode[which(nfp_demographics$State == 'AK')] = 2
-nfp_state_recode[which(nfp_demographics$State == 'AS')] = 60
-nfp_state_recode[which(nfp_demographics$State == 'AS')] = 3
-nfp_state_recode[which(nfp_demographics$State == 'AZ')] = 4
-nfp_state_recode[which(nfp_demographics$State == 'AR')] = 5
-nfp_state_recode[which(nfp_demographics$State == 'AR')] = 81
-nfp_state_recode[which(nfp_demographics$State == 'CA')] = 6
-nfp_state_recode[which(nfp_demographics$State == 'CA')] = 7
-nfp_state_recode[which(nfp_demographics$State == 'CO')] = 8
-nfp_state_recode[which(nfp_demographics$State == 'CT')] = 9
-nfp_state_recode[which(nfp_demographics$State == 'DE')] = 10
-nfp_state_recode[which(nfp_demographics$State == 'DC')] = 11
-nfp_state_recode[which(nfp_demographics$State == 'FL')] = 12
-nfp_state_recode[which(nfp_demographics$State == 'FM')] = 64
-nfp_state_recode[which(nfp_demographics$State == 'GA')] = 13
-nfp_state_recode[which(nfp_demographics$State == 'GA')] = 14
-nfp_state_recode[which(nfp_demographics$State == 'GU')] = 66
-nfp_state_recode[which(nfp_demographics$State == 'HI')] = 15
-nfp_state_recode[which(nfp_demographics$State == 'HI')] = 84
-nfp_state_recode[which(nfp_demographics$State == 'ID')] = 16
-nfp_state_recode[which(nfp_demographics$State == 'IL')] = 17
-nfp_state_recode[which(nfp_demographics$State == 'IN')] = 18
-nfp_state_recode[which(nfp_demographics$State == 'IA')] = 19
-nfp_state_recode[which(nfp_demographics$State == 'IA')] = 86
-nfp_state_recode[which(nfp_demographics$State == 'IA')] = 67
-nfp_state_recode[which(nfp_demographics$State == 'KS')] = 20
-nfp_state_recode[which(nfp_demographics$State == 'KY')] = 21
-nfp_state_recode[which(nfp_demographics$State == 'KY')] = 89
-nfp_state_recode[which(nfp_demographics$State == 'LA')] = 22
-nfp_state_recode[which(nfp_demographics$State == 'ME')] = 23
-nfp_state_recode[which(nfp_demographics$State == 'MH')] = 68
-nfp_state_recode[which(nfp_demographics$State == 'MD')] = 24
-nfp_state_recode[which(nfp_demographics$State == 'MA')] = 25
-nfp_state_recode[which(nfp_demographics$State == 'MI')] = 26
-nfp_state_recode[which(nfp_demographics$State == 'MI')] = 71
-nfp_state_recode[which(nfp_demographics$State == 'MN')] = 27
-nfp_state_recode[which(nfp_demographics$State == 'MS')] = 28
-nfp_state_recode[which(nfp_demographics$State == 'MO')] = 29
-nfp_state_recode[which(nfp_demographics$State == 'MT')] = 30
-nfp_state_recode[which(nfp_demographics$State == 'MT')] = 76
-nfp_state_recode[which(nfp_demographics$State == 'NE')] = 31
-nfp_state_recode[which(nfp_demographics$State == 'NV')] = 32
-nfp_state_recode[which(nfp_demographics$State == 'NH')] = 33
-nfp_state_recode[which(nfp_demographics$State == 'NJ')] = 34
-nfp_state_recode[which(nfp_demographics$State == 'NM')] = 35
-nfp_state_recode[which(nfp_demographics$State == 'NY')] = 36
-nfp_state_recode[which(nfp_demographics$State == 'NC')] = 37
-nfp_state_recode[which(nfp_demographics$State == 'ND')] = 38
-nfp_state_recode[which(nfp_demographics$State == 'MP')] = 69
-nfp_state_recode[which(nfp_demographics$State == 'OH')] = 39
-nfp_state_recode[which(nfp_demographics$State == 'OK')] = 40
-nfp_state_recode[which(nfp_demographics$State == 'OR')] = 41
-nfp_state_recode[which(nfp_demographics$State == 'PW')] = 70
-nfp_state_recode[which(nfp_demographics$State == 'PW')] = 95
-nfp_state_recode[which(nfp_demographics$State == 'PA')] = 42
-nfp_state_recode[which(nfp_demographics$State == 'PA')] = 43
-nfp_state_recode[which(nfp_demographics$State == 'PR')] = 72
-nfp_state_recode[which(nfp_demographics$State == 'RI')] = 44
-nfp_state_recode[which(nfp_demographics$State == 'SC')] = 45
-nfp_state_recode[which(nfp_demographics$State == 'SD')] = 46
-nfp_state_recode[which(nfp_demographics$State == 'TN')] = 47
-nfp_state_recode[which(nfp_demographics$State == 'TX')] = 48
-nfp_state_recode[which(nfp_demographics$State == 'UM')] = 74
-nfp_state_recode[which(nfp_demographics$State == 'UT')] = 49
-nfp_state_recode[which(nfp_demographics$State == 'VT')] = 50
-nfp_state_recode[which(nfp_demographics$State == 'VA')] = 51
-nfp_state_recode[which(nfp_demographics$State == 'VA')] = 52
-nfp_state_recode[which(nfp_demographics$State == 'VI')] = 78
-nfp_state_recode[which(nfp_demographics$State == 'VI')] = 79
-nfp_state_recode[which(nfp_demographics$State == 'WA')] = 53
-nfp_state_recode[which(nfp_demographics$State == 'WV')] = 54
-nfp_state_recode[which(nfp_demographics$State == 'WI')] = 55
-nfp_state_recode[which(nfp_demographics$State == 'WY')] = 56
+##Household income - note that DK/Refused households are NA
 
-nfp_id_and_state <- cbind(nfp_demographics$CL_EN_GEN_ID, nfp_state_recode)
+### Although the lowest bins don't match exactly (6000 is the upper limit in NFP and 7500 in NIS),
+### assume that both skew heavily toward 0 and treat as comparable
+NIS$income_recode[NIS$INCQ298A==3] <- 1
+NIS$income_recode[which(is.element(NIS$INCQ298A, c(4,5,6)))] = 2 # Binning 7500-20000/year together in both sets
+NIS$income_recode[which(is.element(NIS$INCQ298A, c(7,8)))] = 4 # Binning 20k-30k as in nfp
+NIS$income_recode[which(is.element(NIS$INCQ298A, c(9,10)))] = 5 # Binning 30k-40k in the same was as nfp
+NIS$income_recode[which(is.element(NIS$INCQ298A, c(11,12,13,14)))] = 6
 
-## NOTE THAT THIS MAY NOT BE THE FINAL VARIABLE NAME!!!!!!
-nfp_growth_immunization_outcomes.with_location <- merge(nfp_growth_immunization_outcomes,nfp_id_and_state, by = 'CL_EN_GEN_ID')
+# In NFP, must combine income brackets 2 and 3 ($7500-20K) to match NIS buckets.
+nfp_demographics$nfp_income_recode = nfp_demographics$INCOME
+nfp_demographics$nfp_income_recode[nfp_demographics$nfp_income_recode == 3] <- 2
+# Note that in the NFP dataset an income code of 7 indicates a mother living off her parents.
 
-# We must recode 2 and 3 as just two in the income brackets.
 
-nfp_income_recode = nfp_demographics$Income
-nfp_income_recode[which(nfp_income_recode == 3)] = 2
 
-# We might want to get rid of nfp rows with income value of 7 since these are people that live off their parents.
+## Location - recoding NFP state data into FIPS codes (to match the NIS dataset)
+nfp_demographics$nfp_state_recode = rep(NA,dim(nfp_demographics)[1])
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'WY'] = 56
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'AL'] = 1
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'AK'] = 2
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'AS'] = 60
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'AS'] = 3
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'AZ'] = 4
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'AR'] = 5
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'AR'] = 81
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'CA'] = 6
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'CA'] = 7
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'CO'] = 8
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'CT'] = 9
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'DE'] = 10
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'DC'] = 11
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'FL'] = 12
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'FM'] = 64
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'GA'] = 13
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'GA'] = 14
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'GU'] = 66
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'HI'] = 15
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'HI'] = 84
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'ID'] = 16
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'IL'] = 17
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'IN'] = 18
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'IA'] = 19
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'IA'] = 86
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'IA'] = 67
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'KS'] = 20
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'KY'] = 21
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'KY'] = 89
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'LA'] = 22
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'ME'] = 23
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'MH'] = 68
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'MD'] = 24
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'MA'] = 25
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'MI'] = 26
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'MI'] = 71
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'MN'] = 27
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'MS'] = 28
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'MO'] = 29
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'MT'] = 30
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'MT'] = 76
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'NE'] = 31
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'NV'] = 32
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'NH'] = 33
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'NJ'] = 34
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'NM'] = 35
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'NY'] = 36
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'NC'] = 37
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'ND'] = 38
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'MP'] = 69
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'OH'] = 39
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'OK'] = 40
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'OR'] = 41
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'PW'] = 70
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'PW'] = 95
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'PA'] = 42
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'PA'] = 43
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'PR'] = 72
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'RI'] = 44
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'SC'] = 45
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'SD'] = 46
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'TN'] = 47
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'TX'] = 48
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'UM'] = 74
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'UT'] = 49
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'VT'] = 50
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'VA'] = 51
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'VA'] = 52
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'VI'] = 78
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'VI'] = 79
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'WA'] = 53
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'WV'] = 54
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'WI'] = 55
+nfp_demographics$nfp_state_recode[nfp_demographics$State == 'WY'] = 56
 
-#Recode Language in nfp
-nfp_language_recode = rep(0,dim(nfp_demographics)[1])
-nfp_language_recode[which(nfp_demographics$Primary_language == 'English')] = 1
-nfp_language_recode[which(nfp_demographics$Primary_language == 'Spanish')] = 2
-nfp_language_recode[which(nfp_demographics$Primary_language == 'Other')] = 3
 
-# All entries marked with a 0 are the ones with no value in the nfp demographics set
-=======
+# Language - note that we are comparing primary language (NFP) to language in which interview was conducted (NIS)
+NIS$Primary_language[NIS$LANGUAGE==1] <- "English"
+NIS$Primary_language[NIS$LANGUAGE==2] <- "Spanish"
+NIS$Primary_language[NIS$LANGUAGE==3] <- "Other"
+NIS$language <- factor(NIS$Primary_language)
+
+nfp_demographics$language <- as.character(nfp_demographics$Primary_language)
+nfp_demographics$language[nfp_demographics$Primary_language==""] <- NA
+nfp_demographics$language <- factor(nfp_demographics$language)
+
 # Mother's Age - Bucketed in NIS data as <=19, 20-29, >=30. 
 # True comparison to NFP MomsAgeBirth would be mother's age minus child's age in NIS, but both data points are bucketed.
 # Explore ways to make this comparison more accurate, but start by ignoring this distinction.

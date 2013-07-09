@@ -34,7 +34,7 @@ for tr in rows:
 				code = int(text)
 	try:
 		if change == 1:
-			print "nfp_state_recode[nfp_centers$State == '%s'] = %d" % (state,code)
+			print "nfp_demographics$nfp_state_recode[nfp_centers$State == '%s'] = %d" % (state,code)
 	except:
 		continue
 
