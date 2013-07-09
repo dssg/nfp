@@ -124,7 +124,6 @@ NIS <- NISPUF08
 # Load NFP data for recoding and preparation
 setwd("/mnt/data/csv_data")
 nfp_demographics <- read.csv("nfp_demographics_expanded.csv")
-nfp_centers <- read.csv("agency.csv")
 
 
 ##Household income - note that DK/Refused households are NA
@@ -260,7 +259,13 @@ NIS$married[NIS$MARITAL2==1] <- 1
 NIS$married[NIS$MARITAL2==2] <- 0
 
 ## Mother's education
+###NFP tracks HS diploma, GED, or neither (HSGED).
+###NIS has <12 years, 12 years, or 12+ years.  Original questionnaire wording buckets HS degrees and GEDs together.
 
-
+nfp_demographics$HSgrad[nfp_demographics$HSGED==1] <- 1
+nfp_demographics$HSgrad[nfp_demographics$HSGED==2] <- 1
+nfp_demographics$HSgrad[nfp_demographics$HSGED==3] <- 0
+NIS$HSgrad[NIS$EDUC1==1] <- 0
+NIS$HSgrad[which(is.element(NIS$EDUC1,c(2,3,4)))] <- 1
 
 # Matching variables TBD: WIC/Medicaid recipient status and insurance coverage.
