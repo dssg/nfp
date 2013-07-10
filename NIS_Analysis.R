@@ -10,9 +10,13 @@
 ##################################
 ## EXPLORATORY ANALYSIS
 
-load("/mnt/data/NIS/modified_data/NISPUF.RData")
+#load("/mnt/data/NIS/modified_data/NISPUF.RData")
 
-summary(NISPUF)
+load("/mnt/data/NIS/immunizations_analysis.RData")
+
+summary(immunizations)
+
+immunizations 
 
 
 
