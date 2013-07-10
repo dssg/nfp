@@ -548,5 +548,5 @@ NIS$HSgrad[which(is.element(NIS$EDUC1,c(2,3,4)))] <- 1
 
 
 
-save(NIS, file="NIS_for_A.RData", ascii=TRUE)  # ASCII so it's readable years from now
+save(NIS, file="/mnt/data/NIS/NIS_for_Analysis.RData", ascii=TRUE)  # ASCII so it's readable years from now
 
