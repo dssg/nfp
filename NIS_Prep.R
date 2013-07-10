@@ -47,8 +47,8 @@ NISPUF08 <- NISPUF08[,!(names(NISPUF08) %in% c("HH_FLU","P_UTDHEP","P_UTDHIB_ROU
 names(NISPUF08)[names(NISPUF08)=='MARITAL'] <- 'MARITAL2'
 
 # Recode MARITAL2 for consistency.
-NISPUF$MARITAL2[NISPUF$MARITAL2==1] <- 2
-NISPUF$MARITAL2[NISPUF$MARITAL2==3] <- 1
+NISPUF08$MARITAL2[NISPUF08$MARITAL2==1] <- 2
+NISPUF08$MARITAL2[NISPUF08$MARITAL2==3] <- 1
 
 
 # Only keep potentially useful columns
@@ -482,7 +482,10 @@ save(NISPUF, file="NISPUF.RData", ascii=TRUE)  # ASCII so it's readable years fr
 #####################################
 
 
+xxx
 
+
+############################################
 # Load NFP data for recoding and preparation
 setwd("/mnt/data/csv_data")
 nfp_demographics <- read.csv("nfp_demographics_expanded.csv")
@@ -614,14 +617,8 @@ nfp_demographics$male[nfp_demographics$Childgender=="Male"] <- 1
 
 
 ## Mother's marital status
-### Two variables in NIS: MARITAL, in early years (2008 codebook), distinguishes 1) widowed/divorced/separated/deceased, 
-### 2) never married, and 3) married.  MARITAL2 (2010 codebook) distinguishes only married v. not married.
-### We have more detail for NFP, but NFP also provided a binary (nfp_demographics$marital_status) equivalent to MARITAL2.
 
 nfp_demographics$married <- nfp_demographics$marital_status # Rename variable so meaning of 1/0 is more evident
-NISPUF$married[NISPUF$MARITAL==3] <- 1
-NISPUF$married[NISPUF$MARITAL==2] <- 0
-NISPUF$married[NISPUF$MARITAL==1] <- 0
 NISPUF$married[NISPUF$MARITAL2==1] <- 1
 NISPUF$married[NISPUF$MARITAL2==2] <- 0
 
