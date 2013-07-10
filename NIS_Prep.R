@@ -478,9 +478,6 @@ save(NISPUF, file="NISPUF.RData", ascii=TRUE)  # ASCII so it's readable years fr
 #####################################
 
 
-xxx
-
-
 ############################################
 # Load NFP data for recoding and preparation
 setwd("/mnt/data/csv_data")
@@ -569,8 +566,10 @@ nfp_centers$nfp_state_recode[nfp_centers$State == 'WY'] = 56
 
 
 
-nfp_demographics$state <- factor(nfp_state_recode)
-NISPUF$state <- factor(as.numeric(NISPUF$STATE))
+# NEED TO MERGE STATE INFO (from nfp_centers) INTO CORRESPONDING DEMOGRAPHIC INFO (from nfp_demographics)
+
+# nfp_demographics$state <- factor(nfp_state_recode)
+# NISPUF$state <- factor(as.numeric(NISPUF$STATE))
 
 
 ## Language - note that we are comparing primary language (NFP) to language in which interview was conducted (NIS)
@@ -630,10 +629,25 @@ NISPUF$HSgrad[which(is.element(NISPUF$EDUC1,c(2,3,4)))] <- 1
 
 # Matching variables TBD: WIC/Medicaid recipient status and insurance coverage.
 
-NISPUF$treatment <- 0
-nfp_demographics$treatment <- 1
 
-immunizations <- rbind(NISPUF, nfp_demographics)
+########################################
+# Create common dataset to combine NIS and NFP data
 
-#save(immunizations, file = "/mnt/data/NIS/immunizations_analysis.RData", ascii = TRUE) # ASCII so it's readable years from now
-save(nfp_demographics, file = "/mnt/data/NIS/NFP_immunizations_analysis.RData", ascii = TRUE) # ASCII so it's readable years from now
+setwd("/mnt/data/csv_data")
+nfp_outcomes <- read.csv("growth_immunization_outcomes.csv")
+nfp_outcomes$Immunizations_UptoDate_6[nfp_outcomes$final_immun_1=="Yes"] <- 1
+nfp_outcomes$Immunizations_UptoDate_12[nfp_outcomes$final_immun_2=="Yes"] <- 1
+nfp_outcomes$Immunizations_UptoDate_18[nfp_outcomes$final_immun_3=="Yes"] <- 1
+nfp_outcomes$Immunizations_UptoDate_24[nfp_outcomes$final_immun_4=="Yes"] <- 1
+
+NFPfull <- merge(nfp_demographics, nfp_outcomes, by = intersect("CL_EN_GEN_ID"))
+
+# NIScommon <- subset(NISPUF, select = ())
+# NFPcommon <- subset(NFPfull, select = ())
+
+# NIScommon$treatment <- 0
+# NFPcommon$treatment <- 1
+
+# immunizations <- rbind(NIScommon, NFPcommon)
+
+# save(immunizations, file = "/mnt/data/NIS/immunizations_analysis.RData", ascii = TRUE) # ASCII so it's readable years from now
