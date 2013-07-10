@@ -12,13 +12,22 @@ setwd("/mnt/data/NIS/modified_data/")
 ## I'm commenting out the source lines that call NIS-provided code because 
 ## 1) once they're run they don't need to run again and 2) they take too long to run.
 
-############
-# 2008 NIS data
-#source("/mnt/data/NIS/original_data/nispuf08.r")
-load("NISPUF08.RData")
+# NIS data
+source("/mnt/data/NIS/original_data/nispuf08.r")
+  NISPUF08 <- cbind(NISPUF08, 2008)
+source("/mnt/data/NIS/original_data/nispuf09.r")
+  NISPUF09 <- cbind(NISPUF09, 2009)
+source("/mnt/data/NIS/original_data/nispuf10.r")
+  NISPUF10 <- cbind(NISPUF10, 2010)
+source("/mnt/data/NIS/original_data/nispuf11.r")
+  NISPUF11 <- cbind(NISPUF11, 2011)
+
+NISPUF <- rbind(NISPUF08, NISPUF09, NISPUF10, NISPUF11)
+
+
 
 # eliminate observations missing adequate provider data
-NISPUF08 <- subset(NISPUF08, PDAT=="CHILD HAS ADEQUATE PROVIDER DATA OR ZERO VACCINATIONS")
+NISPUF08 <- subset(NISPUF08, PDAT==1)  #PDAT=="CHILD HAS ADEQUATE PROVIDER DATA OR ZERO VACCINATIONS")
 n_2008 <- nrow(NISPUF08)
 
 # HepB immunizations up to date
@@ -105,18 +114,25 @@ Rotavirus18 <- rep(0, n_2008)
 Rotavirus24 <- rep(0, n_2008)
   Rotavirus24[NISPUF08$DROT3<31*24] <- 1
 
+# Examine results for 6-month vaccinations
+mean(HepB6==1)
+mean(DTaP6==1)
+mean(Hib6==1)
+mean(Polio6==1) 
+mean(PCV6==1)
+mean(MMR6==1)
+mean(Varicella6==1)
+mean(HepA6==1)
+mean(Rotavirus6==1)
+
+
 # Overall immunizations up to date
 Immunizations_UptoDate_6 <- rep(0, n_2008)
   Immunizations_UptoDate_6[HepB6==1 & DTaP6==1 & Hib6==1 & Polio6==1 & PCV6==1 & MMR6==1 & Varicella6==1 & HepA6==1 & Rotavirus6==1] <- 1
 
 
 
-save("NISPUF08", "/mnt/data/NIS/modified_data/NISPUF08.RData")
 
-
-#source("/mnt/data/NIS/original_data/nispuf09.r")
-#source("/mnt/data/NIS/original_data/nispuf10.r")
-#source("/mnt/data/NIS/original_data/nispuf11.r")
 
 
 
