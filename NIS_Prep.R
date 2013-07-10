@@ -31,9 +31,9 @@ setwd("/mnt/data/NIS/modified_data/")
 
 #####################################
 ## 2008 NIS data
-source("/mnt/data/NIS/original_data/nispuf08.r")
+#source("/mnt/data/NIS/original_data/nispuf08.r")
 
-#load("NISPUF08.RData")
+load("NISPUF08.RData")
 
 # 2008 data has INS_4 and INS_5; other years have INS_4_5.  Create INS_4_5 and drop other two.
 NISPUF08$INS_4_5 <- 2
@@ -43,8 +43,13 @@ NISPUF08 <- NISPUF08[,!(names(NISPUF08) %in% c("INS_4","INS_5"))]
 # Drop variables missing in other years
 NISPUF08 <- NISPUF08[,!(names(NISPUF08) %in% c("HH_FLU","P_UTDHEP","P_UTDHIB_ROUT_S","P_UTDHIB_SHORT_S","P_UTDPCV","P_UTDPCVB13"))]
 
-# Other years rename MARITAL as MARITAL2.  Make consistent.
+# Other years rename MARITAL as MARITAL2.  Make consistent.  
 names(NISPUF08)[names(NISPUF08)=='MARITAL'] <- 'MARITAL2'
+
+# Recode MARITAL2 for consistency.
+NISPUF$MARITAL2[NISPUF$MARITAL2==1] <- 2
+NISPUF$MARITAL2[NISPUF$MARITAL2==3] <- 1
+
 
 # Only keep potentially useful columns
 NISPUF08 <- subset(NISPUF08, 
@@ -87,9 +92,9 @@ NISPUF08 <- subset(NISPUF08,
 
 #####################################
 ## 2009 NIS data
-source("/mnt/data/NIS/original_data/nispuf09.r")
+#source("/mnt/data/NIS/original_data/nispuf09.r")
 
-#load("NISPUF09.RData")
+load("NISPUF09.RData")
 
 # Drop variables not available in every year
 NISPUF09 <- NISPUF09[,!(names(NISPUF09) %in% c("HH_FLU","P_UTDHEP","P_UTDHIB_ROUT_S","P_UTDHIB_SHORT_S","P_UTDPCV",
@@ -138,9 +143,9 @@ NISPUF09 <- subset(NISPUF09,
 
 #####################################
 ## 2010 NIS data
-source("/mnt/data/NIS/original_data/nispuf10.r")
+#source("/mnt/data/NIS/original_data/nispuf10.r")
 
-#load("NISPUF10.RData")
+load("NISPUF10.RData")
 
 # Drop variables not available in every year
 NISPUF10 <- NISPUF10[,!(names(NISPUF10) %in% c("HH_FLU","HH_H1N","P_UTDHEPA2","P_UTDHEP","P_UTDHIB_ROUT_S","P_UTDHIB_SHORT_S",
@@ -191,9 +196,9 @@ NISPUF10 <- subset(NISPUF10,
 
 #####################################
 ## 2011 NIS data
-source("/mnt/data/NIS/original_data/nispuf11.r")
+#source("/mnt/data/NIS/original_data/nispuf11.r")
 
-#load("NISPUF11.RData")
+load("NISPUF11.RData")
 
 # Drop variables not available in every year
 NISPUF11 <- NISPUF11[,!(names(NISPUF11) %in% c("HH_FLU","HH_H1N","P_UTDHEPA2","P_UTDHEP","P_UTDHIB_ROUT_S","P_UTDHIB_SHORT_S",
@@ -259,130 +264,202 @@ save(NISPUF, file="NISPUF.RData", ascii=TRUE)  # ASCII so it's readable years fr
 #####################################
 #####################################
 #  			            #
-#   Determine Whether Up to Date    #
+#   Determine Whether Child Is      #
+#   Up to Date on Vaccinations      #
+#     as Reported by Provider       #
 #				    #
 #####################################
 #####################################
 
-n <- nrow(NISPUF)
 
 # HepB immunizations up to date
-HepB6 <- rep(0,n)		# adequate immunizations at 6 months
-  HepB6[NISPUF$DHEPB2<31*6] <- 1
-HepB12 <- rep(0,n)	# adequate immunizations at 12 months
-  HepB12[NISPUF$DHEPB2<31*12] <- 1
-HepB18 <- rep(0,n)	# adequate immunizations at 18 months
-  HepB18[NISPUF$DHEPB3<31*18] <- 1
-HepB24 <- rep(0,n)	# adequate immunizations at 24 months
-  HepB24[NISPUF$DHEPB3<31*24] <- 1
+NISPUF$HepB6 <- rep(0,n)		# adequate immunizations at 6 months
+  NISPUF$HepB6[NISPUF$DHEPB2<31*6] <- 1
+NISPUF$HepB12 <- rep(0,n)	# adequate immunizations at 12 months
+  NISPUF$HepB12[NISPUF$DHEPB2<31*12] <- 1
+NISPUF$HepB18 <- rep(0,n)	# adequate immunizations at 18 months
+  NISPUF$HepB18[NISPUF$DHEPB3<31*18] <- 1
+NISPUF$HepB24 <- rep(0,n)	# adequate immunizations at 24 months
+  NISPUF$HepB24[NISPUF$DHEPB3<31*24] <- 1
 
 # DTaP immunizations up to date
-DTaP6 <- rep(0,n)
-  DTaP6[NISPUF$DDTP3<31*6] <- 1
-DTaP12 <- rep(0,n)
-  DTaP12[NISPUF$DDTP3<31*12] <- 1
-DTaP18 <- rep(0,n)
-  DTaP18[NISPUF$DDTP4<31*18] <- 1
-DTaP24 <- rep(0,n)
-  DTaP24[NISPUF$DDTP4<31*24] <- 1
+NISPUF$DTaP6 <- rep(0,n)
+  NISPUF$DTaP6[NISPUF$DDTP3<31*6] <- 1
+NISPUF$DTaP12 <- rep(0,n)
+  NISPUF$DTaP12[NISPUF$DDTP3<31*12] <- 1
+NISPUF$DTaP18 <- rep(0,n)
+  NISPUF$DTaP18[NISPUF$DDTP4<31*18] <- 1
+NISPUF$DTaP24 <- rep(0,n)
+  NISPUF$DTaP24[NISPUF$DDTP4<31*24] <- 1
 
 # Hib immunizations up to date
-Hib6 <- rep(0,n)
-  Hib6[NISPUF$DHIB3<31*6] <- 1
-Hib12 <- rep(0,n)
-  Hib12[NISPUF$DHIB3<31*12] <- 1
-Hib18 <- rep(0,n)
-  Hib18[NISPUF$DHIB4<31*18] <- 1
-Hib24 <- rep(0,n)
-  Hib24[NISPUF$DHIB4<31*24] <- 1
+NISPUF$Hib6 <- rep(0,n)
+  NISPUF$Hib6[NISPUF$DHIB3<31*6] <- 1
+NISPUF$Hib12 <- rep(0,n)
+  NISPUF$Hib12[NISPUF$DHIB3<31*12] <- 1
+NISPUF$Hib18 <- rep(0,n)
+  NISPUF$Hib18[NISPUF$DHIB4<31*18] <- 1
+NISPUF$Hib24 <- rep(0,n)
+  NISPUF$Hib24[NISPUF$DHIB4<31*24] <- 1
 
 # Polio immunizations up to date
-Polio6 <- rep(0,n)
-  Polio6[NISPUF$DPOLIO2<31*6] <- 1
-Polio12 <- rep(0,n)
-  Polio12[NISPUF$DPOLIO2<31*12] <- 1
-Polio18 <- rep(0,n)
-  Polio18[NISPUF$DPOLIO3<31*18] <- 1
-Polio24 <- rep(0,n)
-  Polio24[NISPUF$DPOLIO3<31*24] <- 1
+NISPUF$Polio6 <- rep(0,n)
+  NISPUF$Polio6[NISPUF$DPOLIO2<31*6] <- 1
+NISPUF$Polio12 <- rep(0,n)
+  NISPUF$Polio12[NISPUF$DPOLIO2<31*12] <- 1
+NISPUF$Polio18 <- rep(0,n)
+  NISPUF$Polio18[NISPUF$DPOLIO3<31*18] <- 1
+NISPUF$Polio24 <- rep(0,n)
+  NISPUF$Polio24[NISPUF$DPOLIO3<31*24] <- 1
 
 # PCV immunizations up to date
-PCV6 <- rep(0,n)
-  PCV6[NISPUF$DPCV3<31*6] <- 1
-PCV12 <- rep(0,n)
-  PCV12[NISPUF$DPCV3<31*12] <- 1
-PCV18 <- rep(0,n)
-  PCV18[NISPUF$DPCV4<31*18] <- 1
-PCV24 <- rep(0,n)
-  PCV24[NISPUF$DPCV4<31*24] <- 1
+NISPUF$PCV6 <- rep(0,n)
+  NISPUF$PCV6[NISPUF$DPCV3<31*6] <- 1
+NISPUF$PCV12 <- rep(0,n)
+  NISPUF$PCV12[NISPUF$DPCV3<31*12] <- 1
+NISPUF$PCV18 <- rep(0,n)
+  NISPUF$PCV18[NISPUF$DPCV4<31*18] <- 1
+NISPUF$PCV24 <- rep(0,n)
+  NISPUF$PCV24[NISPUF$DPCV4<31*24] <- 1
 
 # MMR immunization up to date
-MMR6 <- rep(1,n)
-MMR12 <- rep(1,n)
-MMR18 <- rep(1,n)
-  MMR18[NISPUF$DMMR1<31*18] <- 1
-MMR24 <- rep(1,n)
-  MMR24[NISPUF$DMMR1<31*24] <- 1
+NISPUF$MMR6 <- rep(1,n)
+NISPUF$MMR12 <- rep(1,n)
+NISPUF$MMR18 <- rep(1,n)
+  NISPUF$MMR18[NISPUF$DMMR1<31*18] <- 1
+NISPUF$MMR24 <- rep(1,n)
+  NISPUF$MMR24[NISPUF$DMMR1<31*24] <- 1
 
 # Varicella immunization up to date
-Varicella6 <- rep(1,n)
-Varicella12 <- rep(1,n)
-Varicella18 <- rep(1,n)
-  Varicella18[NISPUF$DVRC1<31*18] <- 1
-Varicella24 <- rep(1,n)
-  Varicella24[NISPUF$DVRC1<31*24] <- 1
+NISPUF$Varicella6 <- rep(1,n)
+NISPUF$Varicella12 <- rep(1,n)
+NISPUF$Varicella18 <- rep(1,n)
+  NISPUF$Varicella18[NISPUF$DVRC1<31*18] <- 1
+NISPUF$Varicella24 <- rep(1,n)
+  NISPUF$Varicella24[NISPUF$DVRC1<31*24] <- 1
 
 # HepA immunization up to date
-HepA6 <- rep(1,n)
-HepA12 <- rep(1,n)
-HepA18 <- rep(0,n)
-  HepA18[NISPUF$DHEPA1<31*18] <- 1
-HepA24 <- rep(0,n)
-  HepA24[NISPUF$DHEPA1<31*24] <- 1
+NISPUF$HepA6 <- rep(1,n)
+NISPUF$HepA12 <- rep(1,n)
+NISPUF$HepA18 <- rep(0,n)
+  NISPUF$HepA18[NISPUF$DHEPA1<31*18] <- 1
+NISPUF$HepA24 <- rep(0,n)
+  NISPUF$HepA24[NISPUF$DHEPA1<31*24] <- 1
 
 # Rotavirus immunization up to date
-Rotavirus6 <- rep(0,n)
-  Rotavirus6[NISPUF$DROT3<31*6] <- 1
-Rotavirus12 <- rep(0,n)
-  Rotavirus12[NISPUF$DROT3<31*12] <- 1
-Rotavirus18 <- rep(0,n)
-  Rotavirus18[NISPUF$DROT3<31*18] <- 1
-Rotavirus24 <- rep(0,n)
-  Rotavirus24[NISPUF$DROT3<31*24] <- 1
-
-# Examine results for 6-month vaccinations
-mean(HepB6==1)
-mean(DTaP6==1)
-mean(Hib6==1)
-mean(Polio6==1) 
-mean(PCV6==1)
-mean(MMR6==1)
-mean(Varicella6==1)
-mean(HepA6==1)
-mean(Rotavirus6==1)
-
-
-# Examine results for 6-month vaccinations
-mean(HepB6==1)
-mean(DTaP6==1)
-mean(Hib6==1)
-mean(Polio6==1) 
-mean(PCV6==1)
-mean(MMR6==1)
-mean(Varicella6==1)
-mean(HepA6==1)
-mean(Rotavirus6==1)
+NISPUF$Rotavirus6 <- rep(0,n)
+  NISPUF$Rotavirus6[NISPUF$DROT3<31*6] <- 1
+NISPUF$Rotavirus12 <- rep(0,n)
+  NISPUF$Rotavirus12[NISPUF$DROT3<31*12] <- 1
+NISPUF$Rotavirus18 <- rep(0,n)
+  NISPUF$Rotavirus18[NISPUF$DROT3<31*18] <- 1
+NISPUF$Rotavirus24 <- rep(0,n)
+  NISPUF$Rotavirus24[NISPUF$DROT3<31*24] <- 1
 
 
 # Overall immunizations up to date
-Immunizations_UptoDate_6 <- rep(0,n)
-  Immunizations_UptoDate_6[HepB6==1 & DTaP6==1 & Hib6==1 & Polio6==1 & PCV6==1 & MMR6==1 & Varicella6==1 & HepA6==1 & Rotavirus6==1] <- 1
-Immunizations_UptoDate_12 <- rep(0,n)
-  Immunizations_UptoDate_12[HepB12==1 & DTaP12==1 & Hib12==1 & Polio12==1 & PCV12==1 & MMR12==1 & Varicella12==1 & HepA12==1 & Rotavirus12==1] <- 1
-Immunizations_UptoDate_18 <- rep(0,n)
-  Immunizations_UptoDate_18[HepB18==1 & DTaP18==1 & Hib18==1 & Polio18==1 & PCV18==1 & MMR18==1 & Varicella18==1 & HepA18==1 & Rotavirus18==1] <- 1
-Immunizations_UptoDate_24 <- rep(0,n)
-  Immunizations_UptoDate_24[HepB6==1 & DTaP24==1 & Hib24==1 & Polio24==1 & PCV24==1 & MMR24==1 & Varicella24==1 & HepA24==1 & Rotavirus24==1] <- 1
+NISPUF$Immunizations_UptoDate_6 <- rep(0,n)
+  NISPUF$Immunizations_UptoDate_6[HepB6==1 & DTaP6==1 & Hib6==1 & Polio6==1 & PCV6==1 & MMR6==1 & Varicella6==1 & HepA6==1 & Rotavirus6==1] <- 1
+NISPUF$Immunizations_UptoDate_12 <- rep(0,n)
+  NISPUF$Immunizations_UptoDate_12[HepB12==1 & DTaP12==1 & Hib12==1 & Polio12==1 & PCV12==1 & MMR12==1 & Varicella12==1 & HepA12==1 & Rotavirus12==1] <- 1
+NISPUF$Immunizations_UptoDate_18 <- rep(0,n)
+  NISPUF$Immunizations_UptoDate_18[HepB18==1 & DTaP18==1 & Hib18==1 & Polio18==1 & PCV18==1 & MMR18==1 & Varicella18==1 & HepA18==1 & Rotavirus18==1] <- 1
+NISPUF$Immunizations_UptoDate_24 <- rep(0,n)
+  NISPUF$Immunizations_UptoDate_24[HepB6==1 & DTaP24==1 & Hib24==1 & Polio24==1 & PCV24==1 & MMR24==1 & Varicella24==1 & HepA24==1 & Rotavirus24==1] <- 1
+
+
+
+
+
+
+
+
+#####################################
+#####################################
+#  			            #
+#   Determine Whether Child Is      #
+#   Up to Date on Vaccinations      #
+#    as Reported by Household       #
+#   (from memory, no shotcard)      #
+#				    #
+#####################################
+#####################################
+
+NISPUF$HH_DTaP_UTD <- 0
+  NISPUF$HH_DTaP_UTD[NISPUF$HH_DTP==1] <- 1
+  NISPUF$HH_DTaP_UTD[NISPUF$HH_DTP==50] <- 50
+NISPUF$HH_HEPB_UTD <- 0
+  NISPUF$HH_HEPB_UTD[NISPUF$HH_HEPB==1] <- 1
+  NISPUF$HH_HEPB_UTD[NISPUF$HH_HEPB==50] <- 50
+NISPUF$HH_HIB_UTD <- 0
+  NISPUF$HH_HIB_UTD[NISPUF$HH_HIB==1] <- 1
+  NISPUF$HH_HIB_UTD[NISPUF$HH_HIB==50] <- 50
+NISPUF$HH_MMR_UTD <- 0
+  NISPUF$HH_MMR_UTD[NISPUF$HH_MCV==1] <- 1
+  NISPUF$HH_MMR_UTD[NISPUF$HH_MCV==50] <- 50
+NISPUF$HH_POLIO_UTD <- 0
+  NISPUF$HH_POLIO_UTD[NISPUF$HH_POL==1] <- 1
+  NISPUF$HH_POLIO_UTD[NISPUF$HH_POL==50] <- 50
+NISPUF$HH_VARICELLA_UTD <- 0
+  NISPUF$HH_VARICELLA_UTD[NISPUF$HH_VRC==1] <- 1
+  NISPUF$HH_VARICELLA_UTD[NISPUF$HH_VRC==50] <- 50
+
+NISPUF$HH_UTD <- 0
+  NISPUF$HH_UTD[(NISPUF$HH_DTaP_UTD>0 & NISPUF$HH_HEPB_UTD>0 & NISPUF$HH_HIB_UTD>0 & NISPUF$HH_MMR_UTD>0 & 
+		 NISPUF$HH_POLIO_UTD>0 & NISPUF$HH_VARICELLA_UTD>0) &
+		(NISPUF$HH_DTaP_UTD!=50 & NISPUF$HH_HEPB_UTD!=50 & NISPUF$HH_HIB_UTD!=50 & NISPUF$HH_MMR_UTD!=50 & 
+		 NISPUF$HH_POLIO_UTD!=50 & NISPUF$HH_VARICELLA_UTD!=50)] <- 1
+  NISPUF$HH_UTD[NISPUF$HH_DTaP_UTD==50 & NISPUF$HH_HEPB_UTD==50 & NISPUF$HH_HIB_UTD==50 & NISPUF$HH_MMR_UTD==50 & 
+		 NISPUF$HH_POLIO_UTD==50 & NISPUF$HH_VARICELLA_UTD==50] <- 1
+
+
+
+
+
+
+
+
+#####################################
+#####################################
+#  			            #
+#   Determine Whether Child Is      #
+#   Up to Date on Vaccinations      #
+#         as Reported by            #
+#       Household Shotcard          #
+#				    #
+#####################################
+#####################################
+
+NISPUF$HHSC_DTaP_UTD <- 0
+  NISPUF$HHSC_DTaP_UTD[NISPUF$SC_DTP==1] <- 1
+  NISPUF$HHSC_DTaP_UTD[NISPUF$SC_DTP==50] <- 50
+NISPUF$HHSC_HEPB_UTD <- 0
+  NISPUF$HHSC_HEPB_UTD[NISPUF$SC_HEPB==1] <- 1
+  NISPUF$HHSC_HEPB_UTD[NISPUF$SC_HEPB==50] <- 50
+NISPUF$HHSC_HIB_UTD <- 0
+  NISPUF$HHSC_HIB_UTD[NISPUF$SC_HIB==1] <- 1
+  NISPUF$HHSC_HIB_UTD[NISPUF$SC_HIB==50] <- 50
+NISPUF$HHSC_MMR_UTD <- 0
+  NISPUF$HHSC_MMR_UTD[NISPUF$SC_MCV==1] <- 1
+  NISPUF$HHSC_MMR_UTD[NISPUF$SC_MCV==50] <- 50
+NISPUF$HHSC_POLIO_UTD <- 0
+  NISPUF$HHSC_POLIO_UTD[NISPUF$SC_POL==1] <- 1
+  NISPUF$HHSC_POLIO_UTD[NISPUF$SC_POL==50] <- 50
+NISPUF$HHSC_VARICELLA_UTD <- 0
+  NISPUF$HHSC_VARICELLA_UTD[NISPUF$SC_VRC==1] <- 1
+  NISPUF$HHSC_VARICELLA_UTD[NISPUF$SC_VRC==50] <- 50
+
+NISPUF$HHSC_UTD <- 0
+  NISPUF$HHSC_UTD[(NISPUF$HHSC_DTaP_UTD>0 & NISPUF$HHSC_HEPB_UTD>0 & NISPUF$HHSC_HIB_UTD>0 & NISPUF$HHSC_MMR_UTD>0 & 
+		 NISPUF$HHSC_POLIO_UTD>0 & NISPUF$HHSC_VARICELLA_UTD>0) &
+		(NISPUF$HHSC_DTaP_UTD!=50 & NISPUF$HHSC_HEPB_UTD!=50 & NISPUF$HHSC_HIB_UTD!=50 & NISPUF$HHSC_MMR_UTD!=50 & 
+		 NISPUF$HHSC_POLIO_UTD!=50 & NISPUF$HHSC_VARICELLA_UTD!=50)] <- 1
+  NISPUF$HHSC_UTD[NISPUF$HHSC_DTaP_UTD==50 & NISPUF$HHSC_HEPB_UTD==50 & NISPUF$HHSC_HIB_UTD==50 & NISPUF$HHSC_MMR_UTD==50 & 
+		 NISPUF$HHSC_POLIO_UTD==50 & NISPUF$HHSC_VARICELLA_UTD==50] <- 1
+
+
+
+
 
 
 
@@ -396,8 +473,6 @@ Immunizations_UptoDate_24 <- rep(0,n)
 #####################################
 
 
-## Eventually we'll merge all four years of NIS data.  For now, just working with 2008 data.
-NIS <- NISPUF
 
 # Load NFP data for recoding and preparation
 setwd("/mnt/data/csv_data")
@@ -408,11 +483,11 @@ nfp_centers <- read.csv("agency.csv")
 
 ### Although the lowest bins don't match exactly (6000 is the upper limit in NFP and 7500 in NIS),
 ### assume that both skew heavily toward 0 and treat as comparable
-NIS$income_recode[NIS$INCQ298A==3] <- 1
-NIS$income_recode[which(is.element(NIS$INCQ298A, c(4,5,6)))] = 2 # Binning 7500-20000/year together in both sets
-NIS$income_recode[which(is.element(NIS$INCQ298A, c(7,8)))] = 4 # Binning 20k-30k as in nfp
-NIS$income_recode[which(is.element(NIS$INCQ298A, c(9,10)))] = 5 # Binning 30k-40k in the same was as nfp
-NIS$income_recode[which(is.element(NIS$INCQ298A, c(11,12,13,14)))] = 6
+NISPUF$income_recode[NISPUF$INCQ298A==3] <- 1
+NISPUF$income_recode[which(is.element(NISPUF$INCQ298A, c(4,5,6)))] = 2 # Binning 7500-20000/year together in both sets
+NISPUF$income_recode[which(is.element(NISPUF$INCQ298A, c(7,8)))] = 4 # Binning 20k-30k as in nfp
+NISPUF$income_recode[which(is.element(NISPUF$INCQ298A, c(9,10)))] = 5 # Binning 30k-40k in the same was as nfp
+NISPUF$income_recode[which(is.element(NISPUF$INCQ298A, c(11,12,13,14)))] = 6
 
 ### In NFP, must combine income brackets 2 and 3 ($7500-20K) to match NIS buckets.
 nfp_demographics$income_recode = nfp_demographics$INCOME
@@ -487,14 +562,14 @@ nfp_centers$nfp_state_recode[nfp_centers$State == 'WY'] = 56
 
 
 nfp_demographics$state <- factor(nfp_state_recode)
-NIS$state <- factor(as.numeric(NIS$STATE))
+NISPUF$state <- factor(as.numeric(NISPUF$STATE))
 
 
 ## Language - note that we are comparing primary language (NFP) to language in which interview was conducted (NIS)
-NIS$Primary_language[NIS$LANGUAGE==1] <- "English"
-NIS$Primary_language[NIS$LANGUAGE==2] <- "Spanish"
-NIS$Primary_language[NIS$LANGUAGE==3] <- "Other"
-NIS$language <- factor(NIS$Primary_language)
+NISPUF$Primary_language[NISPUF$LANGUAGE==1] <- "English"
+NISPUF$Primary_language[NISPUF$LANGUAGE==2] <- "Spanish"
+NISPUF$Primary_language[NISPUF$LANGUAGE==3] <- "Other"
+NISPUF$language <- factor(NISPUF$Primary_language)
 
 nfp_demographics$language <- as.character(nfp_demographics$Primary_language)
 nfp_demographics$language[nfp_demographics$Primary_language==""] <- NA
@@ -508,13 +583,13 @@ nfp_demographics$MAge[nfp_demographics$MomsAgeBirth <= 19] <- 1
 nfp_demographics$MAge[20 <= nfp_demographics$MomsAgeBirth & nfp_demographics$MomsAgeBirth <= 29] <- 2
 nfp_demographics$MAge[nfp_demographics$MomsAgeBirth >= 30] <- 3
 nfp_demographics$MAge <- factor(nfp_demographics$MAge, labels = c("<=19 Years", "20-29 Years", ">=30 Years"))
-NIS$MAge <- factor(NIS$M_AGEGRP, labels = c("<=19 Years", "20-29 Years", ">=30 Years"))
+NISPUF$MAge <- factor(NISPUF$M_AGEGRP, labels = c("<=19 Years", "20-29 Years", ">=30 Years"))
 
 
 ## Race - Only child's race is available from NIS and only mother's race from NFP.
 ### Must assume these are the same.
 
-NIS$RE <- factor(NIS$RACEETHK, labels = c("Hispanic", "WhiteNH", "BlackNH", "Other"))
+NISPUF$RE <- factor(NISPUF$RACEETHK, labels = c("Hispanic", "WhiteNH", "BlackNH", "Other"))
 nfp_demographics$RE <- as.character(nfp_demographics$MomsRE) # Renaming variable
 nfp_demographics$RE[nfp_demographics$RE=="Hispanic or Latina"] <- "Hispanic" # Shortening description
 nfp_demographics$RE[nfp_demographics$RE=="Declined or msg"] <- NA 
@@ -523,8 +598,8 @@ nfp_demographics$RE <- factor(nfp_demographics$RE) # Return to factor format wit
 
 ## Child's gender: Create a binary dummy variable for "male"
 
-NIS$male[NIS$SEX==1] <- 1
-NIS$male[NIS$SEX==2] <- 0
+NISPUF$male[NISPUF$SEX==1] <- 1
+NISPUF$male[NISPUF$SEX==2] <- 0
 nfp_demographics$male[nfp_demographics$Childgender=="Female"] <- 0 # Recode factor variable
 nfp_demographics$male[nfp_demographics$Childgender=="Male"] <- 1 
 
@@ -535,11 +610,11 @@ nfp_demographics$male[nfp_demographics$Childgender=="Male"] <- 1
 ### We have more detail for NFP, but NFP also provided a binary (nfp_demographics$marital_status) equivalent to MARITAL2.
 
 nfp_demographics$married <- nfp_demographics$marital_status # Rename variable so meaning of 1/0 is more evident
-NIS$married[NIS$MARITAL==3] <- 1
-NIS$married[NIS$MARITAL==2] <- 0
-NIS$married[NIS$MARITAL==1] <- 0
-NIS$married[NIS$MARITAL2==1] <- 1
-NIS$married[NIS$MARITAL2==2] <- 0
+NISPUF$married[NISPUF$MARITAL==3] <- 1
+NISPUF$married[NISPUF$MARITAL==2] <- 0
+NISPUF$married[NISPUF$MARITAL==1] <- 0
+NISPUF$married[NISPUF$MARITAL2==1] <- 1
+NISPUF$married[NISPUF$MARITAL2==2] <- 0
 
 ## Mother's education
 ###NFP tracks HS diploma, GED, or neither (HSGED).
@@ -548,14 +623,15 @@ NIS$married[NIS$MARITAL2==2] <- 0
 nfp_demographics$HSgrad[nfp_demographics$HSGED==1] <- 1
 nfp_demographics$HSgrad[nfp_demographics$HSGED==2] <- 1
 nfp_demographics$HSgrad[nfp_demographics$HSGED==3] <- 0
-NIS$HSgrad[NIS$EDUC1==1] <- 0
-NIS$HSgrad[which(is.element(NIS$EDUC1,c(2,3,4)))] <- 1
+NISPUF$HSgrad[NISPUF$EDUC1==1] <- 0
+NISPUF$HSgrad[which(is.element(NISPUF$EDUC1,c(2,3,4)))] <- 1
 
 # Matching variables TBD: WIC/Medicaid recipient status and insurance coverage.
 
-NIS$treatment <- 0
+NISPUF$treatment <- 0
 nfp_demographics$treatment <- 1
 
-immunizations <- rbind(NIS, nfp_demographics)
+immunizations <- rbind(NISPUF, nfp_demographics)
 
-save(immunizations, file = "/mnt/data/NIS/immunizations_analysis.RData", ascii = TRUE) # ASCII so it's readable years from now
+#save(immunizations, file = "/mnt/data/NIS/immunizations_analysis.RData", ascii = TRUE) # ASCII so it's readable years from now
+save(nfp_demographics, file = "/mnt/data/NIS/NFP_immunizations_analysis.RData", ascii = TRUE) # ASCII so it's readable years from now
