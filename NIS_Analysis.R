@@ -2,15 +2,8 @@
 install.packages("Matching", repo="http://cran.rstudio.com")
 library(Matching)
 
-# Load and combine data
 setwd("/mnt/data/NIS")
-load("NIS_for_Analysis.R")
-load("NFP_for_NIS_Analysis.R")
-
-NIS$treatment <- 0
-nfp_demographics$treatment <- 1
-
-immunizations <- rbind(NIS, nfp_demographics)
+load("immunizations_analysis.RData")
 
 # Define D, X, Y, and Z.
 # D is an indicator of whether the observation came from the NFP data set.
@@ -19,8 +12,8 @@ immunizations <- rbind(NIS, nfp_demographics)
 # Z include all X and the other variables that may impact likelihood of treatment, but do not independently impact the outcome.
 
 D <- immunizations$treatment
-X <- subset(immunizations, select = c())
-Y <- 
+X <- subset(immunizations, select = c(income_recode, ))
+Y <- immunizations$Immunizations_UptoDate_6
 Z <- subset(immunizations, select = c())
 
 # Regress D on Z to create propensity scores (probit model)
