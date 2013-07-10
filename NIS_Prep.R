@@ -484,6 +484,9 @@ nfp_demographics$nfp_state_recode[nfp_centers$State == 'WV'] = 54
 nfp_demographics$nfp_state_recode[nfp_centers$State == 'WI'] = 55
 nfp_demographics$nfp_state_recode[nfp_centers$State == 'WY'] = 56
 
+nfp_demographics$state <- factor(nfp_state_recode)
+NIS$state <- factor(as.numeric(NIS$STATE))
+
 
 ## Language - note that we are comparing primary language (NFP) to language in which interview was conducted (NIS)
 NIS$Primary_language[NIS$LANGUAGE==1] <- "English"
