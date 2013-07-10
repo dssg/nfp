@@ -247,9 +247,9 @@ NISPUF11 <- subset(NISPUF11,
 
 
 #####################################
-## Combine NIS data and save
+## Combine NIS data 
 NISPUF <- rbind(NISPUF08, NISPUF09, NISPUF10, NISPUF11)
-save(NISPUF, file="NISPUF.RData", ascii=TRUE)  # ASCII so it's readable years from now
+
 
 
 
@@ -273,99 +273,103 @@ save(NISPUF, file="NISPUF.RData", ascii=TRUE)  # ASCII so it's readable years fr
 
 
 # HepB immunizations up to date
-NISPUF$HepB6 <- rep(0,n)		# adequate immunizations at 6 months
+NISPUF$HepB6 <- 0		# adequate immunizations at 6 months
   NISPUF$HepB6[NISPUF$DHEPB2<31*6] <- 1
-NISPUF$HepB12 <- rep(0,n)	# adequate immunizations at 12 months
+NISPUF$HepB12 <- 0	# adequate immunizations at 12 months
   NISPUF$HepB12[NISPUF$DHEPB2<31*12] <- 1
-NISPUF$HepB18 <- rep(0,n)	# adequate immunizations at 18 months
+NISPUF$HepB18 <- 0	# adequate immunizations at 18 months
   NISPUF$HepB18[NISPUF$DHEPB3<31*18] <- 1
-NISPUF$HepB24 <- rep(0,n)	# adequate immunizations at 24 months
+NISPUF$HepB24 <- 0	# adequate immunizations at 24 months
   NISPUF$HepB24[NISPUF$DHEPB3<31*24] <- 1
 
 # DTaP immunizations up to date
-NISPUF$DTaP6 <- rep(0,n)
+NISPUF$DTaP6 <- 0
   NISPUF$DTaP6[NISPUF$DDTP3<31*6] <- 1
-NISPUF$DTaP12 <- rep(0,n)
+NISPUF$DTaP12 <- 0
   NISPUF$DTaP12[NISPUF$DDTP3<31*12] <- 1
-NISPUF$DTaP18 <- rep(0,n)
+NISPUF$DTaP18 <- 0
   NISPUF$DTaP18[NISPUF$DDTP4<31*18] <- 1
-NISPUF$DTaP24 <- rep(0,n)
+NISPUF$DTaP24 <- 0
   NISPUF$DTaP24[NISPUF$DDTP4<31*24] <- 1
 
 # Hib immunizations up to date
-NISPUF$Hib6 <- rep(0,n)
+NISPUF$Hib6 <- 0
   NISPUF$Hib6[NISPUF$DHIB3<31*6] <- 1
-NISPUF$Hib12 <- rep(0,n)
+NISPUF$Hib12 <- 0
   NISPUF$Hib12[NISPUF$DHIB3<31*12] <- 1
-NISPUF$Hib18 <- rep(0,n)
+NISPUF$Hib18 <- 0
   NISPUF$Hib18[NISPUF$DHIB4<31*18] <- 1
-NISPUF$Hib24 <- rep(0,n)
+NISPUF$Hib24 <- 0
   NISPUF$Hib24[NISPUF$DHIB4<31*24] <- 1
 
 # Polio immunizations up to date
-NISPUF$Polio6 <- rep(0,n)
+NISPUF$Polio6 <- 0
   NISPUF$Polio6[NISPUF$DPOLIO2<31*6] <- 1
-NISPUF$Polio12 <- rep(0,n)
+NISPUF$Polio12 <- 0
   NISPUF$Polio12[NISPUF$DPOLIO2<31*12] <- 1
-NISPUF$Polio18 <- rep(0,n)
+NISPUF$Polio18 <- 0
   NISPUF$Polio18[NISPUF$DPOLIO3<31*18] <- 1
-NISPUF$Polio24 <- rep(0,n)
+NISPUF$Polio24 <- 0
   NISPUF$Polio24[NISPUF$DPOLIO3<31*24] <- 1
 
 # PCV immunizations up to date
-NISPUF$PCV6 <- rep(0,n)
+NISPUF$PCV6 <- 0
   NISPUF$PCV6[NISPUF$DPCV3<31*6] <- 1
-NISPUF$PCV12 <- rep(0,n)
+NISPUF$PCV12 <- 0
   NISPUF$PCV12[NISPUF$DPCV3<31*12] <- 1
-NISPUF$PCV18 <- rep(0,n)
+NISPUF$PCV18 <- 0
   NISPUF$PCV18[NISPUF$DPCV4<31*18] <- 1
-NISPUF$PCV24 <- rep(0,n)
+NISPUF$PCV24 <- 0
   NISPUF$PCV24[NISPUF$DPCV4<31*24] <- 1
 
 # MMR immunization up to date
-NISPUF$MMR6 <- rep(1,n)
-NISPUF$MMR12 <- rep(1,n)
-NISPUF$MMR18 <- rep(1,n)
+NISPUF$MMR6 <- 1
+NISPUF$MMR12 <- 1
+NISPUF$MMR18 <- 1
   NISPUF$MMR18[NISPUF$DMMR1<31*18] <- 1
-NISPUF$MMR24 <- rep(1,n)
+NISPUF$MMR24 <- 1
   NISPUF$MMR24[NISPUF$DMMR1<31*24] <- 1
 
 # Varicella immunization up to date
-NISPUF$Varicella6 <- rep(1,n)
-NISPUF$Varicella12 <- rep(1,n)
-NISPUF$Varicella18 <- rep(1,n)
+NISPUF$Varicella6 <- 1
+NISPUF$Varicella12 <- 1
+NISPUF$Varicella18 <- 1
   NISPUF$Varicella18[NISPUF$DVRC1<31*18] <- 1
-NISPUF$Varicella24 <- rep(1,n)
+NISPUF$Varicella24 <- 1
   NISPUF$Varicella24[NISPUF$DVRC1<31*24] <- 1
 
 # HepA immunization up to date
-NISPUF$HepA6 <- rep(1,n)
-NISPUF$HepA12 <- rep(1,n)
-NISPUF$HepA18 <- rep(0,n)
+NISPUF$HepA6 <- 1
+NISPUF$HepA12 <- 1
+NISPUF$HepA18 <- 0
   NISPUF$HepA18[NISPUF$DHEPA1<31*18] <- 1
-NISPUF$HepA24 <- rep(0,n)
+NISPUF$HepA24 <- 0
   NISPUF$HepA24[NISPUF$DHEPA1<31*24] <- 1
 
 # Rotavirus immunization up to date
-NISPUF$Rotavirus6 <- rep(0,n)
+NISPUF$Rotavirus6 <- 0
   NISPUF$Rotavirus6[NISPUF$DROT3<31*6] <- 1
-NISPUF$Rotavirus12 <- rep(0,n)
+NISPUF$Rotavirus12 <- 0
   NISPUF$Rotavirus12[NISPUF$DROT3<31*12] <- 1
-NISPUF$Rotavirus18 <- rep(0,n)
+NISPUF$Rotavirus18 <- 0
   NISPUF$Rotavirus18[NISPUF$DROT3<31*18] <- 1
-NISPUF$Rotavirus24 <- rep(0,n)
+NISPUF$Rotavirus24 <- 0
   NISPUF$Rotavirus24[NISPUF$DROT3<31*24] <- 1
 
 
 # Overall immunizations up to date
-NISPUF$Immunizations_UptoDate_6 <- rep(0,n)
-  NISPUF$Immunizations_UptoDate_6[HepB6==1 & DTaP6==1 & Hib6==1 & Polio6==1 & PCV6==1 & MMR6==1 & Varicella6==1 & HepA6==1 & Rotavirus6==1] <- 1
-NISPUF$Immunizations_UptoDate_12 <- rep(0,n)
-  NISPUF$Immunizations_UptoDate_12[HepB12==1 & DTaP12==1 & Hib12==1 & Polio12==1 & PCV12==1 & MMR12==1 & Varicella12==1 & HepA12==1 & Rotavirus12==1] <- 1
-NISPUF$Immunizations_UptoDate_18 <- rep(0,n)
-  NISPUF$Immunizations_UptoDate_18[HepB18==1 & DTaP18==1 & Hib18==1 & Polio18==1 & PCV18==1 & MMR18==1 & Varicella18==1 & HepA18==1 & Rotavirus18==1] <- 1
-NISPUF$Immunizations_UptoDate_24 <- rep(0,n)
-  NISPUF$Immunizations_UptoDate_24[HepB6==1 & DTaP24==1 & Hib24==1 & Polio24==1 & PCV24==1 & MMR24==1 & Varicella24==1 & HepA24==1 & Rotavirus24==1] <- 1
+NISPUF$Immunizations_UptoDate_6 <- 0
+  NISPUF$Immunizations_UptoDate_6[NISPUF$HepB6==1 & NISPUF$DTaP6==1 & NISPUF$Hib6==1 & NISPUF$Polio6==1 & NISPUF$PCV6==1 & 
+				  NISPUF$MMR6==1 & NISPUF$Varicella6==1 & NISPUF$HepA6==1 & NISPUF$Rotavirus6==1] <- 1
+NISPUF$Immunizations_UptoDate_12 <- 0
+  NISPUF$Immunizations_UptoDate_12[NISPUF$HepB12==1 & NISPUF$DTaP12==1 & NISPUF$Hib12==1 & NISPUF$Polio12==1 & NISPUF$PCV12==1 & 
+				   NISPUF$MMR12==1 & NISPUF$Varicella12==1 & NISPUF$HepA12==1 & NISPUF$Rotavirus12==1] <- 1
+NISPUF$Immunizations_UptoDate_18 <- 0
+  NISPUF$Immunizations_UptoDate_18[NISPUF$HepB18==1 & NISPUF$DTaP18==1 & NISPUF$Hib18==1 & NISPUF$Polio18==1 & NISPUF$PCV18==1 & 
+				   NISPUF$MMR18==1 & NISPUF$Varicella18==1 & NISPUF$HepA18==1 & NISPUF$Rotavirus18==1] <- 1
+NISPUF$Immunizations_UptoDate_24 <- 0
+  NISPUF$Immunizations_UptoDate_24[NISPUF$HepB6==1 & NISPUF$DTaP24==1 & NISPUF$Hib24==1 & NISPUF$Polio24==1 & NISPUF$PCV24==1 & 
+				   NISPUF$MMR24==1 & NISPUF$Varicella24==1 & NISPUF$HepA24==1 & NISPUF$Rotavirus24==1] <- 1
 
 
 
@@ -459,6 +463,11 @@ NISPUF$HHSC_UTD <- 0
 
 
 
+
+
+###################################
+## Save NIS data
+save(NISPUF, file="NISPUF.RData", ascii=TRUE)  # ASCII so it's readable years from now
 
 
 
