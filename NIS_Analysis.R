@@ -51,6 +51,34 @@ hist(
 
 
 
+
+# Examine results for 6-month vaccinations
+mean(HepB6==1)
+mean(DTaP6==1)
+mean(Hib6==1)
+mean(Polio6==1) 
+mean(PCV6==1)
+mean(MMR6==1)
+mean(Varicella6==1)
+mean(HepA6==1)
+mean(Rotavirus6==1)
+
+
+# Examine results for 6-month vaccinations
+mean(HepB6==1)
+mean(DTaP6==1)
+mean(Hib6==1)
+mean(Polio6==1) 
+mean(PCV6==1)
+mean(MMR6==1)
+mean(Varicella6==1)
+mean(HepA6==1)
+mean(Rotavirus6==1)
+
+
+
+
+
 ##################################
 ## MATCHING
 
