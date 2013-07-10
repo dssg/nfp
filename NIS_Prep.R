@@ -395,7 +395,7 @@ Immunizations_UptoDate_6 <- rep(0,n)
 
 
 ## Eventually we'll merge all four years of NIS data.  For now, just working with 2008 data.
-NIS <- NISPUF08
+NIS <- NISPUF
 
 # Load NFP data for recoding and preparation
 setwd("/mnt/data/csv_data")
@@ -545,3 +545,8 @@ NIS$HSgrad[NIS$EDUC1==1] <- 0
 NIS$HSgrad[which(is.element(NIS$EDUC1,c(2,3,4)))] <- 1
 
 # Matching variables TBD: WIC/Medicaid recipient status and insurance coverage.
+
+
+
+save(NIS, file="NIS_for_Analysis.RData", ascii=TRUE)  # ASCII so it's readable years from now
+
