@@ -377,10 +377,12 @@ mean(Rotavirus6==1)
 # Overall immunizations up to date
 Immunizations_UptoDate_6 <- rep(0,n)
   Immunizations_UptoDate_6[HepB6==1 & DTaP6==1 & Hib6==1 & Polio6==1 & PCV6==1 & MMR6==1 & Varicella6==1 & HepA6==1 & Rotavirus6==1] <- 1
-
-
-
-
+Immunizations_UptoDate_12 <- rep(0,n)
+  Immunizations_UptoDate_12[HepB12==1 & DTaP12==1 & Hib12==1 & Polio12==1 & PCV12==1 & MMR12==1 & Varicella12==1 & HepA12==1 & Rotavirus12==1] <- 1
+Immunizations_UptoDate_18 <- rep(0,n)
+  Immunizations_UptoDate_18[HepB18==1 & DTaP18==1 & Hib18==1 & Polio18==1 & PCV18==1 & MMR18==1 & Varicella18==1 & HepA18==1 & Rotavirus18==1] <- 1
+Immunizations_UptoDate_24 <- rep(0,n)
+  Immunizations_UptoDate_24[HepB6==1 & DTaP24==1 & Hib24==1 & Polio24==1 & PCV24==1 & MMR24==1 & Varicella24==1 & HepA24==1 & Rotavirus24==1] <- 1
 
 
 
@@ -413,8 +415,8 @@ NIS$income_recode[which(is.element(NIS$INCQ298A, c(9,10)))] = 5 # Binning 30k-40
 NIS$income_recode[which(is.element(NIS$INCQ298A, c(11,12,13,14)))] = 6
 
 ### In NFP, must combine income brackets 2 and 3 ($7500-20K) to match NIS buckets.
-nfp_demographics$nfp_income_recode = nfp_demographics$INCOME
-nfp_demographics$nfp_income_recode[nfp_demographics$nfp_income_recode == 3] <- 2
+nfp_demographics$income_recode = nfp_demographics$INCOME
+nfp_demographics$income_recode[nfp_demographics$income_recode == 3] <- 2
 ### Note that in the NFP dataset an income code of 7 indicates a mother living off her parents.
 
 
@@ -546,7 +548,9 @@ NIS$HSgrad[which(is.element(NIS$EDUC1,c(2,3,4)))] <- 1
 
 # Matching variables TBD: WIC/Medicaid recipient status and insurance coverage.
 
+NIS$treatment <- 0
+nfp_demographics$treatment <- 1
 
+immunizations <- rbind(NIS, nfp_demographics)
 
-save(NIS, file = "/mnt/data/NIS/NIS_for_Analysis.RData", ascii=TRUE)  # ASCII so it's readable years from now
-save(nfp_demographics, file = "/mnt/data/NIS/NFP_for_NIS_Analysis.RData", ascii=TRUE)
+save(immunizations, file = "/mnt/data/NIS/immunizations_analysis.RData", ascii = TRUE) # ASCII so it's readable years from now
