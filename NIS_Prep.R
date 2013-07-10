@@ -57,7 +57,7 @@ NISPUF08 <- subset(NISPUF08,
 			"D7",								# permission to contact providers
 			"EDUC1",							# mother's education level
 			"M_AGEGRP",							# mother's age group
-			"MARITAL",							# mother's marital status
+			"MARITAL2",							# mother's marital status
 			"INCQ298A",							# family income category
 			"I_HISP_K",							# Hispanic origin of child
 			"INCPORAR",							# income to poverty ratio (eligibility criterion)
@@ -548,5 +548,5 @@ NIS$HSgrad[which(is.element(NIS$EDUC1,c(2,3,4)))] <- 1
 
 
 
-save(NIS, file="NIS_for_Analysis.RData", ascii=TRUE)  # ASCII so it's readable years from now
+save(NIS, file="NIS_for_A.RData", ascii=TRUE)  # ASCII so it's readable years from now
 
