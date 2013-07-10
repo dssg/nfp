@@ -247,9 +247,9 @@ NISPUF11 <- subset(NISPUF11,
 
 
 #####################################
-## Combine NIS data and save
+## Combine NIS data 
 NISPUF <- rbind(NISPUF08, NISPUF09, NISPUF10, NISPUF11)
-save(NISPUF, file="NISPUF.RData", ascii=TRUE)  # ASCII so it's readable years from now
+
 
 
 
@@ -459,6 +459,11 @@ NISPUF$HHSC_UTD <- 0
 
 
 
+
+
+###################################
+## Save NIS data
+save(NISPUF, file="NISPUF.RData", ascii=TRUE)  # ASCII so it's readable years from now
 
 
 
