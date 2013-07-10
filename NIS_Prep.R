@@ -402,7 +402,7 @@ NIS <- NISPUF
 # Load NFP data for recoding and preparation
 setwd("/mnt/data/csv_data")
 nfp_demographics <- read.csv("nfp_demographics_expanded.csv")
-
+nfp_centers <- read.csv("agency.csv")
 
 ##Household income - note that DK/Refused households are NA
 
@@ -422,67 +422,69 @@ nfp_demographics$income_recode[nfp_demographics$income_recode == 3] <- 2
 
 
 ## Location - recoding NFP state data into FIPS codes (to match the NIS dataset)
-nfp_demographics$nfp_state_recode = rep(NA,dim(nfp_demographics)[1])
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'AL'] = 1
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'AK'] = 2
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'AS'] = 60
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'AZ'] = 4
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'AR'] = 5
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'CA'] = 6
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'CO'] = 8
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'CT'] = 9
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'DE'] = 10
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'DC'] = 11
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'FL'] = 12
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'FM'] = 64
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'GA'] = 13
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'GU'] = 66
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'HI'] = 15
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'ID'] = 16
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'IL'] = 17
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'IN'] = 18
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'IA'] = 19
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'KS'] = 20
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'KY'] = 21
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'LA'] = 22
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'ME'] = 23
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'MH'] = 68
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'MD'] = 24
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'MA'] = 25
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'MI'] = 26
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'MN'] = 27
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'MS'] = 28
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'MO'] = 29
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'MT'] = 30
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'NE'] = 31
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'NV'] = 32
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'NH'] = 33
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'NJ'] = 34
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'NM'] = 35
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'NY'] = 36
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'NC'] = 37
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'ND'] = 38
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'MP'] = 69
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'OH'] = 39
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'OK'] = 40
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'OR'] = 41
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'PW'] = 70
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'PA'] = 42
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'PR'] = 72
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'RI'] = 44
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'SC'] = 45
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'SD'] = 46
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'TN'] = 47
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'TX'] = 48
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'UM'] = 74
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'UT'] = 49
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'VT'] = 50
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'VA'] = 51
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'VI'] = 78
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'WA'] = 53
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'WV'] = 54
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'WI'] = 55
-nfp_demographics$nfp_state_recode[nfp_centers$State == 'WY'] = 56
+nfp_centers$nfp_state_recode = rep(NA,dim(nfp_demographics)[1])
+nfp_centers$nfp_state_recode[nfp_centers$State == 'AL'] = 1
+nfp_centers$nfp_state_recode[nfp_centers$State == 'AK'] = 2
+nfp_centers$nfp_state_recode[nfp_centers$State == 'AS'] = 60
+nfp_centers$nfp_state_recode[nfp_centers$State == 'AZ'] = 4
+nfp_centers$nfp_state_recode[nfp_centers$State == 'AR'] = 5
+nfp_centers$nfp_state_recode[nfp_centers$State == 'CA'] = 6
+nfp_centers$nfp_state_recode[nfp_centers$State == 'CO'] = 8
+nfp_centers$nfp_state_recode[nfp_centers$State == 'CT'] = 9
+nfp_centers$nfp_state_recode[nfp_centers$State == 'DE'] = 10
+nfp_centers$nfp_state_recode[nfp_centers$State == 'DC'] = 11
+nfp_centers$nfp_state_recode[nfp_centers$State == 'FL'] = 12
+nfp_centers$nfp_state_recode[nfp_centers$State == 'FM'] = 64
+nfp_centers$nfp_state_recode[nfp_centers$State == 'GA'] = 13
+nfp_centers$nfp_state_recode[nfp_centers$State == 'GU'] = 66
+nfp_centers$nfp_state_recode[nfp_centers$State == 'HI'] = 15
+nfp_centers$nfp_state_recode[nfp_centers$State == 'ID'] = 16
+nfp_centers$nfp_state_recode[nfp_centers$State == 'IL'] = 17
+nfp_centers$nfp_state_recode[nfp_centers$State == 'IN'] = 18
+nfp_centers$nfp_state_recode[nfp_centers$State == 'IA'] = 19
+nfp_centers$nfp_state_recode[nfp_centers$State == 'KS'] = 20
+nfp_centers$nfp_state_recode[nfp_centers$State == 'KY'] = 21
+nfp_centers$nfp_state_recode[nfp_centers$State == 'LA'] = 22
+nfp_centers$nfp_state_recode[nfp_centers$State == 'ME'] = 23
+nfp_centers$nfp_state_recode[nfp_centers$State == 'MH'] = 68
+nfp_centers$nfp_state_recode[nfp_centers$State == 'MD'] = 24
+nfp_centers$nfp_state_recode[nfp_centers$State == 'MA'] = 25
+nfp_centers$nfp_state_recode[nfp_centers$State == 'MI'] = 26
+nfp_centers$nfp_state_recode[nfp_centers$State == 'MN'] = 27
+nfp_centers$nfp_state_recode[nfp_centers$State == 'MS'] = 28
+nfp_centers$nfp_state_recode[nfp_centers$State == 'MO'] = 29
+nfp_centers$nfp_state_recode[nfp_centers$State == 'MT'] = 30
+nfp_centers$nfp_state_recode[nfp_centers$State == 'NE'] = 31
+nfp_centers$nfp_state_recode[nfp_centers$State == 'NV'] = 32
+nfp_centers$nfp_state_recode[nfp_centers$State == 'NH'] = 33
+nfp_centers$nfp_state_recode[nfp_centers$State == 'NJ'] = 34
+nfp_centers$nfp_state_recode[nfp_centers$State == 'NM'] = 35
+nfp_centers$nfp_state_recode[nfp_centers$State == 'NY'] = 36
+nfp_centers$nfp_state_recode[nfp_centers$State == 'NC'] = 37
+nfp_centers$nfp_state_recode[nfp_centers$State == 'ND'] = 38
+nfp_centers$nfp_state_recode[nfp_centers$State == 'MP'] = 69
+nfp_centers$nfp_state_recode[nfp_centers$State == 'OH'] = 39
+nfp_centers$nfp_state_recode[nfp_centers$State == 'OK'] = 40
+nfp_centers$nfp_state_recode[nfp_centers$State == 'OR'] = 41
+nfp_centers$nfp_state_recode[nfp_centers$State == 'PW'] = 70
+nfp_centers$nfp_state_recode[nfp_centers$State == 'PA'] = 42
+nfp_centers$nfp_state_recode[nfp_centers$State == 'PR'] = 72
+nfp_centers$nfp_state_recode[nfp_centers$State == 'RI'] = 44
+nfp_centers$nfp_state_recode[nfp_centers$State == 'SC'] = 45
+nfp_centers$nfp_state_recode[nfp_centers$State == 'SD'] = 46
+nfp_centers$nfp_state_recode[nfp_centers$State == 'TN'] = 47
+nfp_centers$nfp_state_recode[nfp_centers$State == 'TX'] = 48
+nfp_centers$nfp_state_recode[nfp_centers$State == 'UM'] = 74
+nfp_centers$nfp_state_recode[nfp_centers$State == 'UT'] = 49
+nfp_centers$nfp_state_recode[nfp_centers$State == 'VT'] = 50
+nfp_centers$nfp_state_recode[nfp_centers$State == 'VA'] = 51
+nfp_centers$nfp_state_recode[nfp_centers$State == 'VI'] = 78
+nfp_centers$nfp_state_recode[nfp_centers$State == 'WA'] = 53
+nfp_centers$nfp_state_recode[nfp_centers$State == 'WV'] = 54
+nfp_centers$nfp_state_recode[nfp_centers$State == 'WI'] = 55
+nfp_centers$nfp_state_recode[nfp_centers$State == 'WY'] = 56
+
+
 
 nfp_demographics$state <- factor(nfp_state_recode)
 NIS$state <- factor(as.numeric(NIS$STATE))
