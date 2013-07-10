@@ -1,3 +1,59 @@
+##################################
+##    Data Preparation File     ##
+## National Immunization Survey ##
+##         Joe Walsh            ##
+##         Emily Rowe           ##
+##        Adam Fishman          ##
+##################################
+
+
+##################################
+## EXPLORATORY ANALYSIS
+
+load("/mnt/data/NIS/modified_data/NISPUF.RData")
+
+summary(NISPUF)
+
+
+
+
+
+
+
+# How many people are being questioned each year?
+apply(NISPUF, year, sum)
+
+
+# Compare mother's education levels, etc.
+#MOSAICPLOT
+hist(NISPUF$EDUC1)
+hist(
+
+# Child variables: whether child is first born, age, WIC, 
+
+# Household-reported vaccination rates
+# NFP
+# NIS
+
+
+# How reliable are household-reported vaccination rates?  Compare HH reports to provider reports in NIS data.
+
+
+# How reliable are household shot cards?
+
+
+
+
+
+
+# How many shots of each vaccine are kids receiving?
+
+
+
+
+##################################
+## MATCHING
+
 # Install and import packages.
 install.packages("Matching", repo="http://cran.rstudio.com")
 library(Matching)
@@ -12,7 +68,7 @@ load("immunizations_analysis.RData")
 # Z include all X and the other variables that may impact likelihood of treatment, but do not independently impact the outcome.
 
 D <- immunizations$treatment
-X <- subset(immunizations, select = c(income_recode, ))
+X <- subset(immunizations, select = c(income_recode, state, language, MAg, RE, male, married, HSgrad))
 Y <- immunizations$Immunizations_UptoDate_6
 Z <- subset(immunizations, select = c())
 
