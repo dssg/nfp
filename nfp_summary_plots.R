@@ -40,6 +40,20 @@ nfp_demographics$race_factor <-
   factor(nfp_demographics$maternalrace, 
          labels = c("White", "Black","Latina","Other", "No Response"), exclude = NULL)
 
+# Breakdown by race
+race_alone <- ggplot(nfp_demographics, aes(race_factor, fill = race_factor)) + 
+	geom_histogram() + 
+	theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 25), 
+		axis.text.y = element_text(size = 25), 
+		plot.title = element_text(size = 40), 
+		axis.title.x = element_text(size = 30), 
+		axis.title.y = element_text(size = 30), 
+		legend.position = "none") + 
+	labs(x = "Race", y = "Count") + 
+	scale_fill_brewer(palette = "YlOrRd", name = "Race") + 
+	ggtitle("NFP Mothers by Race")
+
+# Race plotted against income		 
 race_vs_income <- ggplot(nfp_demographics, aes(income_description,fill=race_factor)) + 
   geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   labs(x = "Income", y = "Count") + scale_fill_brewer(palette="YlOrRd",name="Race") +
