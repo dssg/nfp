@@ -4,6 +4,17 @@ setwd("/mnt/data/csv_data")
 
 nfp_demographics <- read.csv("nfp_demographics_expanded.csv", header = TRUE)
 
+# Language
+nfp_demographics$language_factor <- factor(nfp_demographics$Primary_language,
+                                           labels = c("No Response", "English", "Other", "Spanish"),
+                                           exclude = NULL)
+nfp_demographics$language_factor <- factor(nfp_demographics$language_factor, levels = c("English", "Spanish", "Other", "No Response"))
+language <- ggplot(nfp_demographics, aes(language_factor, fill=language_factor)) + geom_bar() + labs(x = "Primary Language", 
+                                                                               y = "Count") +
+  ggtitle("Language Spoken at Home") + theme(legend.position = "none")
+
+language
+
 # Age vs Smoking
 nfp_demographics$smoker = 
   factor(nfp_demographics$pgsmoker, labels = c("Nonsmoker", "Smoker", "No Response"))
