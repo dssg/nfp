@@ -1,5 +1,5 @@
 import urllib2
-from bs4 import BeautifulSoup
+from BeautifulSoup import BeautifulSoup
 
 def is_number(s):
     try:
@@ -34,7 +34,7 @@ for tr in rows:
 				code = int(text)
 	try:
 		if change == 1:
-			print "nfp_demographics$nfp_state_recode[nfp_centers$State == '%s'] = %d" % (state,code)
+			print "NISPUF$State[NISPUF$STATE == '%d'] = '%s'" % (code, state)
 	except:
 		continue
 
