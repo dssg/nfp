@@ -1,18 +1,42 @@
 ##################################
-##    Data Preparation File     ##
+##     Week 6 Presentation      ##
 ## National Immunization Survey ##
 ##         Joe Walsh            ##
 ##         Emily Rowe           ##
 ##        Adam Fishman          ##
 ##################################
 
+setwd("/mnt/data/NIS/modified_data/")
 
 ##################################
 ## EXPLORATORY ANALYSIS
 
-#load("/mnt/data/NIS/modified_data/NISPUF.RData")
 
-load("/mnt/data/NIS/immunizations_analysis.RData")
+## START WITH NIS
+load("NISPUF.RData")
+
+summary(NISPUF)
+
+hist(NISPUF$YEAR)
+
+
+sum(NISPUF$PDAT==1 & NISPUF$D7==1, na.rm=T) / sum(NISPUF$D7==1, na.rm=T)
+sum(NISPUF$PDAT==1 & NISPUF$D7==2, na.rm=T)
+
+
+
+
+## NFP
+
+#Who drops out?
+
+
+
+
+# When comparing NFP, NIS data: subset=(PDAT==1 & FRSTBRN==2)
+
+
+load("/mnt/data/NIS/week6_presentation.RData")
 
 summary(immunizations)
 
@@ -202,6 +226,21 @@ mean(Varicella6==1)
 mean(HepA6==1)
 mean(Rotavirus6==1)
 
+
+
+
+
+
+# I'll bet that babies born prematurely are more likely to be up to date on their immunizations
+# because they will still be in the hospital or will make more visits to the hospital.
+# What about being severely underweight?  Are they more likely to visit the hospital?
+
+
+# Pr(preterm | age): non-monotonic?
+
+
+
+# Being not up to date on immunizations is a rare event.
 
 
 

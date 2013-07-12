@@ -43,13 +43,13 @@ NISPUF08 <- NISPUF08[,!(names(NISPUF08) %in% c("HH_FLU","P_UTDHEP","P_UTDHIB_ROU
 names(NISPUF08)[names(NISPUF08)=='MARITAL'] <- 'MARITAL2'
 
 # Recode MARITAL2 for consistency.
-NISPUF08$MARITAL2[NISPUF08$MARITAL2==1] <- 2
-NISPUF08$MARITAL2[NISPUF08$MARITAL2==3] <- 1
-
+NISPUF08$MARITAL2[NISPUF08$MARITAL2==1] <- 2  # not married 
+NISPUF08$MARITAL2[NISPUF08$MARITAL2==3] <- 1  # married
 
 # Only keep potentially useful columns
 NISPUF08 <- subset(NISPUF08, 
 	       select=(c(sort(names(NISPUF08)[grep("SEQNUM", names(NISPUF08))]),	# NIS respondent identifiers
+      "PDAT",               # whether there is adequate provider data
 			"YEAR",								# year of interview
 			"STATE",							# state of residence
 			#"ESTIAP08",	inconsistently coded from year to year		# state or metropolitan statistical area of residence
@@ -60,11 +60,10 @@ NISPUF08 <- subset(NISPUF08,
 			"M_AGEGRP",							# mother's age group
 			"MARITAL2",							# mother's marital status
 			"INCQ298A",							# family income category
-			"I_HISP_K",							# Hispanic origin of child
 			"INCPORAR",							# income to poverty ratio (eligibility criterion)
 			"FRSTBRN",							# whether child is first born
 			"AGEGRP",							# child's age group
-			sort(names(NISPUF08)[grep("RACE", names(NISPUF08))]),		# child's race
+			"RACEETHK",		            # child's race
 			"SEX",								# child's sex
 			sort(names(NISPUF08)[grep("CWIC_", names(NISPUF08))]),		# WIC variables	
 			sort(names(NISPUF08)[grep("INS_", names(NISPUF08))]),		# insurance variables
@@ -99,7 +98,8 @@ NISPUF09 <- NISPUF09[,!(names(NISPUF09) %in% c("HH_FLU","P_UTDHEP","P_UTDHIB_ROU
 # Only keep potentially useful columns
 NISPUF09 <- subset(NISPUF09, 
 	       select=(c(sort(names(NISPUF09)[grep("SEQNUM", names(NISPUF09))]),	# NIS respondent identifiers
-			"YEAR",								# year of interview
+     "PDAT",               # whether there is adequate provider data			
+     "YEAR",								# year of interview
 			"STATE",							# state of residence
 			#"ESTIAP09",	inconsistently coded from year to year		# state or metropolitan statistical area of residence
 			"C5R", 								# relationship of respondent to child (match on mother?)
@@ -109,11 +109,10 @@ NISPUF09 <- subset(NISPUF09,
 			"M_AGEGRP",							# mother's age group
 			"MARITAL2",							# mother's marital status
 			"INCQ298A",							# family income category
-			"I_HISP_K",							# Hispanic origin of child
 			"INCPORAR",							# income to poverty ratio (eligibility criterion)
 			"FRSTBRN",							# whether child is first born
 			"AGEGRP",							# child's age group
-			sort(names(NISPUF09)[grep("RACE", names(NISPUF09))]),		# child's race
+			"RACEETHK",		            # child's race
 			"SEX",								# child's sex
 			sort(names(NISPUF09)[grep("CWIC_", names(NISPUF09))]),		# WIC variables	
 			sort(names(NISPUF09)[grep("INS_", names(NISPUF09))]),		# insurance variables
@@ -151,7 +150,8 @@ NISPUF10 <- NISPUF10[,!(names(NISPUF10) %in% c("HH_FLU","HH_H1N","P_UTDHEPA2","P
 # Only keep potentially useful columns
 NISPUF10 <- subset(NISPUF10, 
 	       select=(c(sort(names(NISPUF10)[grep("SEQNUM", names(NISPUF10))]),	# NIS respondent identifiers
-			"YEAR",								# year of interview
+	    "PDAT",               # whether there is adequate provider data
+      "YEAR",								# year of interview
 			"STATE",							# state of residence
 			#"ESTIAP10",	inconsistently coded from year to year		# state or metropolitan statistical area of residence
 			"C5R", 								# relationship of respondent to child (match on mother?)
@@ -161,11 +161,10 @@ NISPUF10 <- subset(NISPUF10,
 			"M_AGEGRP",							# mother's age group
 			"MARITAL2",							# mother's marital status
 			"INCQ298A",							# family income category
-			"I_HISP_K",							# Hispanic origin of child
 			"INCPORAR",							# income to poverty ratio (eligibility criterion)
 			"FRSTBRN",							# whether child is first born
 			"AGEGRP",							# child's age group
-			sort(names(NISPUF10)[grep("RACE", names(NISPUF10))]),		# child's race
+			"RACEETHK",		            # child's race
 			"SEX",								# child's sex
 			sort(names(NISPUF10)[grep("CWIC_", names(NISPUF10))]),		# WIC variables	
 			sort(names(NISPUF10)[grep("INS_", names(NISPUF10))]),		# insurance variables
@@ -204,7 +203,8 @@ NISPUF11 <- NISPUF11[,!(names(NISPUF11) %in% c("HH_FLU","HH_H1N","P_UTDHEPA2","P
 # Only keep potentially useful columns
 NISPUF11 <- subset(NISPUF11, 
 	       select=(c(sort(names(NISPUF11)[grep("SEQNUM", names(NISPUF11))]),	# NIS respondent identifiers
-			"YEAR",								# year of interview
+	    "PDAT",               # whether there is adequate provider data
+      "YEAR",								# year of interview
 			"STATE",							# state of residence
 			#"ESTIAP11",	inconsistently coded from year to year		# state or metropolitan statistical area of residence
 			"C5R", 								# relationship of respondent to child (match on mother?)
@@ -214,11 +214,10 @@ NISPUF11 <- subset(NISPUF11,
 			"M_AGEGRP",							# mother's age group
 			"MARITAL2",							# mother's marital status
 			"INCQ298A",							# family income category
-			"I_HISP_K",							# Hispanic origin of child
 			"INCPORAR",							# income to poverty ratio (eligibility criterion)
 			"FRSTBRN",							# whether child is first born
 			"AGEGRP",							# child's age group
-			sort(names(NISPUF11)[grep("RACE", names(NISPUF11))]),		# child's race
+			"RACEETHK",		            # child's race
 			"SEX",								# child's sex
 			sort(names(NISPUF11)[grep("CWIC_", names(NISPUF11))]),		# WIC variables	
 			sort(names(NISPUF11)[grep("INS_", names(NISPUF11))]),		# insurance variables
@@ -247,6 +246,76 @@ NISPUF11 <- subset(NISPUF11,
 NISPUF <- rbind(NISPUF08, NISPUF09, NISPUF10, NISPUF11)
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+######################################
+## State data
+
+## Drop Virgin Islands observations
+NISPUF <- subset(NISPUF, subset=(STATE!=78))
+
+## Recode NISPUF$STATE to meaningful values
+NISPUF$STATE[NISPUF$STATE==1] <- "AL"
+NISPUF$STATE[NISPUF$STATE==2] <- "AK"
+NISPUF$STATE[NISPUF$STATE==4] <- "AZ"
+NISPUF$STATE[NISPUF$STATE==5] <- "AR"
+NISPUF$STATE[NISPUF$STATE==6] <- "CA"
+NISPUF$STATE[NISPUF$STATE==8] <- "CO"
+NISPUF$STATE[NISPUF$STATE==9] <- "CT"
+NISPUF$STATE[NISPUF$STATE==10] <- "DE"
+NISPUF$STATE[NISPUF$STATE==11] <- "DC"
+NISPUF$STATE[NISPUF$STATE==12] <- "FL"
+NISPUF$STATE[NISPUF$STATE==13] <- "GA"
+NISPUF$STATE[NISPUF$STATE==15] <- "HI"
+NISPUF$STATE[NISPUF$STATE==16] <- "ID"
+NISPUF$STATE[NISPUF$STATE==17] <- "IL"
+NISPUF$STATE[NISPUF$STATE==18] <- "IN"
+NISPUF$STATE[NISPUF$STATE==19] <- "IA"
+NISPUF$STATE[NISPUF$STATE==20] <- "KS"
+NISPUF$STATE[NISPUF$STATE==21] <- "KY"
+NISPUF$STATE[NISPUF$STATE==22] <- "LA"
+NISPUF$STATE[NISPUF$STATE==23] <- "ME"
+NISPUF$STATE[NISPUF$STATE==24] <- "MD"
+NISPUF$STATE[NISPUF$STATE==25] <- "MA"
+NISPUF$STATE[NISPUF$STATE==26] <- "MI"
+NISPUF$STATE[NISPUF$STATE==27] <- "MN"
+NISPUF$STATE[NISPUF$STATE==28] <- "MS"
+NISPUF$STATE[NISPUF$STATE==29] <- "MO"
+NISPUF$STATE[NISPUF$STATE==30] <- "MT"
+NISPUF$STATE[NISPUF$STATE==31] <- "NE"
+NISPUF$STATE[NISPUF$STATE==32] <- "NV"
+NISPUF$STATE[NISPUF$STATE==33] <- "NH"
+NISPUF$STATE[NISPUF$STATE==34] <- "NJ"
+NISPUF$STATE[NISPUF$STATE==35] <- "NM"
+NISPUF$STATE[NISPUF$STATE==36] <- "NY"
+NISPUF$STATE[NISPUF$STATE==37] <- "NC"
+NISPUF$STATE[NISPUF$STATE==38] <- "ND"
+NISPUF$STATE[NISPUF$STATE==39] <- "OH"
+NISPUF$STATE[NISPUF$STATE==40] <- "OK"
+NISPUF$STATE[NISPUF$STATE==41] <- "OR"
+NISPUF$STATE[NISPUF$STATE==42] <- "PA"
+NISPUF$STATE[NISPUF$STATE==44] <- "RI"
+NISPUF$STATE[NISPUF$STATE==45] <- "SC"
+NISPUF$STATE[NISPUF$STATE==46] <- "SD"
+NISPUF$STATE[NISPUF$STATE==47] <- "TN"
+NISPUF$STATE[NISPUF$STATE==48] <- "TX"
+NISPUF$STATE[NISPUF$STATE==49] <- "UT"
+NISPUF$STATE[NISPUF$STATE==50] <- "VT"
+NISPUF$STATE[NISPUF$STATE==51] <- "VA"
+NISPUF$STATE[NISPUF$STATE==53] <- "WA"
+NISPUF$STATE[NISPUF$STATE==54] <- "WV"
+NISPUF$STATE[NISPUF$STATE==55] <- "WI"
+NISPUF$STATE[NISPUF$STATE==56] <- "WY"
 
 
 
@@ -465,6 +534,9 @@ NISPUF$HHSC_UTD <- 0
 ## Save NIS data
 save(NISPUF, file="NISPUF.RData", ascii=TRUE)  # ASCII so it's readable years from now
 
+## Drop old NISPUF datasets from memory
+rm(NISPUF08,NISPUF09,NISPUF10,NISPUF11)
+
 
 
 
@@ -476,6 +548,7 @@ save(NISPUF, file="NISPUF.RData", ascii=TRUE)  # ASCII so it's readable years fr
 #				    #
 #####################################
 #####################################
+
 
 
 ############################################
@@ -499,77 +572,73 @@ nfp_demographics$income_recode = nfp_demographics$INCOME
 nfp_demographics$income_recode[nfp_demographics$income_recode == 3] <- 2
 ### Note that in the NFP dataset an income code of 7 indicates a mother living off her parents.
 
-
+### Drop NISPUF$INCQ298A and nfp_demographics$INCOME
+NISPUF <- NISPUF[,!(names(NISPUF) %in% "INCQ298A")]
+nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "INCOME")]
 
 ## Location - recoding NFP state data into FIPS codes (to match the NIS dataset)
-# nfp_centers$nfp_state_recode = rep(NA,dim(nfp_demographics)[1])
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'AL'] = 1
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'AK'] = 2
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'AS'] = 60
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'AZ'] = 4
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'AR'] = 5
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'CA'] = 6
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'CO'] = 8
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'CT'] = 9
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'DE'] = 10
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'DC'] = 11
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'FL'] = 12
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'FM'] = 64
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'GA'] = 13
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'GU'] = 66
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'HI'] = 15
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'ID'] = 16
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'IL'] = 17
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'IN'] = 18
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'IA'] = 19
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'KS'] = 20
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'KY'] = 21
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'LA'] = 22
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'ME'] = 23
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'MH'] = 68
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'MD'] = 24
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'MA'] = 25
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'MI'] = 26
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'MN'] = 27
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'MS'] = 28
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'MO'] = 29
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'MT'] = 30
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'NE'] = 31
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'NV'] = 32
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'NH'] = 33
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'NJ'] = 34
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'NM'] = 35
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'NY'] = 36
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'NC'] = 37
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'ND'] = 38
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'MP'] = 69
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'OH'] = 39
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'OK'] = 40
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'OR'] = 41
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'PW'] = 70
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'PA'] = 42
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'PR'] = 72
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'RI'] = 44
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'SC'] = 45
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'SD'] = 46
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'TN'] = 47
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'TX'] = 48
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'UM'] = 74
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'UT'] = 49
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'VT'] = 50
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'VA'] = 51
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'VI'] = 78
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'WA'] = 53
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'WV'] = 54
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'WI'] = 55
-# nfp_centers$nfp_state_recode[nfp_centers$State == 'WY'] = 56
+# make a character vector first
+nfp_centers$State <- as.character(nfp_centers$State)  
 
+nfp_centers$State[nfp_centers$State==1] <- "AL"
+nfp_centers$State[nfp_centers$State==2] <- "AK"
+nfp_centers$State[nfp_centers$State==4] <- "AZ"
+nfp_centers$State[nfp_centers$State==5] <- "AR"
+nfp_centers$State[nfp_centers$State==6] <- "CA"
+nfp_centers$State[nfp_centers$State==8] <- "CO"
+nfp_centers$State[nfp_centers$State==9] <- "CT"
+nfp_centers$State[nfp_centers$State==10] <- "DE"
+nfp_centers$State[nfp_centers$State==11] <- "DC"
+nfp_centers$State[nfp_centers$State==12] <- "FL"
+nfp_centers$State[nfp_centers$State==13] <- "GA"
+nfp_centers$State[nfp_centers$State==15] <- "HI"
+nfp_centers$State[nfp_centers$State==16] <- "ID"
+nfp_centers$State[nfp_centers$State==17] <- "IL"
+nfp_centers$State[nfp_centers$State==18] <- "IN"
+nfp_centers$State[nfp_centers$State==19] <- "IA"
+nfp_centers$State[nfp_centers$State==20] <- "KS"
+nfp_centers$State[nfp_centers$State==21] <- "KY"
+nfp_centers$State[nfp_centers$State==22] <- "LA"
+nfp_centers$State[nfp_centers$State==23] <- "ME"
+nfp_centers$State[nfp_centers$State==24] <- "MD"
+nfp_centers$State[nfp_centers$State==25] <- "MA"
+nfp_centers$State[nfp_centers$State==26] <- "MI"
+nfp_centers$State[nfp_centers$State==27] <- "MN"
+nfp_centers$State[nfp_centers$State==28] <- "MS"
+nfp_centers$State[nfp_centers$State==29] <- "MO"
+nfp_centers$State[nfp_centers$State==30] <- "MT"
+nfp_centers$State[nfp_centers$State==31] <- "NE"
+nfp_centers$State[nfp_centers$State==32] <- "NV"
+nfp_centers$State[nfp_centers$State==33] <- "NH"
+nfp_centers$State[nfp_centers$State==34] <- "NJ"
+nfp_centers$State[nfp_centers$State==35] <- "NM"
+nfp_centers$State[nfp_centers$State==36] <- "NY"
+nfp_centers$State[nfp_centers$State==37] <- "NC"
+nfp_centers$State[nfp_centers$State==38] <- "ND"
+nfp_centers$State[nfp_centers$State==39] <- "OH"
+nfp_centers$State[nfp_centers$State==40] <- "OK"
+nfp_centers$State[nfp_centers$State==41] <- "OR"
+nfp_centers$State[nfp_centers$State==42] <- "PA"
+nfp_centers$State[nfp_centers$State==44] <- "RI"
+nfp_centers$State[nfp_centers$State==45] <- "SC"
+nfp_centers$State[nfp_centers$State==46] <- "SD"
+nfp_centers$State[nfp_centers$State==47] <- "TN"
+nfp_centers$State[nfp_centers$State==48] <- "TX"
+nfp_centers$State[nfp_centers$State==49] <- "UT"
+nfp_centers$State[nfp_centers$State==50] <- "VT"
+nfp_centers$State[nfp_centers$State==51] <- "VA"
+nfp_centers$State[nfp_centers$State==53] <- "WA"
+nfp_centers$State[nfp_centers$State==54] <- "WV"
+nfp_centers$State[nfp_centers$State==55] <- "WI"
+nfp_centers$State[nfp_centers$State==56] <- "WY"
 
+# Some NFP agencies are missing State data.  Add them.
+nfp_centers[nfp_centers$Site_ID==274, names(nfp_centers) %in% "State"] <- "WA"
+nfp_centers[nfp_centers$Site_ID==280, names(nfp_centers) %in% "State"] <- "SC"
+nfp_centers[nfp_centers$Site_ID==281, names(nfp_centers) %in% "State"] <- "NJ"
+nfp_centers[nfp_centers$Site_ID==294, names(nfp_centers) %in% "State"] <- "FL"
+nfp_centers[nfp_centers$Site_ID==352, names(nfp_centers) %in% "State"] <- "VA"
 
-# NEED TO MERGE STATE INFO (from nfp_centers) INTO CORRESPONDING DEMOGRAPHIC INFO (from nfp_demographics)
-
-# nfp_demographics$state <- factor(nfp_state_recode)
-# NISPUF$state <- factor(as.numeric(NISPUF$STATE))
 
 
 ## Language - note that we are comparing primary language (NFP) to language in which interview was conducted (NIS)
@@ -582,25 +651,47 @@ nfp_demographics$language <- as.character(nfp_demographics$Primary_language)
 nfp_demographics$language[nfp_demographics$Primary_language==""] <- NA
 nfp_demographics$language <- factor(nfp_demographics$language)
 
+# Drop NISPUF$Primary_language and nfp_demographics$language
+NISPUF <- NISPUF[,!(names(NISPUF) %in% "LANGUAGE")]
+nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "Primary_language")]
+
+
+
+
+
 ## Mother's Age - Bucketed in NIS data as <=19, 20-29, >=30. 
 ### True comparison to NFP MomsAgeBirth would be mother's age minus child's age in NIS, but both data points are bucketed.
 ### Explore ways to make this comparison more accurate, but start by ignoring this distinction.
 
-nfp_demographics$MAge[nfp_demographics$MomsAgeBirth <= 19] <- 1
-nfp_demographics$MAge[20 <= nfp_demographics$MomsAgeBirth & nfp_demographics$MomsAgeBirth <= 29] <- 2
-nfp_demographics$MAge[nfp_demographics$MomsAgeBirth >= 30] <- 3
-nfp_demographics$MAge <- factor(nfp_demographics$MAge, labels = c("<=19 Years", "20-29 Years", ">=30 Years"))
-NISPUF$MAge <- factor(NISPUF$M_AGEGRP, labels = c("<=19 Years", "20-29 Years", ">=30 Years"))
+nfp_demographics$MothersAge[nfp_demographics$MomsAgeBirth <= 19] <- 1
+nfp_demographics$MothersAge[20 <= nfp_demographics$MomsAgeBirth & nfp_demographics$MomsAgeBirth <= 29] <- 2
+nfp_demographics$MothersAge[nfp_demographics$MomsAgeBirth >= 30] <- 3
+nfp_demographics$MothersAge <- factor(nfp_demographics$MothersAge, labels = c("<=19 Years", "20-29 Years", ">=30 Years"))
+NISPUF$MothersAge <- factor(NISPUF$M_AGEGRP, labels = c("<=19 Years", "20-29 Years", ">=30 Years"))
+
+### Delete NISPUF$M_AGEGRP and nfp_demographics$MomsAgeBirth
+NISPUF <- NISPUF[,!(names(NISPUF) %in% "M_AGEGRP")]
+nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "MomsAgeBirth")]
+
+
+
 
 
 ## Race - Only child's race is available from NIS and only mother's race from NFP.
 ### Must assume these are the same.
 
-NISPUF$RE <- factor(NISPUF$RACEETHK, labels = c("Hispanic", "WhiteNH", "BlackNH", "Other"))
-nfp_demographics$RE <- as.character(nfp_demographics$MomsRE) # Renaming variable
-nfp_demographics$RE[nfp_demographics$RE=="Hispanic or Latina"] <- "Hispanic" # Shortening description
-nfp_demographics$RE[nfp_demographics$RE=="Declined or msg"] <- NA 
-nfp_demographics$RE <- factor(nfp_demographics$RE) # Return to factor format with adjusted levels
+NISPUF$Race <- factor(NISPUF$RACEETHK, labels = c("Hispanic", "WhiteNH", "BlackNH", "Other"))
+nfp_demographics$Race <- as.character(nfp_demographics$MomsRE) # Renaming variable
+nfp_demographics$Race[nfp_demographics$Race=="Hispanic or Latina"] <- "Hispanic" # Shortening description
+nfp_demographics$Race[nfp_demographics$Race=="Declined or msg"] <- NA 
+nfp_demographics$Race <- factor(nfp_demographics$Race) # Return to factor format with adjusted levels
+
+### Drop NISPUF$RACEETHK and nfp_demographics$MomsRE
+NISPUF <- NISPUF[,!(names(NISPUF) %in% "RACEETHK")]
+nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "MomsRE")]
+
+
+
 
 
 ## Child's gender: Create a binary dummy variable for "male"
@@ -610,6 +701,12 @@ NISPUF$male[NISPUF$SEX==2] <- 0
 nfp_demographics$male[nfp_demographics$Childgender=="Female"] <- 0 # Recode factor variable
 nfp_demographics$male[nfp_demographics$Childgender=="Male"] <- 1 
 
+### Drop NISPUF$SEX and nfp_demographics$Childgender
+NISPUF <- NISPUF[,!(names(NISPUF) %in% "SEX")]
+nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "Childgender")]
+
+
+
 
 ## Mother's marital status
 
@@ -617,17 +714,41 @@ nfp_demographics$married <- nfp_demographics$marital_status # Rename variable so
 NISPUF$married[NISPUF$MARITAL2==1] <- 1
 NISPUF$married[NISPUF$MARITAL2==2] <- 0
 
+### Drop NISPUF$MARITAL2 and nfp_demographics$marital_status
+NISPUF <- NISPUF[,!(names(NISPUF) %in% "MARITAL2")]
+nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "marital_status")]
+
+
+
+
 ## Mother's education
 ###NFP tracks HS diploma, GED, or neither (HSGED).
 ###NIS has <12 years, 12 years, or 12+ years.  Original questionnaire wording buckets HS degrees and GEDs together.
 
+NISPUF$HSgrad[NISPUF$EDUC1==1] <- 0
+NISPUF$HSgrad[which(is.element(NISPUF$EDUC1,c(2,3,4)))] <- 1
 nfp_demographics$HSgrad[nfp_demographics$HSGED==1] <- 1
 nfp_demographics$HSgrad[nfp_demographics$HSGED==2] <- 1
 nfp_demographics$HSgrad[nfp_demographics$HSGED==3] <- 0
-NISPUF$HSgrad[NISPUF$EDUC1==1] <- 0
-NISPUF$HSgrad[which(is.element(NISPUF$EDUC1,c(2,3,4)))] <- 1
+
+### Drop NISPUF$EDUC1 & nfp_demographics$HSGED
+NISPUF <- NISPUF[,!(names(NISPUF) %in% "EDUC1")]
+nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "HSGED")]
+
+
+
 
 # Matching variables TBD: WIC/Medicaid recipient status and insurance coverage.
+
+
+
+
+
+
+
+
+
+
 
 
 ########################################
@@ -640,13 +761,32 @@ nfp_outcomes$Immunizations_UptoDate_12[nfp_outcomes$final_immun_2=="Yes"] <- 1
 nfp_outcomes$Immunizations_UptoDate_18[nfp_outcomes$final_immun_3=="Yes"] <- 1
 nfp_outcomes$Immunizations_UptoDate_24[nfp_outcomes$final_immun_4=="Yes"] <- 1
 
+# Drop nfp_outcomes$final_immun_*
+nfp_outcomes <- nfp_outcomes[,!(names(nfp_outcomes) %in% c("final_immun_1","final_immun_2","final_immun_3","final_immun_4"))]
+
+
+
+
+
+# Merge NFP demographics and immunization datasets
 NFPfull <- merge(nfp_demographics, nfp_outcomes, by = intersect("CL_EN_GEN_ID", "CL_EN_GEN_ID"))
 NFPfull$ID <- NFPfull$CL_EN_GEN_ID
+NFPfull <- NFPfull[,!(names(NFPfull) %in% "CL_EN_GEN_ID")]
 
+
+
+# Rename NISPUF ID variable 
 NISPUF$ID <- NISPUF$SEQNUMC
+NISPUF <- NISPUF[,!(names(NISPUF) %in% "SEQNUMC")]
 
-NIScommon <- subset(NISPUF, select = c(ID, income_recode, language, MAge, RE, male, married, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
-NFPcommon <- subset(NFPfull, select = c(ID, income_recode, language, MAge, RE, male, married, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
+
+matrix(names(NISPUF),ncol=1)
+matrix(names(NFPfull),ncol=1)
+unique(NISPUF$RACE_K)
+
+NIScommon <- subset(NISPUF, select = c(ID, income_recode, language, MothersAge, Race, married, male, premature, lbw, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
+NFPcommon <- subset(NFPfull, select = c(ID, income_recode, language, MothersAge, Race, married, male, premature, lbw, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
+# Other NIS variables to potentially subset on: PDAT, C5R, INCPORAR, FRSTBRN, AGEGRP
 
 NIScommon$treatment <- 0
 NFPcommon$treatment <- 1
