@@ -576,6 +576,7 @@ nfp_demographics$income_recode[nfp_demographics$income_recode == 3] <- 2
 NISPUF <- NISPUF[,!(names(NISPUF) %in% "INCQ298A")]
 nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "INCOME")]
 
+
 ## Location - recoding NFP state data into FIPS codes (to match the NIS dataset)
 # make a character vector first
 nfp_centers$State <- as.character(nfp_centers$State)  
