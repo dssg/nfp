@@ -295,8 +295,12 @@ summary(match3)
 ## Average treatment effect for the treated (ATET) and control (ATEC)
 # So far we have assumed the same treatment effect for the treatment and control groups.
 # However, the treatment effect may vary differ for those groups.  For example, only those
-# who would benefit the most from college enroll.  It is also possible that we do not feel
-# comfortable making all the assumptions necessary to estimate the ATE.
+# who would benefit the most from college enroll.  Furthermore, the ATET or ATEC might be
+# more interesting quantities.  For instance, we might want to know the effect of a drug
+# on the people who took it, not the people who did not take it, since it wasn't intended
+# for most of the people who did not take it (because they are healthy).  It is also 
+# possible that we do not feel comfortable making all the assumptions necessary to estimate
+# the ATE.  
 #
 # Here is the new data-generating process, where the treatment effect varies and those
 # who have a positive treatment effect are more likely to enroll.
@@ -304,70 +308,107 @@ summary(match3)
 e <- rnorm(n)
 x <- rbinom(n, size=1, prob=.5)-1
 beta <- rbinom(n, size=1, prob=.4)  #effect for some is positive 1, for others -2
-  beta[beta==0] <- -2
+  beta[beta==0] <- -10
 d <- rbinom(n, size=1, prob=.8)  #ppl with positive effect more likely to enroll
-  d[beta==-2] <- rbinom(length(d[beta==-2]), size=1, prob=.3)
+  d[beta==-10] <- rbinom(length(beta[beta==-10]), size=1, prob=.5)
 y <- -3 + beta*d + 5*x + e  # DGP
 data <- as.data.frame(cbind(d,x,beta,y))
 
 
-
-
-##############
-# Naive estimator: doesn't tell us much about what's going on
-mean(y[d==1]) - mean(y[d==0])
-
-
-
-
-##############
-# OLS: doesn't help much, even when controlling for x!
-lm(y~d+x)
-
-
-
-
-# In these cases we might be interested in the average treatment effect for the treated
-# (ATET) and average treatment effect for the control (ATEC).
-#
 # Note that we cannot estimate the ATET by looking at the treated group only
+# because there is no variation on the treatment variable
 d.treated <- coef(lm(y~d+x, data=subset(data,d==1)))[2]
 d.treated
 
 # Nor can we estimate the ATEC by looking at the control group only
+# because there is no variation on the treatment variable
 d.control <- coef(lm(y~d+x, data=subset(data,d==0)))[2]
 d.control
 
 # How to calculate ATET when we don't observe untreated outcomes for the treated observations?
 # "Progress can be made by assuming that selection into treatment depends on observable 
-# covariates X" (http://sekhon.berkeley.edu/papers/MatchingJSS.pdf)
-#
-# Assume that conditioning on X creates exchangability, i.e.
+# covariates X" (http://sekhon.berkeley.edu/papers/MatchingJSS.pdf).  Assume that 
+# conditioning on X creates exchangability, i.e.
 # E[Y(1)|X,D=1] = E[Y(1)|X,D=0]  and  E[Y(0)|X,D=1] = E[Y(0)|X,D=0]
 
-# E[Y|X=-1,D=0]
-mean(y[x==-1 & d==0])
-# E[Y|X=-1,D=1]
-mean(y[x==-1 & d==1])
-# E[Y|X=0,D=0]
-mean(y[x== 0 & d==0])
-# E[Y|X=0,D=1]
-mean(y[x== 0 & d==1])
 
-# Pr(X=-1|D=0)
-sum(x==-1 & d==0)/sum(d==0)
-# Pr(X= 0|D=0)
-sum(x== 0 & d==0)/sum(d==0)
 
+
+
+##############
+## Stratification
 
 # ATET: E[Y(1)-Y(0)|D=1] = E[Y(1)|D=1] - E[Y(0)|D=1]
-# w/ ignorability:       = E[Y(1)|D=1] - E[Y(0)|D=0]
-#                        = (E[Y(1)|X=-1,D=1] - E[Y(0)|X=-1,D=0])*(1-Pr[X=-1|D=0]) + 
-#                            (E[Y|X= 0,D=1] - E[Y|X= 0,D=0])*(1-Pr[X= 0|D=0])
-(mean(y[x==-1 & d==1]) - mean(y[x==-1 & d==0])) * (1-sum(x==-1 & d==0)/sum(d==0)) +
-(mean(y[x== 0 & d==1]) - mean(y[x== 0 & d==0])) * (1-sum(x== 0 & d==0)/sum(d==0))
+# w/ ignorability:       = E[Y(1)|X= 0,D=1] - E[Y(0)|X= 0,D=0] and
+#                          E[Y(1)|X=-1,D=1] - E[Y(0)|X=-1,D=0]
+# weight by value of X:  = (E[Y(1)|X= 0,D=1] - E[Y(0)|X= 0,D=0]) * Pr(X= 0|D=1) + 
+#                          (E[Y(1)|X=-1,D=1] - E[Y(0)|X=-1,D=0]) * Pr(X=-1|D=1)
+(mean(y[x== 0 & d==1]) - mean(y[x== 0 & d==0])) * sum(x== 0 & d==1)/sum(d==1) +
+(mean(y[x==-1 & d==1]) - mean(y[x==-1 & d==0])) * sum(x==-1 & d==1)/sum(d==1)
+
+
+
+# We can do the same thing for ATEC.
+# ATEC: E[Y(1)-Y(0)|D=0] = E[Y(1)|D=0] - E[Y(0)|D=0]
+# w/ ignorability:       = E[Y(1)|X= 0,D=1] - E[Y(0)|X= 0,D=0] and
+#                          E[Y(1)|X=-1,D=1] - E[Y(0)|X=-1,D=0]
+# weight by value of X:  = (E[Y(1)|X= 0,D=1] - E[Y(0)|X= 0,D=0]) * Pr(X= 0|D=0) + 
+#                          (E[Y(1)|X=-1,D=1] - E[Y(0)|X=-1,D=0]) * Pr(X=-1|D=0)
+(mean(y[x== 0 & d==1]) - mean(y[x== 0 & d==0])) * sum(x== 0 & d==0)/sum(d==0) +
+(mean(y[x==-1 & d==1]) - mean(y[x==-1 & d==0])) * sum(x==-1 & d==0)/sum(d==0)
+
+
+
+
+
+##############
+## Matching
+
+# it is easier to sample from a matrix for this example
+data <- cbind(d,x,y)
+#split into two samples
+data1 <- subset(data, d==1)   #treatment group
+data2 <- subset(data, d==0)   #control group
+
+# We will match k observations (assigned earlier) from the control group to 1 observation
+# from the treatment group.  To do that, I store k differences in outcomes for each 
+# observation in the treatment group.
+difference <- matrix(NA, nrow(data1), k)  
+
+# cycle through each treatment observation
+for(i in 1:nrow(data1)){
+  # find k matches on x from sample 2
+  # because there are more than k matches, I randomly select k matches with replacement
+  match_y <- sample(data2[,3][data2[,2]==data1[i,2]], size=k, replace=TRUE)
+  
+  # store the differences in outcomes between the treatment observation and the control obs.
+  difference[i,] <- data1[i,3] - match_y
+}
+ATE.X0 <- mean(subset(difference, subset=c(data1[,2]== 0))) 
+ATE.Xneg1 <- mean(subset(difference, subset=c(data1[,2]==-1))) 
+
+
+# ATET
+# ATET = ATE.XO*Pr(X=0|D=1) + ATE.Xneg1*Pr(X=-1|D=1)
+ATET <- ATE.X0 * sum(data1[,2]== 0 & dim(data1)[1])/dim(data1)[1] +
+        ATE.Xneg1 * sum(data1[,2]==-1 & dim(data1)[1])/dim(data1)[1]
+ATET
 
 # The Matching package gives similar results
 library(Matching)
-match4 <- Match(Y=y, Tr=d, X=p.hat, estimand="ATT", M=k, ties=FALSE)
+match4 <- Match(Y=y, Tr=d, X=x, estimand="ATT", M=k, ties=FALSE)
 summary(match4)
+
+
+
+
+
+# ATEC
+# ATEC = ATE.XO*Pr(X=0|D=0) + ATE.Xneg1*Pr(X=-1|D=0)
+ATEC <- ATE.X0 * sum(data1[,2]== 0 & data1[,1]!=0)/sum(data1[,1]!=0) +
+        ATE.Xneg1 * sum(data1[,2]==-1 & data1[,1]!=0)/sum(data1[,1]!=0)
+ATEC
+
+# The Matching package gives similar results
+match5 <- Match(Y=y, Tr=d, X=x, estimand="ATC", M=k, ties=FALSE)
+summary(match5)
