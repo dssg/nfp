@@ -1,8 +1,8 @@
 # Importing data
-setwd("/mnt/data/nfp-data/csv_data")
+setwd("/mnt/data/nfp_data/csv_data")
 nfpdemo <- read.csv("nfp_demographics_expanded.csv")
+setwd("/mnt/data/NSCH/data")
 nsch <- read.csv("DRC_2011_2012_NSCH.csv")
-
 
 # Recoding sex, prematurity, low birthweight variables from NSCH to match NFP
 nsch$NSCH_ID <- nsch$IDNUMR
@@ -19,14 +19,23 @@ nsch$MomsAge[which(is.element(nsch$MomsAge, c(996,997)))] <- NA # Make NA DK/ref
 nsch$MomsAgeBirth <- nsch$MomsAge - nsch$AGEYR_CHILD # Mother's age at birth = mom's age at time of survey - child's age at time of survey
 # Note some weird results here - 20 year old mothers with 17 year old children?
 # Shouldn't be an issue for our analysis since we are only working with infants/toddlers
-subset(nsch, nsch$MomsAgeBirth<=15, select = c(ID, K9Q16R, MomsAge, AGEYR_CHILD, MomsAgeBirth))
+# Highlight some examples for question: subset(nsch, nsch$MomsAgeBirth<=15, select = c(NSCH_ID, K9Q16R, MomsAge, AGEYR_CHILD, MomsAgeBirth))
 
+# Recoding education from NSCH to match information available from NFP
+nsch$momsEd[nsch$EDUC_MOMR==1] <- "NoHS" # 8th grade education or less
+nsch$momsEd[nsch$EDUC_MOMR==2] <- "HSnoDip" # Last year of schooling was 9th-12th
+nsch$momsEd[which(is.element(nsch$EDUC_MOMR,c(3,6,7)))] <- "HSorGED" # Received at least HS degree or GED
+nsch$momsEd <- factor(nsch$momsEd)
 
-# Recoding sex from NFP to match NSCH
+# Recoding ID, sex, education from NFP
 nfpdemo$NFP_ID <- nfpdemo$CL_EN_GEN_ID
 nfpdemo$male[nfpdemo$Childgender=="Female"] <- 0 # Recode factor variable
 nfpdemo$male[nfpdemo$Childgender=="Male"] <- 1 
 
+nfpdemo$momsEd[nfpdemo$HSGED_Last_Grade_1 <= 8] <- "NoHS"
+nfpdemo$momsEd[nfpdemo$HSGED_Last_Grade_1 > 8] <- "HSnoDip"
+nfpdemo$momsEd[which(is.element(nfpdemo$HSGED, c(1,2)))] <- "HSorGED"
+nfpdemo$momsEd <- factor(nfpdemo$momsEd)
 
 # Race recodes: note that NSCH has only child's race and NFP has only mother's race.
 # Must assume for matching purposes that they are the same.
