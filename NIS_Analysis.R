@@ -8,6 +8,101 @@
 
 
 ##################################
+## NIS-reported immunization rates seem too low
+## See if I can get more reasonable estimates than simple averages
+
+load("/mnt/data/NIS/modified_data/NISPUF_2008_2009_2010.RData")
+#load("/mnt/data/NIS/modified_data/NISPUF08.RData")
+
+# NISPUF includes lots of older kids (24-36 months)
+length(NISPUF_08_09_10$AGEGRP[NISPUF_08_09_10$AGEGRP==2 | NISPUF_08_09_10$AGEGRP==3]) / length(NISPUF_08_09_10$AGEGRP)
+
+
+# NISPUF includes kids w/o adequate records
+length(NISPUF_08_09_10$PDAT[NISPUF_08_09_10$PDAT==2]) / length(NISPUF_08_09_10$PDAT)
+
+
+## Create dataset with only comparable data
+# PDAT==1: adequate provider data
+# AGEGRP==1: 19-23 months, so it is comparative
+data <- subset(NISPUF_08_09_10, subset=c(PDAT==1)) # & AGEGRP==1))
+
+
+# DTaP immunizations up to date
+data$DTaP6 <- 0
+  data$DTaP6[data$DDTP3<=366/2+30] <- 1
+data$DTaP12 <- 0
+  data$DTaP12[data$DDTP3<=366+30] <- 1
+data$DTaP18 <- 0
+  data$DTaP18[data$DDTP4<=3/2*366+30] <- 1
+data$DTaP24 <- 0
+  data$DTaP24[data$DDTP4<=2*366+30] <- 1
+
+# Polio immunizations up to date
+data$Polio6 <- 0
+data$Polio6[data$DPOLIO2<=366/2+30] <- 1
+data$Polio12 <- 0
+  data$Polio12[data$DPOLIO2<=366+30] <- 1
+data$Polio18 <- 0
+  data$Polio18[data$DPOLIO3<=3/2*366+30] <- 1
+data$Polio24 <- 0
+  data$Polio24[data$DPOLIO3<=2*366+30] <- 1
+
+# MMR immunization up to date
+data$MMR6 <- 1
+data$MMR12 <- 1
+data$MMR18 <- 0
+  data$MMR18[data$DMMR1<=3/2*366+30] <- 1
+data$MMR24 <- 1
+  data$MMR24[data$DMMR1<=2*366+30] <- 1
+
+# 4:3:1 UTD, as determined by FISPUF age variables
+data$UTD6 <- 0
+  data$UTD6[data$DTaP6==1 & data$Polio6==1 & data$MMR6==1] <- 1
+data$UTD12 <- 0
+  data$UTD12[data$DTaP12==1 & data$Polio12==1 & data$MMR12==1] <- 1
+data$UTD18 <- 0
+  data$UTD18[data$DTaP18==1 & data$Polio18==1 & data$MMR18==1] <- 1
+data$UTD24 <- 0
+  data$UTD24[data$DTaP24==1 & data$Polio24==1 & data$MMR24==1] <- 1
+
+# How do my UTD measures compare with the dataset's?
+# I marked 4% of cases as UTD where the dataset says they are not
+library(gmodels)
+CrossTable(data$UTD24, data$P_UTD431)
+
+# Is it possible that an earlier shot is missing for some of these?
+# For example, the child has only received three shots but the third 
+# shot is marked as the fourth
+# NO!
+length(data$DTaP24[data$DTaP24==1 & is.na(data$DDTP3) & is.na(data$DDTP2)] & is.na(data$DDTP1)) / length(data$DTaP24[data$DTaP24==1])
+length(data$Polio24[data$Polio24==1 & is.na(data$DPOLIO2) & is.na(data$DPOLIO1)]) / length(data$Polio24[data$Polio24==1])
+
+# Drop conflicting observations
+data <- subset(data, subset=((UTD24==0 & P_UTD431==0) | (UTD24==1 & P_UTD431==1)))
+
+# Weighted UTD 4:3:1 for 2010
+sum(data$PROVWT[data$P_UTD431==1 & data$YEAR==2010], na.rm=TRUE) / sum(data$PROVWT[data$YEAR==2010], na.rm=TRUE)
+sum(data$PROVWT[data$UTD24==1 & data$YEAR==2010], na.rm=TRUE) / sum(data$PROVWT[data$YEAR==2010], na.rm=TRUE)
+
+# Raw mean UTD at 6, 12, 18, and 24 months for 2010
+mean(data$UTD6[data$YEAR==2010])
+mean(data$UTD12[data$YEAR==2010])
+mean(data$UTD18[data$YEAR==2010])
+mean(data$UTD24[data$YEAR==2010])
+
+# Weighted mean UTD 6, 12, 18, and 24 months for 2010
+sum(data$PROVWT[data$UTD6==1 & data$YEAR==2010], na.rm=TRUE) / sum(data$PROVWT[data$YEAR==2010], na.rm=TRUE)
+sum(data$PROVWT[data$UTD12==1 & data$YEAR==2010], na.rm=TRUE) / sum(data$PROVWT[data$YEAR==2010], na.rm=TRUE)
+sum(data$PROVWT[data$UTD18==1 & data$YEAR==2010], na.rm=TRUE) / sum(data$PROVWT[data$YEAR==2010], na.rm=TRUE)
+sum(data$PROVWT[data$UTD24==1 & data$YEAR==2010], na.rm=TRUE) / sum(data$PROVWT[data$YEAR==2010], na.rm=TRUE)
+
+
+
+
+
+
+##################################
 ## EXPLORATORY ANALYSIS
 
 #load("/mnt/data/NIS/modified_data/NISPUF.RData")
