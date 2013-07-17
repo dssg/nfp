@@ -50,6 +50,7 @@ NISPUF08$MARITAL2[NISPUF08$MARITAL2==3] <- 1  # married
 NISPUF08 <- subset(NISPUF08, 
 	       select=(c(sort(names(NISPUF08)[grep("SEQNUM", names(NISPUF08))]),	# NIS respondent identifiers
       "PDAT",               # whether there is adequate provider data
+      "PROVWT",             # weight for children with adequate provider data
 			"YEAR",								# year of interview
 			"STATE",							# state of residence
 			#"ESTIAP08",	inconsistently coded from year to year		# state or metropolitan statistical area of residence
@@ -78,7 +79,8 @@ NISPUF08 <- subset(NISPUF08,
 			sort(names(NISPUF08)[grep("DPCV", names(NISPUF08))]),		# provider-reported pneumococcal-containing shots
 			sort(names(NISPUF08)[grep("DPOLIO", names(NISPUF08))]),		# provider-reported polio-containing shots
 			sort(names(NISPUF08)[grep("DROT", names(NISPUF08))]),		# provider-reported rotavirus-containing shots
-			sort(names(NISPUF08)[grep("DVRC", names(NISPUF08))])		# provider-reported Varicella-containing shots
+			sort(names(NISPUF08)[grep("DVRC", names(NISPUF08))]),		# provider-reported Varicella-containing shots
+      "P_UTD431"
 			)
 		       )
 		)
@@ -99,6 +101,7 @@ NISPUF09 <- NISPUF09[,!(names(NISPUF09) %in% c("HH_FLU","P_UTDHEP","P_UTDHIB_ROU
 NISPUF09 <- subset(NISPUF09, 
 	       select=(c(sort(names(NISPUF09)[grep("SEQNUM", names(NISPUF09))]),	# NIS respondent identifiers
      "PDAT",               # whether there is adequate provider data			
+	   "PROVWT",             # weight for children with adequate provider data
      "YEAR",								# year of interview
 			"STATE",							# state of residence
 			#"ESTIAP09",	inconsistently coded from year to year		# state or metropolitan statistical area of residence
@@ -127,7 +130,8 @@ NISPUF09 <- subset(NISPUF09,
 			sort(names(NISPUF09)[grep("DPCV", names(NISPUF09))]),		# provider-reported pneumococcal-containing shots
 			sort(names(NISPUF09)[grep("DPOLIO", names(NISPUF09))]),		# provider-reported polio-containing shots
 			sort(names(NISPUF09)[grep("DROT", names(NISPUF09))]),		# provider-reported rotavirus-containing shots
-			sort(names(NISPUF09)[grep("DVRC", names(NISPUF09))])		# provider-reported Varicella-containing shots
+			sort(names(NISPUF09)[grep("DVRC", names(NISPUF09))]),		# provider-reported Varicella-containing shots
+	    "P_UTD431"
 			)
 		       )
 		)
@@ -151,6 +155,7 @@ NISPUF10 <- NISPUF10[,!(names(NISPUF10) %in% c("HH_FLU","HH_H1N","P_UTDHEPA2","P
 NISPUF10 <- subset(NISPUF10, 
 	       select=(c(sort(names(NISPUF10)[grep("SEQNUM", names(NISPUF10))]),	# NIS respondent identifiers
 	    "PDAT",               # whether there is adequate provider data
+      "PROVWT",             # weight for children with adequate provider data
       "YEAR",								# year of interview
 			"STATE",							# state of residence
 			#"ESTIAP10",	inconsistently coded from year to year		# state or metropolitan statistical area of residence
@@ -179,13 +184,16 @@ NISPUF10 <- subset(NISPUF10,
 			sort(names(NISPUF10)[grep("DPCV", names(NISPUF10))]),		# provider-reported pneumococcal-containing shots
 			sort(names(NISPUF10)[grep("DPOLIO", names(NISPUF10))]),		# provider-reported polio-containing shots
 			sort(names(NISPUF10)[grep("DROT", names(NISPUF10))]),		# provider-reported rotavirus-containing shots
-			sort(names(NISPUF10)[grep("DVRC", names(NISPUF10))])		# provider-reported Varicella-containing shots
+			sort(names(NISPUF10)[grep("DVRC", names(NISPUF10))]),		# provider-reported Varicella-containing shots
+	    "P_UTD431"
 			)
 		       )
 		)
 
 
 
+NISPUF_08_09_10 <- rbind(NISPUF08,NISPUF09,NISPUF10)
+save(NISPUF_08_09_10, file="NISPUF_2008_2009_2010.RData")
 
 
 
@@ -204,6 +212,7 @@ NISPUF11 <- NISPUF11[,!(names(NISPUF11) %in% c("HH_FLU","HH_H1N","P_UTDHEPA2","P
 NISPUF11 <- subset(NISPUF11, 
 	       select=(c(sort(names(NISPUF11)[grep("SEQNUM", names(NISPUF11))]),	# NIS respondent identifiers
 	    "PDAT",               # whether there is adequate provider data
+      "PROVWT",             # weight for children with adequate provider data
       "YEAR",								# year of interview
 			"STATE",							# state of residence
 			#"ESTIAP11",	inconsistently coded from year to year		# state or metropolitan statistical area of residence
@@ -540,7 +549,6 @@ rm(NISPUF08,NISPUF09,NISPUF10,NISPUF11)
 
 
 
-
 #####################################
 #####################################
 #    		                    #
@@ -633,12 +641,22 @@ nfp_centers$State[nfp_centers$State==54] <- "WV"
 nfp_centers$State[nfp_centers$State==55] <- "WI"
 nfp_centers$State[nfp_centers$State==56] <- "WY"
 
+# Rename nfp_centers$State nfp_centers$STATE
+nfp_centers$STATE <- nfp_centers$State
+nfp_centers <- nfp_centers[,!(names(nfp_centers) %in% "State")]
+
+
 # Some NFP agencies are missing State data.  Add them.
 nfp_centers[nfp_centers$Site_ID==274, names(nfp_centers) %in% "State"] <- "WA"
 nfp_centers[nfp_centers$Site_ID==280, names(nfp_centers) %in% "State"] <- "SC"
 nfp_centers[nfp_centers$Site_ID==281, names(nfp_centers) %in% "State"] <- "NJ"
 nfp_centers[nfp_centers$Site_ID==294, names(nfp_centers) %in% "State"] <- "FL"
 nfp_centers[nfp_centers$Site_ID==352, names(nfp_centers) %in% "State"] <- "VA"
+
+
+## Fix demographic dataset
+nfp_demographics$STATE <- nfp_demographics$State
+nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "State")]
 
 
 
@@ -781,12 +799,8 @@ NISPUF$ID <- NISPUF$SEQNUMC
 NISPUF <- NISPUF[,!(names(NISPUF) %in% "SEQNUMC")]
 
 
-matrix(names(NISPUF),ncol=1)
-matrix(names(NFPfull),ncol=1)
-unique(NISPUF$RACE_K)
-
-NIScommon <- subset(NISPUF, select = c(ID, income_recode, language, MothersAge, Race, married, male, premature, lbw, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
-NFPcommon <- subset(NFPfull, select = c(ID, income_recode, language, MothersAge, Race, married, male, premature, lbw, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
+NIScommon <- subset(NISPUF, select = c(ID, STATE, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
+NFPcommon <- subset(NFPfull, select = c(ID, STATE, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
 # Other NIS variables to potentially subset on: PDAT, C5R, INCPORAR, FRSTBRN, AGEGRP
 
 NIScommon$treatment <- 0
