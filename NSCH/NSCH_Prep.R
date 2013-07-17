@@ -1,7 +1,6 @@
 # Importing data
-setwd("/mnt/data/csv_data")
+setwd("/mnt/data/nfp-data/csv_data")
 nfpdemo <- read.csv("nfp_demographics_expanded.csv")
-setwd("/mnt/data")
 nsch <- read.csv("DRC_2011_2012_NSCH.csv")
 
 
@@ -20,6 +19,8 @@ nsch$MomsAge[which(is.element(nsch$MomsAge, c(996,997)))] <- NA # Make NA DK/ref
 nsch$MomsAgeBirth <- nsch$MomsAge - nsch$AGEYR_CHILD # Mother's age at birth = mom's age at time of survey - child's age at time of survey
 # Note some weird results here - 20 year old mothers with 17 year old children?
 # Shouldn't be an issue for our analysis since we are only working with infants/toddlers
+subset(nsch, nsch$MomsAgeBirth<=15, select = c(ID, K9Q16R, MomsAge, AGEYR_CHILD, MomsAgeBirth))
+
 
 # Recoding sex from NFP to match NSCH
 nfpdemo$NFP_ID <- nfpdemo$CL_EN_GEN_ID
