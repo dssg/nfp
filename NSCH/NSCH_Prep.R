@@ -1,17 +1,23 @@
 # Importing data
-setwd("/mnt/data/nfp-data/csv_data")
+setwd("/mnt/data/nfp_data/csv_data")
 nfpdemo <- read.csv("nfp_demographics_expanded.csv")
+setwd("/mnt/data/NSCH/data")
 nsch <- read.csv("DRC_2011_2012_NSCH.csv")
 
-
-# Recoding sex, prematurity, low birthweight variables from NSCH to match NFP
-nsch$NSCH_ID <- nsch$IDNUMR
+# Recoding sex, prematurity, low birthweight, education, marital status variables from NSCH to match NFP
+nsch$ID <- nsch$IDNUMR
 nsch$male[nsch$SEX==2] <- 0 # Male binary = 0 if child is female; null if DK/refused
 nsch$male[nsch$SEX==1] <- 1 
 nsch$premature[nsch$K2Q05==0] <- 0 # Indicator for prematurity; null if DK/refused or missing
 nsch$premature[nsch$K2Q05==1] <- 1
 nsch$lbw[nsch$ind1_8_11==1] <- 1 # Indicator for low birthweight; null if DK/refused
 nsch$lbw[nsch$ind1_8_11==2] <- 0
+nsch$highschool[nsch$EDUC_MOMR >= 3] <- 1 # Indicator for whether mother graduated from high school
+nsch$highschool[nsch$EDUC_MOMR <= 2] <- 0
+nsch$highered[nsch$EDUC_MOMR >= 5] <- 1
+nsch$highered[nsch$EDUC_MOMR < 5] <- 0
+nsch$marital_status[nsch$FAM_MAR_COHAB<=4] <- 1 # Not quite marital status - actually indicates whether child lives with two parents: biological, adopted, or step
+nsch$marital_status[nsch$FAM_MAR_COHAB>=5] <- 0
 
 # Recoding age from NSCH to match NFP
 nsch$MomsAge <- nsch$K9Q16R 
@@ -19,14 +25,69 @@ nsch$MomsAge[which(is.element(nsch$MomsAge, c(996,997)))] <- NA # Make NA DK/ref
 nsch$MomsAgeBirth <- nsch$MomsAge - nsch$AGEYR_CHILD # Mother's age at birth = mom's age at time of survey - child's age at time of survey
 # Note some weird results here - 20 year old mothers with 17 year old children?
 # Shouldn't be an issue for our analysis since we are only working with infants/toddlers
-subset(nsch, nsch$MomsAgeBirth<=15, select = c(ID, K9Q16R, MomsAge, AGEYR_CHILD, MomsAgeBirth))
+# Highlight some examples for question: subset(nsch, nsch$MomsAgeBirth<=15, select = c(NSCH_ID, K9Q16R, MomsAge, AGEYR_CHILD, MomsAgeBirth))
 
+# Recoding NSCH state to meaningful values
+## Recode NISPUF$STATE to meaningful values
+nsch$State[nsch$STATE==1] <- "AL"
+nsch$State[nsch$STATE==2] <- "AK"
+nsch$State[nsch$STATE==3] <- "AZ"
+nsch$State[nsch$STATE==4] <- "AR"
+nsch$State[nsch$STATE==5] <- "CA"
+nsch$State[nsch$STATE==6] <- "CO"
+nsch$State[nsch$STATE==7] <- "CT"
+nsch$State[nsch$STATE==8] <- "DE"
+nsch$State[nsch$STATE==9] <- "DC"
+nsch$State[nsch$STATE==10] <- "FL"
+nsch$State[nsch$STATE==11] <- "GA"
+nsch$State[nsch$STATE==12] <- "HI"
+nsch$State[nsch$STATE==13] <- "ID"
+nsch$State[nsch$STATE==14] <- "IL"
+nsch$State[nsch$STATE==15] <- "IN"
+nsch$State[nsch$STATE==16] <- "IA"
+nsch$State[nsch$STATE==17] <- "KS"
+nsch$State[nsch$STATE==18] <- "KY"
+nsch$State[nsch$STATE==19] <- "LA"
+nsch$State[nsch$STATE==20] <- "ME"
+nsch$State[nsch$STATE==21] <- "MD"
+nsch$State[nsch$STATE==22] <- "MA"
+nsch$State[nsch$STATE==23] <- "MI"
+nsch$State[nsch$STATE==24] <- "MN"
+nsch$State[nsch$STATE==25] <- "MS"
+nsch$State[nsch$STATE==26] <- "MO"
+nsch$State[nsch$STATE==27] <- "MT"
+nsch$State[nsch$STATE==28] <- "NE"
+nsch$State[nsch$STATE==29] <- "NV"
+nsch$State[nsch$STATE==30] <- "NH"
+nsch$State[nsch$STATE==31] <- "NJ"
+nsch$State[nsch$STATE==32] <- "NM"
+nsch$State[nsch$STATE==33] <- "NY"
+nsch$State[nsch$STATE==34] <- "NC"
+nsch$State[nsch$STATE==35] <- "ND"
+nsch$State[nsch$STATE==36] <- "OH"
+nsch$State[nsch$STATE==37] <- "OK"
+nsch$State[nsch$STATE==38] <- "OR"
+nsch$State[nsch$STATE==39] <- "PA"
+nsch$State[nsch$STATE==40] <- "RI"
+nsch$State[nsch$STATE==41] <- "SC"
+nsch$State[nsch$STATE==42] <- "SD"
+nsch$State[nsch$STATE==43] <- "TN"
+nsch$State[nsch$STATE==44] <- "TX"
+nsch$State[nsch$STATE==45] <- "UT"
+nsch$State[nsch$STATE==46] <- "VT"
+nsch$State[nsch$STATE==47] <- "VA"
+nsch$State[nsch$STATE==48] <- "WA"
+nsch$State[nsch$STATE==49] <- "WV"
+nsch$State[nsch$STATE==50] <- "WI"
+nsch$State[nsch$STATE==51] <- "WY"
 
-# Recoding sex from NFP to match NSCH
-nfpdemo$NFP_ID <- nfpdemo$CL_EN_GEN_ID
+# Recoding ID, higher ed, sex from NFP
+nfpdemo$ID <- nfpdemo$CL_EN_GEN_ID
+nfpdemo$highered <- 1 # Binary 1/0 for any post-HS education (original variable specifies kind of degree/schooling)
+nfpdemo$highered[nfpdemo$Client_Higher_Educ_1=="No"] <- 0
+nfpdemo$highered[nfpdemo$Client_Higher_Educ_1==""] <- NA
 nfpdemo$male[nfpdemo$Childgender=="Female"] <- 0 # Recode factor variable
 nfpdemo$male[nfpdemo$Childgender=="Male"] <- 1 
-
 
 # Race recodes: note that NSCH has only child's race and NFP has only mother's race.
 # Must assume for matching purposes that they are the same.
@@ -45,13 +106,18 @@ nfpdemo$RE[nfpdemo$RE=="Hispanic or Latina"] <- "Hispanic" # Shortening descript
 nfpdemo$RE[nfpdemo$RE=="Declined or msg"] <- NA 
 nfpdemo$RE <- factor(nfpdemo$RE) # Return to factor format with adjusted levels
 
-
-# Remove extra NSCH columns and obs for families with no children < age 2.
-NSCH_Columns <- subset(nsch, select = c(NSCH_ID, male, premature, lbw, RE))
-NSCH_Final <- subset(nsch) # Subset here by child's age
-
+# Remove extra NSCH columns, obs for families with no children < age 2, families making more than 200% of FPL
+# (WIC/NFP criteria is generally 100-185% FPL, so these mothers are not valid matches)
+NSCH_Final <- subset(nsch, nsch$POVLEVEL_I <= 2 & nsch$AGEYR_CHILD <= 4, 
+	select = c(ID, male, premature, lbw, highschool, highered, marital_status, MomsAgeBirth, State, RE))
+	
 # Remove extra NFP columns.
-NFP_Demo_Set <- subset(nfpdemo, select = c(NFP_ID, male, premature, lbw, RE))
-NFP_Final <- merge(NFP_Demo_Set, NFP_Locaton) # Merge on location information
+NFP_Final <- subset(nfpdemo, select = c(ID, male, premature, lbw, highschool, highered, 
+	marital_status, MomsAgeBirth, State, RE))
+
+# Add treatment indicator
+NSCH_Final$treatment <- 0
+NFP_Final$treatment <- 1
 
 # Combine final datasets to create analysis dataset.
+breastfeeding <- rbind(NSCH_Final, NFP_Final)
