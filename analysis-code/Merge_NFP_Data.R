@@ -16,8 +16,8 @@ demoExp <- rename(demoExp, c(sitecode = "AGENCY_NAME"))
 
 # Merge demographics and agency information
 demoAgency <- merge(demoExp, agency, by = intersect("AGENCY_NAME", "AGENCY_NAME"), all.x = TRUE)
-
-write.csv(demoAgency, "merge_results.csv")
+# Note 440 individuals in demographics dataset have names with no match in the agency set.
+# Questions and IDs sent to Dustin for review on 7/23.
 
 # Read in other (outcome) data sets
 breast <- read.csv("breast_feeding_variables.csv")
@@ -25,3 +25,4 @@ growth_immun <- read.csv("growth_immunization_outcomes.csv")
 immun_source <- read.csv("immun_record_source.csv")
 moms_life <- read.csv("secondpreg_employ_educ.csv")
 weight_gain <- read.csv("weight_gain.csv")
+attrition <- read.csv("discharge_reason.csv")
