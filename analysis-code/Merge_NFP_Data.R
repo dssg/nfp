@@ -19,10 +19,27 @@ demoAgency <- merge(demoExp, agency, by = intersect("AGENCY_NAME", "AGENCY_NAME"
 # Note 440 individuals in demographics dataset have names with no match in the agency set.
 # Questions and IDs sent to Dustin for review on 7/23.
 
-# Read in other (outcome) data sets
+# Merge this dataset with weight gain and attrition data (available for all mothers)
+weight_gain <- read.csv("weight_gain.csv")
+weight_gain <- rename(weight_gain, c(cl_en_gen_id = "CL_EN_GEN_ID"))
+deAgWg <- merge(demoAgency, weight_gain, by = intersect("CL_EN_GEN_ID","CL_EN_GEN_ID"))
+
+attrition <- read.csv("discharge_reason.csv")
+attrition <- rename(attrition, c(clid = "CL_EN_GEN_ID"))
+deAgWgAt <- merge(deAgWg, attrition, by = intersect("CL_EN_GEN_ID","CL_EN_GEN_ID"))
+
+# Read in and merge outcome datasets that share a common pool of individuals
 breast <- read.csv("breast_feeding_variables.csv")
+breast <- rename(breast, c(id2 = "CL_EN_GEN_ID"))
 growth_immun <- read.csv("growth_immunization_outcomes.csv")
 immun_source <- read.csv("immun_record_source.csv")
+immun_source  <- rename(immun_source, c(cl_en_gen_id = "CL_EN_GEN_ID"))
+
+all_immun <- merge(growth_immun, immun_source, by = intersect("CL_EN_GEN_ID","CL_EN_GEN_ID"))
+all_out <- merge(all_immun, breast, by = intersect("CL_EN_GEN_ID","CL_EN_GEN_ID"))
+
+# Read in other (outcome) data set
 moms_life <- read.csv("secondpreg_employ_educ.csv")
-weight_gain <- read.csv("weight_gain.csv")
-attrition <- read.csv("discharge_reason.csv")
+
+
+# Now working with three data sets of different lengths.  Need to identify dropped obs.
