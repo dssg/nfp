@@ -852,8 +852,7 @@ names(immun_record_source)[names(immun_record_source)=='cl_en_gen_id'] <- 'CL_EN
 ## CHECK THE DIMENSIONS BEFORE AND AFTER TO MAKE SURE IT MERGED CORRECTLY
 dim(nfp_outcomes)
 dim(immun_record_source)
-dim(demographics)
-
+dim(nfp_demographics)
 
 # Merge the datasets
 nfp_outcomes <- merge(nfp_outcomes, immun_record_source, by="CL_EN_GEN_ID")
@@ -861,16 +860,12 @@ dim(nfp_outcomes)
 
 
 
-## CHECK THE DIMENSIONS BEFORE AND AFTER TO MAKE SURE IT MERGED CORRECTLY
-dim(nfp_outcomes)
-dim(immun_record_source)
-
-
 
 # Merge NFP demographics and immunization datasets and rename ID variable
 NFPfull <- merge(nfp_demographics, nfp_outcomes, by="CL_EN_GEN_ID", all=TRUE)
 names(NFPfull)[names(NFPfull)=="CL_EN_GEN_ID"] <- "ID"
 dim(NFPfull)
+
 
 
 
@@ -926,7 +921,20 @@ NISPUF$PDAT18 <- NISPUF$PDAT
 NISPUF$PDAT24 <- NISPUF$PDAT
 
 
-  
+
+
+# Rename 4:3:1 UTD variables
+NISPUF <- NISPUF[,!(names(NISPUF) %in% c("Immunizations_UptoDate_6",
+                                         "Immunizations_UptoDate_12",
+                                         "Immunizations_UptoDate_18",
+                                         "Immunizations_UptoDate_24"))]
+names(NISPUF)[names(NISPUF)=="Immunizations_UptoDate431_6"] <- "Immunizations_UptoDate_6"
+names(NISPUF)[names(NISPUF)=="Immunizations_UptoDate431_12"] <- "Immunizations_UptoDate_12"
+names(NISPUF)[names(NISPUF)=="Immunizations_UptoDate431_18"] <- "Immunizations_UptoDate_18"
+names(NISPUF)[names(NISPUF)=="Immunizations_UptoDate431_24"] <- "Immunizations_UptoDate_24"
+
+
+
   
 # Subset using only the variables we want to use in the analysis
 NIScommon <- subset(NISPUF, select = c(ID, STATE, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
@@ -937,7 +945,8 @@ NFPcommon <- subset(NFPfull, select = c(ID, STATE, income_recode, language, Moth
 NIScommon$treatment <- 0
 NFPcommon$treatment <- 1
 
-  
+
+
 
 
 
