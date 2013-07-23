@@ -59,12 +59,15 @@ legend("topright", legend=c("NFP state", "Not an NFP state"), pch=15,
 
 summary(immunizations)
 
-# Matching: Income
+
+
+
+# Comparing NIS/NFP income
 results <- table(immunizations$income_recode, immunizations$treatment)
 results <- results[-nrow(results),]
-colnames(results) <- c("not NFP", "NFP")
-rownames(results) <- c("$0-7.5k", "$7.5-20k", "20-30k", "$30-40k", "$40k+")
-par(las=3, mar=c(2.2,3,2,1))
+colnames(results) <- c("~NFP", "NFP")
+rownames(results) <- c("$0-7.5k", "$7.5-20k", "$20-30k", "$30-40k", "$40k+")
+par(las=1, mar=c(2.2,3,2,1))
 mosaicplot(results,
            color = c("gray60", "gray80"),
            main="Income Distributions",
@@ -87,22 +90,86 @@ text(.8,0,results[5,2],cex=.75)
 
 
 
-# Matching: Mother's Education
+# Comparing NIS/NFP education
 results <- table(immunizations$HSgrad, immunizations$treatment)
 rownames(results) <- c("~HS grad", "HS grad")
-colnames(results) <- c("not NFP", "NFP")
-par(las=3, mar=c(2.2,3,2,1))
+colnames(results) <- c("~NFP", "NFP")
+par(las=1,mar=c(2.2,3,2,1))
 mosaicplot(results,
            color = c("gray60", "gray80"),
            main="Matching: Mother's Education",
            xlab="whether mother finished high school",
            ylab="NFP enrollment")
-text(.09,.65,"10947", cex=.75)
-text(.09,.18,"9351", cex=.75)
-text(.6,.5,"91560", cex=.75)
-text(.6,.025,"11109",cex=.75)
+text(.13,.775,results[1,2], cex=.75)
+text(.13,.3,results[2,2], cex=.75)
+text(.635,.55,results[2,1], cex=.75)
+text(.635,.075,results[2,2],cex=.75)
 
 
+
+
+
+# Comparing NIS/NFP mother's age
+results <- table(immunizations$MothersAge, immunizations$treatment)
+colnames(results) <- c("~NFP", "NFP")
+
+# NOT BELIEVABLE.  NUMBERS DO NOT MATCH NATIONAL VITAL STATISTICS REPORTS
+# In 2010, about 300,000 first-time births for mothers under 20 years old
+# out of a total of 1.6 million first-time births, or about 19%
+
+# Using Provider weights does not help much
+names(NISPUF)
+head(NISPUF)
+table(NISPUF$MothersAge[NISPUF$PDAT==1]) / sum(NISPUF$PDAT==1)
+table(NISPUF$MothersAge) / length(NISPUF$PDAT)
+sum(NISPUF$PROVWT[NISPUF$MothersAge=="<=19 Years"], na.rm=TRUE) / sum(NISPUF$PROVWT, na.rm=TRUE)
+sum(NISPUF$PROVWT[NISPUF$MothersAge=="20-29 Years"], na.rm=TRUE) / sum(NISPUF$PROVWT, na.rm=TRUE)
+sum(NISPUF$PROVWT[NISPUF$MothersAge==">=30 Years"], na.rm=TRUE) / sum(NISPUF$PROVWT, na.rm=TRUE)
+
+# Maybe if we just use NISPUF10
+table(NISPUF10$M_AGEGRP[NISPUF10$PDAT==1]) / sum(NISPUF10$PDAT==1)
+table(NISPUF10$M_AGEGRP) / length(NISPUF10$PDAT)
+
+
+
+
+
+# Comparing NIS/NFP married
+results <- table(immunizations$married, immunizations$treatment)
+rownames(results) <- c("~married","married")
+colnames(results) <- c("~NFP", "NFP")
+
+
+
+
+# Comparing NIS/NFP male child
+results <- table(immunizations$male, immunizations$treatment)
+rownames(results) <- c("Hispanic", "White", "Black", "Other")
+colnames(results) <- c("~NFP", "NFP")
+
+
+
+
+# Comparing NIS/NFP race/ethnicity
+results <- table(immunizations$Race, immunizations$treatment)
+rownames(results) <- c("Hispanic", "White", "Black", "Other")
+colnames(results) <- c("~NFP", "NFP")
+
+
+
+
+# Comparing NIS/NFP language
+results <- table(immunizations$language, immunizations$treatment)
+colnames(results) <- c("~NFP", "NFP")
+
+
+
+
+
+# Comparing NIS/NFP 6-month immunization rate
+results <- table(immunizations$Immunizations_UptoDate_6, immunizations$treatment)
+rownames(results) <- c("Hispanic", "White", "Black", "Other")
+colnames(results) <- c("~NFP", "NFP")
 
 
 names(immunizations)
@@ -124,14 +191,12 @@ text(.6,.025,"11109",cex=.75)
 
 names(immunizations)
 
-temp <- subset(immunizations, 
-               subset=c(!is.na(immunizations$income_recode) & 
-                          !is.na(immunizations$language) &
-                          !is.na(immunizations$MAge) & 
-                          !is.na(immunizations$RE) & 
-                          !is.na(immunizations$male) & 
-                          !is.na(immunizations$married) & 
-                          !is.na(immunizations$HSgrad)))
+
+
+
+
+
+
 
 reg <- glm(treatment ~ factor(income_recode) + factor(language) + 
              factor(MAge) + factor(RE) + male + married + HSgrad, 
