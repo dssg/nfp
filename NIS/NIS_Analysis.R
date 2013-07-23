@@ -7,38 +7,81 @@
 ##################################
 
 
+load("/mnt/data/NIS/immunizations_analysis.RData")
+
+
+
+
+##########################################
+## Plot states with NFP programs
+library(maps)
+m <- map("state", interior = FALSE, plot=FALSE)
+
+m$my.colors <- 0
+m$names
+m$my.colors[m$names %in% c("alabama","arizona","california","colorado","delaware",
+                           "florida","iowa","illinois","kentucky","louisiana",
+                           "maryland","michigan:north","michigan:south",
+                           "minnesota","missouri","north carolina:main",
+                           "north carolina:knotts","north carolina:spit",
+                           "north dakota","new jersey","nevada","new york:main",
+                           "new york:manhattan","new york:staten island",
+                           "new york:long island","ohio","oklahoma","oregon",
+                           "pennsylvania","rhode island","south carolina",
+                           "south dakota","tennessee","texas","utah",
+                           "washington:main","washington:lopez island",
+                           "washington:san juan island","washington:orcas island",
+                           "washington:whidbey island","wisconsin","wyoming")] <- "gray50"
+m$my.colors[m$names %in% c("arkansas","connecticut","district of columbia",
+                           "georgia","idaho","indiana","kansas","maine",
+                           "massachusetts:main","massachusetts:martha's vineyard",
+                           "massachusetts:nantucket","mississippi","montana",
+                           "nebraska","new hampshire","new mexico","vermont",
+                           "virginia:main","virginia:chesapeake",
+                           "virginia:chicoteague","virginia:san juan island",
+                           "west virginia")] <- "gray80"
+
+m.world <- map("world", c("USA","hawaii"), xlim=c(-180,-65), ylim=c(19,72),interior = FALSE)
+title("NFP States")
+
+map("state", boundary = TRUE, col=m$my.colors, add = TRUE, fill=TRUE )
+map("world", c("hawaii"), boundary = TRUE, col='gray80', add = TRUE, fill=TRUE )
+map("world", c("USA:Alaska"), boundary = TRUE, col='gray80', add = TRUE, fill=TRUE )
+legend("topright", legend=c("NFP state", "Not an NFP state"), pch=15, 
+       col=c("gray50","gray80"), ncol=1, cex=1.2)
+
+
+
+
+
 ##################################
 ## EXPLORATORY ANALYSIS
-
-#load("/mnt/data/NIS/modified_data/NISPUF.RData")
-
-load("/mnt/data/NIS/immunizations_analysis.RData")
 
 summary(immunizations)
 
 # Matching: Income
 results <- table(immunizations$income_recode, immunizations$treatment)
+results <- results[-nrow(results),]
 colnames(results) <- c("not NFP", "NFP")
-rownames(results) <- c("$0-7.5k", "$7.5-20k", "20-30k",
-                       "$30-40k", "$40k+", "parents")
+rownames(results) <- c("$0-7.5k", "$7.5-20k", "20-30k", "$30-40k", "$40k+")
 par(las=3, mar=c(2.2,3,2,1))
 mosaicplot(results,
            color = c("gray60", "gray80"),
-           main="Matching: Income",
+           main="Income Distributions",
            xlab="income category",
            ylab="NFP enrollment")
 
-text(.05,.7,"4221",cex=.75)
-text(.05,.2,"3571",cex=.75)
-text(.18,.65,"12953",cex=.75)
-text(.18,.15,"6691",cex=.75)
-text(.325,.6,"8813",cex=.75)
-text(.325,.1,"2271",cex=.75)
-text(.425,.5,"7672",cex=.75)
-text(.425,.03,"946",cex=.75)
-text(.72,.5,"59895",cex=.75)
-text(.72,0,"686",cex=.75)
-text(.98,0,"27",cex=.75)
+text(.07,.75,results[1,1],cex=.75)
+text(.07,.29,results[1,2],cex=.75)
+text(.25,.7,results[2,1],cex=.75)
+text(.25,.25,results[2,2],cex=.75)
+text(.435,.65,results[3,1],cex=.75)
+text(.435,.2,results[3,2],cex=.75)
+text(.54,.5,results[4,1],cex=.75)
+text(.54,.06,results[4,2],cex=.75)
+text(.8,.4,results[5,1],cex=.75)
+text(.8,0,results[5,2],cex=.75)
+
 
 
 
