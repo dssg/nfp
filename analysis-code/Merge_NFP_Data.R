@@ -13,11 +13,18 @@ agency <- agency[!agency$Site_ID==294,]
 
 # Rename agency name column in demographics file prior to merging with agency data
 demoExp <- rename(demoExp, c(sitecode = "AGENCY_NAME"))
+# Rename select agencies where names did not match between datasets
+demoExp$AGENCY_NAME <- factor(demoExp$AGENCY_NAME, levels = c(levels(demoExp$AGENCY_NAME), "Garrett County Nurse Family Partnership", 
+							"Building Blocks/NFP  Missouri-Southeast Region NFP", "Otter Tail Becker Nurse-Family Partnership", 
+							"NFP of St. Louis County and Carlton County", "North Phoenix NFP"))
+demoExp$AGENCY_NAME[demoExp$AGENCY_NAME=="Garrett Co NFP Partnership for Children  Families"] <- "Garrett County Nurse Family Partnership"
+demoExp$AGENCY_NAME[demoExp$AGENCY_NAME=="Building Blocks of Missouri-Southeast Region NFP"] <- "Building Blocks/NFP  Missouri-Southeast Region NFP"
+demoExp$AGENCY_NAME[demoExp$AGENCY_NAME=="OtterTail Nurse-Family Partnership"] <- "Otter Tail Becker Nurse-Family Partnership"
+demoExp$AGENCY_NAME[demoExp$AGENCY_NAME=="St. Louis County NFP"] <- "NFP of St. Louis County and Carlton County"
+demoExp$AGENCY_NAME[demoExp$AGENCY_NAME=="Southwest Human Development"] <- "North Phoenix NFP"
 
 # Merge demographics and agency information
-demoAgency <- merge(demoExp, agency, by = intersect("AGENCY_NAME", "AGENCY_NAME"), all.x = TRUE)
-# Note 440 individuals in demographics dataset have names with no match in the agency set.
-# Questions and IDs sent to Dustin for review on 7/23.
+demoAgency <- merge(demoExp, agency, by = intersect("AGENCY_NAME", "AGENCY_NAME"))
 
 # Merge this dataset with weight gain and attrition data (available for all mothers)
 weight_gain <- read.csv("weight_gain.csv")
