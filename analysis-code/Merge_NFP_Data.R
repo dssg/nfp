@@ -48,5 +48,22 @@ all_out <- merge(all_immun, breast, by = intersect("CL_EN_GEN_ID","CL_EN_GEN_ID"
 # Read in other (outcome) data set
 moms_life <- read.csv("secondpreg_employ_educ.csv")
 
+# Merge outcomes with individual data & identify dropped observations
+combine1 <- merge(deAgWgAt, all_out, by = intersect("CL_EN_GEN_ID","CL_EN_GEN_ID")) # Contains only obs in both sets
+combine <- merge(deAgWgAt, all_out, by = intersect("CL_EN_GEN_ID","CL_EN_GEN_ID"), all.x = TRUE) # Contains all obs from deAgWgAt
+missings <- combine[which(!is.element(combine$CL_EN_GEN_ID,combine1$CL_EN_GEN_ID)),] # Contains obs from deAgWgAt omitted from all_out
+table(missings$ReasonForDismissal)
+table(combine1$ReasonForDismissal) # Missing outcome data is not just for mothers who dropped out - some even graduated
+# write.csv(missings$CL_EN_GEN_ID, "IDsMissingOutcomes.csv") # Create csv of obs missing outcome data
 
-# Now working with three data sets of different lengths.  Need to identify dropped obs.
+comb1 <- merge(deAgWgAt, moms_life, by = intersect("CL_EN_GEN_ID", "CL_EN_GEN_ID"))
+comb <- merge(deAgWgAt, moms_life, by = intersect("CL_EN_GEN_ID", "CL_EN_GEN_ID"), all.x = TRUE)
+miss <- comb[which(!is.element(comb$CL_EN_GEN_ID, comb1$CL_EN_GEN_ID)),]
+dual_missing <- merge(missings, miss, by = intersect("CL_EN_GEN_ID", "CL_EN_GEN_ID")) # Note that 8 observations that are missing mom's life are NOT missing other outcome data!
+# write.csv(miss$CL_EN_GEN_ID, "IDsMissingMothersOutcomes.csv")
+
+# Final working datasets:
+#### For breastfeeding, immunization, and growth outcomes: includes all obs with those outcomes (7 obs are NA for mom's life outcomes)
+
+
+#### For mother's life outcomes: includes all obs with those outcomes (8,848 obs are NA for other outcomes)
