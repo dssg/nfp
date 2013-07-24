@@ -112,10 +112,13 @@ text(.635,.075,results[2,2],cex=.75)
 # Comparing NIS/NFP mother's age
 results <- table(immunizations$MothersAge, immunizations$treatment)
 colnames(results) <- c("~NFP", "NFP")
+results[,1] / sum(results[,1])
+
 
 # NOT BELIEVABLE.  NUMBERS DO NOT MATCH NATIONAL VITAL STATISTICS REPORTS
 # In 2010, about 300,000 first-time births for mothers under 20 years old
-# out of a total of 1.6 million first-time births, or about 19%
+# out of a total of 1.6 million first-time births, or about 19%.  Also, 56%
+# of first-time mothers seems too high.
 
 # Using Provider weights does not help much
 names(NISPUF)
@@ -129,6 +132,15 @@ sum(NISPUF$PROVWT[NISPUF$MothersAge==">=30 Years"], na.rm=TRUE) / sum(NISPUF$PRO
 # Maybe if we just use NISPUF10
 table(NISPUF10$M_AGEGRP[NISPUF10$PDAT==1]) / sum(NISPUF10$PDAT==1)
 table(NISPUF10$M_AGEGRP) / length(NISPUF10$PDAT)
+
+# This appears to be because the NIS is recording the mother's age at the time
+# of the interview, not at the time of birth.  If 19% of first-time mothers are
+# under 20 at the time of birth, and if 66% are 18-19 and 94% are 16-19, then 
+# it makes sense that only 2-3% would be 19 years old or younger when their
+# children are 19-35 months old.  Furthermore, if 26% of mothers are at least 30
+# at the time of birth and if 52% are at least 25 at the time of birth, then 
+# it makes sense that 56% of mothers would be at least 30 19-35 months later.
+
 
 
 
@@ -189,22 +201,49 @@ text(.6,.5,"91560", cex=.75)
 text(.6,.025,"11109",cex=.75)
 
 
-names(immunizations)
+
+
+###############################
+## Unmatched immunization rates
+mean(immunizations$Immunizations_UptoDate_6[immunizations$treatment==0], na.rm=TRUE)
+  mean(immunizations$Immunizations_UptoDate_6[immunizations$treatment==1], na.rm=TRUE)
+mean(immunizations$Immunizations_UptoDate_12[immunizations$treatment==0], na.rm=TRUE)
+  mean(immunizations$Immunizations_UptoDate_12[immunizations$treatment==1], na.rm=TRUE)
+mean(immunizations$Immunizations_UptoDate_18[immunizations$treatment==0], na.rm=TRUE)
+  mean(immunizations$Immunizations_UptoDate_18[immunizations$treatment==1], na.rm=TRUE)
+mean(immunizations$Immunizations_UptoDate_24[immunizations$treatment==0], na.rm=TRUE)
+  mean(immunizations$Immunizations_UptoDate_24[immunizations$treatment==1], na.rm=TRUE)
 
 
 
 
 
+###############################
+## Propensity score model
+PSM_Matching <- immunizations[complete.cases(immunizations),]
 
+summary(PSM_Matching)
+# lots of the treatments dropped
 
-
+# PSM
 reg <- glm(treatment ~ factor(income_recode) + factor(language) + 
-             factor(MAge) + factor(RE) + male + married + HSgrad, 
-           data=temp, family=binomial)
+             factor(Race) + married + HSgrad, 
+           data=PSM_Matching, family=binomial(link='logit'))
 
-p <- reg$fitted
-p.t <- p[temp$treatment==1& p>.05]
-p.c <- p[temp$treatment==0& p>.05]
+
+
+library(Matching)
+rr1 <- Match(Tr=PSM_dataset$treatment, X=reg$fitted.values)
+summary(rr1)
+
+MatchBalance(PSM_dataset$treatment ~ factor(income_recode) + factor(language) + 
+             factor(Race) + married + HSgrad, data=PSM_dataset, match.out=rr1, 
+             nboots=1000)
+
+
+
+
+
 
 #SHOW WITH MATCHES
 par(mfrow=c(2,1))
