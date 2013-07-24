@@ -13,15 +13,40 @@ agency <- agency[!agency$Site_ID==294,]
 
 # Rename agency name column in demographics file prior to merging with agency data
 demoExp <- rename(demoExp, c(sitecode = "AGENCY_NAME"))
+# Rename select agencies where names did not match between datasets
+demoExp$AGENCY_NAME <- factor(demoExp$AGENCY_NAME, levels = c(levels(demoExp$AGENCY_NAME), "Garrett County Nurse Family Partnership", 
+							"Building Blocks/NFP  Missouri-Southeast Region NFP", "Otter Tail Becker Nurse-Family Partnership", 
+							"NFP of St. Louis County and Carlton County", "North Phoenix NFP"))
+demoExp$AGENCY_NAME[demoExp$AGENCY_NAME=="Garrett Co NFP Partnership for Children  Families"] <- "Garrett County Nurse Family Partnership"
+demoExp$AGENCY_NAME[demoExp$AGENCY_NAME=="Building Blocks of Missouri-Southeast Region NFP"] <- "Building Blocks/NFP  Missouri-Southeast Region NFP"
+demoExp$AGENCY_NAME[demoExp$AGENCY_NAME=="OtterTail Nurse-Family Partnership"] <- "Otter Tail Becker Nurse-Family Partnership"
+demoExp$AGENCY_NAME[demoExp$AGENCY_NAME=="St. Louis County NFP"] <- "NFP of St. Louis County and Carlton County"
+demoExp$AGENCY_NAME[demoExp$AGENCY_NAME=="Southwest Human Development"] <- "North Phoenix NFP"
 
 # Merge demographics and agency information
-demoAgency <- merge(demoExp, agency, by = intersect("AGENCY_NAME", "AGENCY_NAME"), all.x = TRUE)
+demoAgency <- merge(demoExp, agency, by = intersect("AGENCY_NAME", "AGENCY_NAME"))
 
-write.csv(demoAgency, "merge_results.csv")
+# Merge this dataset with weight gain and attrition data (available for all mothers)
+weight_gain <- read.csv("weight_gain.csv")
+weight_gain <- rename(weight_gain, c(cl_en_gen_id = "CL_EN_GEN_ID"))
+deAgWg <- merge(demoAgency, weight_gain, by = intersect("CL_EN_GEN_ID","CL_EN_GEN_ID"))
 
-# Read in other (outcome) data sets
+attrition <- read.csv("discharge_reason.csv")
+attrition <- rename(attrition, c(clid = "CL_EN_GEN_ID"))
+deAgWgAt <- merge(deAgWg, attrition, by = intersect("CL_EN_GEN_ID","CL_EN_GEN_ID"))
+
+# Read in and merge outcome datasets that share a common pool of individuals
 breast <- read.csv("breast_feeding_variables.csv")
+breast <- rename(breast, c(id2 = "CL_EN_GEN_ID"))
 growth_immun <- read.csv("growth_immunization_outcomes.csv")
 immun_source <- read.csv("immun_record_source.csv")
+immun_source  <- rename(immun_source, c(cl_en_gen_id = "CL_EN_GEN_ID"))
+
+all_immun <- merge(growth_immun, immun_source, by = intersect("CL_EN_GEN_ID","CL_EN_GEN_ID"))
+all_out <- merge(all_immun, breast, by = intersect("CL_EN_GEN_ID","CL_EN_GEN_ID"))
+
+# Read in other (outcome) data set
 moms_life <- read.csv("secondpreg_employ_educ.csv")
-weight_gain <- read.csv("weight_gain.csv")
+
+
+# Now working with three data sets of different lengths.  Need to identify dropped obs.
