@@ -364,7 +364,7 @@ NISPUF$HepB12 <- 0	# adequate immunizations at 12 months
 NISPUF$HepB18 <- 0	# adequate immunizations at 18 months
   NISPUF$HepB18[NISPUF$DHEPB3<3/2*366+30] <- 1
 NISPUF$HepB24 <- 0	# adequate immunizations at 24 months
-  NISPUF$HepB24[NISPUF$DHEPB3<31*24+31] <- 1
+  NISPUF$HepB24[NISPUF$DHEPB3<31*24+30] <- 1
 
 # DTaP immunizations up to date
 NISPUF$DTaP6 <- 0
@@ -443,13 +443,13 @@ NISPUF$Rotavirus24 <- 0
 
 # 4 DTaP, 3 polio, 1 measles immunizations up to date
 NISPUF$Immunizations_UptoDate431_6 <- 0
-NISPUF$Immunizations_UptoDate431_6[NISPUF$DTaP6==1 & NISPUF$Polio6==1 & NISPUF$MMR6==1] <- 1
+  NISPUF$Immunizations_UptoDate431_6[NISPUF$DTaP6==1 & NISPUF$Polio6==1 & NISPUF$MMR6==1] <- 1
 NISPUF$Immunizations_UptoDate431_12 <- 0
-NISPUF$Immunizations_UptoDate431_12[NISPUF$DTaP12==1 & NISPUF$Polio12==1 & NISPUF$MMR12==1] <- 1
+  NISPUF$Immunizations_UptoDate431_12[NISPUF$DTaP12==1 & NISPUF$Polio12==1 & NISPUF$MMR12==1] <- 1
 NISPUF$Immunizations_UptoDate431_18 <- 0
-NISPUF$Immunizations_UptoDate431_18[NISPUF$DTaP18==1 & NISPUF$Polio18==1 & NISPUF$MMR18==1] <- 1
+  NISPUF$Immunizations_UptoDate431_18[NISPUF$DTaP18==1 & NISPUF$Polio18==1 & NISPUF$MMR18==1] <- 1
 NISPUF$Immunizations_UptoDate431_24 <- 0
-NISPUF$Immunizations_UptoDate431_24[NISPUF$DTaP24==1 & NISPUF$Polio24==1 & NISPUF$MMR24==1] <- 1
+  NISPUF$Immunizations_UptoDate431_24[NISPUF$DTaP24==1 & NISPUF$Polio24==1 & NISPUF$MMR24==1] <- 1
 
 
 
@@ -885,7 +885,6 @@ names(NISPUF)[names(NISPUF)=="SEQNUMC"] <- "ID"
 
 NFPfull$weight <- 1
 
-names(NISPUF)
 NISPUF$weight <- 0
   NISPUF$weight[NISPUF$AGEGRP==1 & NISPUF$YEAR==2009] <- 5/16
 
@@ -933,12 +932,12 @@ names(NISPUF)[names(NISPUF)=="Immunizations_UptoDate431_12"] <- "Immunizations_U
 names(NISPUF)[names(NISPUF)=="Immunizations_UptoDate431_18"] <- "Immunizations_UptoDate_18"
 names(NISPUF)[names(NISPUF)=="Immunizations_UptoDate431_24"] <- "Immunizations_UptoDate_24"
 
-
+sort(names(NFPfull))
 
   
 # Subset using only the variables we want to use in the analysis
-NIScommon <- subset(NISPUF, select = c(ID, STATE, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
-NFPcommon <- subset(NFPfull, select = c(ID, STATE, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
+NIScommon <- subset(NISPUF, select = c(ID, STATE, PDAT6, PDAT12, PDAT18, PDAT24, weight, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
+NFPcommon <- subset(NFPfull, select = c(ID, STATE, PDAT6, PDAT12, PDAT18, PDAT24, weight, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
 # Other NIS variables to potentially subset on: PDAT, C5R, INCPORAR, FRSTBRN, AGEGRP
 
 # Create treatment variable
