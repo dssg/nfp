@@ -6,8 +6,10 @@
 ##        Adam Fishman          ##
 ##################################
 
-setwd("/mnt/data/NIS/modified_data/")
+library(survey)   #TO USE svydesign(), svymean(), and svyby()
+library(Hmisc)    #TO USE prn()
 
+setwd("/mnt/data/NIS/modified_data/")
 
 
 
@@ -30,6 +32,55 @@ setwd("/mnt/data/NIS/modified_data/")
 #source("/mnt/data/NIS/original_data/nispuf08.r")
 
 load("NISPUF08.RData")
+
+# Check validity of my coding by replicating estimates in the NIS 2010 documentation
+table(NISPUF08$EDUC1); sum(is.na(NISPUF08$EDUC1))         # Education matches
+table(NISPUF08$SC_431); sum(is.na(NISPUF08$SC_431))       # Shot card 4:3:1 matches
+table(NISPUF08$M_AGEGRP); sum(is.na(NISPUF08$M_AGEGRP))   # Mother's age matches
+
+
+UTD4313levels=c(0,1)
+UTD4313labels=c("NOT 4:3:1:3 UTD", "4:3:1:3 UTD")
+ESTIAPlevels=c(1, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 2, 20, 22, 24, 25, 27,
+               28, 29, 30, 31, 34, 35, 36, 38, 4, 40, 41, 44, 46, 47, 49, 5, 50, 51, 52, 53, 54,
+               55, 56, 57, 58, 59, 6, 60, 61, 62, 63, 64, 65, 66, 68, 69, 7, 70, 72, 73, 74, 75,
+               76, 77,
+               774, 8, 85, 91, 92, 93)
+ESTIAPlabels=c("CT", "NY-REST OF STATE", "NY-CITY OF NEW YORK", "DC", "DE", "MD-
+REST OF STATE", "MD-CITY OF BALTIMORE", "PA-REST OF STATE", "PA-PHILADELPHIA
+COUNTY", "VA", "WV", "MA", "AL", "FL-REST OF STATE", "FL-MIAMI-DADE COUNTY", "GA",
+               "KY", "MS",
+               "NC", "SC", "TN", "IL-REST OF STATE", "IL-CITY OF CHICAGO", "IN", "MI", "ME", "MN-
+REST OF STATE", "OH", "WI", "AR", "LA", "NM", "NH", "OK", "TX-REST OF STATE", "TX-
+DALLAS COUNTY", "TX-EL PASO COUNTY", "TX-CITY OF HOUSTON", "TX-BEXAR COUNTY", "IA",
+               "KS",
+               "MO", "NE", "RI", "CO", "MT", "ND", "SD", "UT", "WY", "AZ", "CA-REST OF STATE",
+               "CA-LOS ANGELES COUNTY", "VT", "CA-SANTA CLARA COUNTY", "HI", "NV", "AK", "ID",
+               "OR", "WA-REST OF STATE", "WA-EASTERN/WESTERN WA", "NJ", "CA-NORTHERN CA", "FL-
+ORANGE COUNTY",
+               "IL-MADISON/ST. CLAIR COUNTIES", "MN-TWIN CITIES")
+
+R_FILE <- subset(NISPUF08, select=c(SEQNUMHH, SEQNUMC, PUTD4313, ESTIAP08, PROVWT))
+names(R_FILE) <- c("SEQNUMHH", "SEQNUMC", "PUTD4313", "ESTIAP", "WT")
+R_FILE <- na.omit(R_FILE)
+#---ASSIGN LABELS---#
+R_FILE$PUTD4313 <- factor(R_FILE$PUTD4313, levels=UTD4313levels, labels=UTD4313labels)
+
+#---SPECIFY A SAMPLING DESIGN---#
+svydsg <- svydesign(id=~SEQNUMHH, strata=~ESTIAP, weights=~WT, data=R_FILE)
+
+#---U.S. TOTAL ESTIMATES AND STANDARD ERRORS---#
+r_nation <- svymean(~PUTD4313, svydsg)
+r_nation
+PERCENT_UTD <- round(r_nation*100,2) #CONVERT INTO PERCENT ESTIMATES(MEAN)
+SE_UTD <- round(SE(r_nation)*100,2) #CONVERT INTO PERCENT ESTIMATES(SE)
+r_nation_est <- cbind(PERCENT_UTD, SE_UTD)
+title <- "PERCENT 4:3:1:3 ESTIMATES AT A NATIONWIDE LEVEL"
+c(r_nation_est, title)
+
+
+xxx
+
 
 
 # 2008 data has INS_4 and INS_5; other years have INS_4_5.  Create INS_4_5 and drop other two.

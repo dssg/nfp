@@ -7,6 +7,8 @@
 ##################################
 
 
+require(ggplot2)
+
 load("/mnt/data/NIS/immunizations_analysis.RData")
 
 
@@ -106,6 +108,9 @@ text(.13,.775,results[1,2], cex=.75)
 text(.13,.3,results[2,2], cex=.75)
 text(.635,.55,results[2,1], cex=.75)
 text(.635,.075,results[2,2],cex=.75)
+
+
+
 
 
 
@@ -291,7 +296,7 @@ reg <- glm(treatment ~ factor(income_recode) + factor(language) +
              factor(Race) + married + HSgrad, 
            data=PSM_Matching, family=binomial(link='logit'))
 
-length(PSM_Matching$treatment)
+
 
 
 ## Six-month rate
@@ -349,24 +354,29 @@ summary(rr24)
 ############################
 # Plot immunization rates
 
-
-png("Meetup_immunizations.png")
+setwd("/mnt/data/NIS/")
+png("Meetup_three_immunizations.png", width=13.3, height=7.5, units="in", res=100)
 y.coord <- c(mean(PSM_Matching$Immunizations_UptoDate_6[PSM_Matching$treatment==1 & PSM_Matching$PDAT6==1],na.rm=T),
              mean(PSM_Matching$Immunizations_UptoDate_12[PSM_Matching$treatment==1 & PSM_Matching$PDAT12==1],na.rm=T),
              mean(PSM_Matching$Immunizations_UptoDate_18[PSM_Matching$treatment==1 & PSM_Matching$PDAT18==1],na.rm=T),
              mean(PSM_Matching$Immunizations_UptoDate_24[PSM_Matching$treatment==1 & PSM_Matching$PDAT24==1],na.rm=T))
-plot(c(6,12,18,24), y.coord, pch=19, xlim=c(6,24), ylim=c(0,1), axes=F,
+par(mar=c(4.5,5.5,4,1.5), cex.main=2, cex.axis=1.5, cex.lab=2, las=1)
+plot(c(6,12,18,24), 100*y.coord, pch=19, xlim=c(6,24), ylim=c(0,100), 
+     axes=F, 
+     type='l', lwd=4,
      main='Up-to-Date Vaccination Rates',
      xlab='months since birth', 
-     ylab='proportion of children up to date')
+     ylab='% of children UTD    ')
 axis(1,at=c(6,12,18,24))
-axis(2)
+axis(2,at=c(0,25,50,75,100))
 box()
-points(c(6,12,18,24), y.coord-c(0.32563, 0.062674, 0.2865, 0.17554), pch=19, col='red')
-points(c(6,12,18,24), apply(bootstrap_genpop_immunizations,2,mean), pch=19, col='blue')
+points(c(6,12,18,24), 100*(y.coord-c(0.32563, 0.062674, 0.2865, 0.17554)), 
+       pch=19, col='red', type='l', lwd=4)
+points(c(6,12,18,24), 100*c(0.7282518, 0.9184530, 0.7286034, 0.8451572), 
+       pch=19, col='blue', type='l', lwd=4)
 
-legend('bottomright', pch=19, col=c("black","red","blue"), 
-       legend=c("NFP","Matched Group","General Population"))
+legend('bottomright', lty=1, lwd=4, col=c("black","red","blue"), 
+       legend=c("NFP","Matched Group","General Population"),cex=1.5)
 dev.off()
 
 
@@ -375,7 +385,37 @@ dev.off()
 
 
 
+##############################
+## Motivation
+## Motivation could be a confounder.  If motivation increases the probability 
+## that a woman enrolls and that a child receives immunizations / goes to the
+## doctor / etc, then it is a confounder and its effect needs to be accounted 
+## for.  
+##
+## One piece of evidence that suggests motivation is not a big issue is the
+## stability of the NFP immunization rates across 6, 12, 18, and 24 months.
+## NFP has a high attrition rate -- they lose over half their clients before 
+## the children turn two -- so the women who remain in the program are 
+## probably the most motivated.  Yet the immunization rate for kids (as 
+## verified with records) remains flat over time.  It should increase if
+## motivation is a cause.
+##
+## Perhaps I'm wrong to assume that the women still in the program when their 
+## child turns two are more motivated than the women in the program when
+## their child turns two.  It could be that women either drop quickly, perhaps
+## before the kid is even born, or not at all.  Then the women enrolled at 6 
+## months and 24 months would be the same.  We can check this when we get dates
+## for add/drop dates for each client from Bill.
 
+
+
+
+
+##############################
+##  How accurate are self-reported immunization rates?
+##
+## First, who has shot cards?
+names()
 
 
 # What proportion of those who gave permission had adequate provider records?
@@ -390,84 +430,3 @@ unique(NISPUF$AGEGRP)
 # How reliable are household shot cards?
 
 
-
-
-
-
-# How many shots of each vaccine are kids receiving?
-
-
-
-
-
-# Examine results for 6-month vaccinations
-mean(HepB6==1)
-mean(DTaP6==1)
-mean(Hib6==1)
-mean(Polio6==1) 
-mean(PCV6==1)
-mean(MMR6==1)
-mean(Varicella6==1)
-mean(HepA6==1)
-mean(Rotavirus6==1)
-
-
-# Examine results for 6-month vaccinations
-mean(HepB6==1)
-mean(DTaP6==1)
-mean(Hib6==1)
-mean(Polio6==1) 
-mean(PCV6==1)
-mean(MMR6==1)
-mean(Varicella6==1)
-mean(HepA6==1)
-mean(Rotavirus6==1)
-
-
-
-
-
-##################################
-## MATCHING
-
-# Install and import packages.
-install.packages("Matching", repo="http://cran.rstudio.com")
-library(Matching)
-
-setwd("/mnt/data/NIS")
-load("immunizations_analysis.RData")
-
-# Define D, X, Y, and Z.
-# D is an indicator of whether the observation came from the NFP data set.
-# X are controls for the independent variables in the regression of Y on D.
-# Y is the outcome of interest.
-# Z include all X and the other variables that may impact likelihood of treatment, but do not independently impact the outcome.
-
-D <- immunizations$treatment
-X <- subset(immunizations, select = c(income_recode, state, language, MAg, RE, male, married, HSgrad))
-Y <- immunizations$Immunizations_UptoDate_6
-Z <- subset(immunizations, select = c())
-
-# Regress D on Z to create propensity scores (probit model)
-
-probit <- glm(D ~ ., family = binomial(link = "probit"), data = Z)
-summary(probit)
-
-psm <- predict(probit, data = Z, type = "response")
-
-# Create M, a vector of covariates on which to match, including (but not limited to) propensity score
-
-M <- cbind(Z, ps)
-
-# Complete matching!
-k <- [insert desired number of matches for each observation]
-
-match <- Match(Y = Y, Tr = D, X = M, M = k, caliper = ? (will we want one?))
-summary(match) 
- 
-##Add "CommonSupport=TRUE" argument to limit to areas of common support , though R documentation recommends setting a caliper instead
-## Consider using the GenMatch method - determines weights for each of M in matching with the goal of minimizing the maximum observed discrepancy between paired observations
-## Use MatchBalance() to check balance before and after matching with Match (GenMatch automatically finds balance)
-## Note that Matchby() function may be useful for stratified matching?
-
-# Calculate weighted average across centers
