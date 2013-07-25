@@ -1,6 +1,6 @@
 # Importing data
 setwd("/mnt/data/nfp_data/csv_data")
-nfpdemo <- read.csv("nfp_demographics_expanded.csv")
+nfp <- read.csv("Full_NFP_Data_Child_Development_Outcomes.csv")
 setwd("/mnt/data/NSCH/data")
 nsch <- read.csv("DRC_2011_2012_NSCH.csv")
 
@@ -82,12 +82,12 @@ nsch$State[nsch$STATE==50] <- "WI"
 nsch$State[nsch$STATE==51] <- "WY"
 
 # Recoding ID, higher ed, sex from NFP
-nfpdemo$ID <- nfpdemo$CL_EN_GEN_ID
-nfpdemo$highered <- 1 # Binary 1/0 for any post-HS education (original variable specifies kind of degree/schooling)
-nfpdemo$highered[nfpdemo$Client_Higher_Educ_1=="No"] <- 0
-nfpdemo$highered[nfpdemo$Client_Higher_Educ_1==""] <- NA
-nfpdemo$male[nfpdemo$Childgender=="Female"] <- 0 # Recode factor variable
-nfpdemo$male[nfpdemo$Childgender=="Male"] <- 1 
+nfp$ID <- nfpdemo$CL_EN_GEN_ID
+nfp$highered <- 1 # Binary 1/0 for any post-HS education (original variable specifies kind of degree/schooling)
+nfp$highered[nfp$Client_Higher_Educ_1=="No"] <- 0
+nfp$highered[nfp$Client_Higher_Educ_1==""] <- NA
+nfp$male[nfp$Childgender=="Female"] <- 0 # Recode factor variable
+nfp$male[nfp$Childgender=="Male"] <- 1 
 
 # Race recodes: note that NSCH has only child's race and NFP has only mother's race.
 # Must assume for matching purposes that they are the same.
@@ -101,10 +101,10 @@ nsch$RE[nsch$HISPANIC==0 & nsch$RACER==1] <- "WhiteNH"
 nsch$RE[nsch$HISPANIC==0 & nsch$RACER==2] <- "BlackNH"
 nsch$RE[nsch$HISPANIC==0 & nsch$RACER==3] <- "Other"
 
-nfpdemo$RE <- as.character(nfpdemo$MomsRE) # Renaming variable
-nfpdemo$RE[nfpdemo$RE=="Hispanic or Latina"] <- "Hispanic" # Shortening description
-nfpdemo$RE[nfpdemo$RE=="Declined or msg"] <- NA 
-nfpdemo$RE <- factor(nfpdemo$RE) # Return to factor format with adjusted levels
+nfpdemo$RE <- as.character(nfp$MomsRE) # Renaming variable
+nfpdemo$RE[nfp$RE=="Hispanic or Latina"] <- "Hispanic" # Shortening description
+nfpdemo$RE[nfp$RE=="Declined or msg"] <- NA 
+nfpdemo$RE <- factor(nfp$RE) # Return to factor format with adjusted levels
 
 # Remove extra NSCH columns, obs for families with no children < age 2, families making more than 200% of FPL
 # (WIC/NFP criteria is generally 100-185% FPL, so these mothers are not valid matches)
@@ -112,7 +112,7 @@ NSCH_Final <- subset(nsch, nsch$POVLEVEL_I <= 2 & nsch$AGEYR_CHILD <= 4,
 	select = c(ID, male, premature, lbw, highschool, highered, marital_status, MomsAgeBirth, State, RE))
 	
 # Remove extra NFP columns.
-NFP_Final <- subset(nfpdemo, select = c(ID, male, premature, lbw, highschool, highered, 
+NFP_Final <- subset(nfp, select = c(ID, male, premature, lbw, highschool, highered, 
 	marital_status, MomsAgeBirth, State, RE))
 
 # Add treatment indicator

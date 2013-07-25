@@ -48,5 +48,39 @@ all_out <- merge(all_immun, breast, by = intersect("CL_EN_GEN_ID","CL_EN_GEN_ID"
 # Read in other (outcome) data set
 moms_life <- read.csv("secondpreg_employ_educ.csv")
 
+# Merge outcomes with individual data & identify dropped observations
+combine1 <- merge(deAgWgAt, all_out, by = intersect("CL_EN_GEN_ID","CL_EN_GEN_ID")) # Contains only obs in both sets
+combine <- merge(deAgWgAt, all_out, by = intersect("CL_EN_GEN_ID","CL_EN_GEN_ID"), all.x = TRUE) # Contains all obs from deAgWgAt
+missings <- combine[which(!is.element(combine$CL_EN_GEN_ID,combine1$CL_EN_GEN_ID)),] # Contains obs from deAgWgAt omitted from all_out
+table(missings$ReasonForDismissal)
+table(combine1$ReasonForDismissal) # Missing outcome data is not just for mothers who dropped out - some even graduated
+# write.csv(missings$CL_EN_GEN_ID, "IDsMissingOutcomes.csv") # Create csv of obs missing outcome data
 
-# Now working with three data sets of different lengths.  Need to identify dropped obs.
+comb1 <- merge(deAgWgAt, moms_life, by = intersect("CL_EN_GEN_ID", "CL_EN_GEN_ID"))
+comb <- merge(deAgWgAt, moms_life, by = intersect("CL_EN_GEN_ID", "CL_EN_GEN_ID"), all.x = TRUE)
+miss <- comb[which(!is.element(comb$CL_EN_GEN_ID, comb1$CL_EN_GEN_ID)),]
+dual_missing <- merge(missings, miss, by = intersect("CL_EN_GEN_ID", "CL_EN_GEN_ID")) # Note that 8 observations that are missing mom's life are NOT missing other outcome data!
+# write.csv(miss$CL_EN_GEN_ID, "IDsMissingMothersOutcomes.csv")
+
+# Final working datasets:
+#### For breastfeeding, immunization, and growth outcomes: includes all obs with those outcomes (7 obs are NA for mom's life outcomes)
+childout <- merge(combine1, moms_life, by = intersect("CL_EN_GEN_ID", "CL_EN_GEN_ID"), all.x = TRUE)
+drop_names <- c("X.x.x", "HSGED_Last_Grade_1.y", "Client_Higher_Educ_1.y", "Client_Educ_Cur_Enroll_1.y", 
+				"Client_Cur_Enroll_Type_1.y", "Childgender.y", "PREPGKG.y", "PREPGBMI.y", "X.y.x", "X.x.x",
+				"X.y.x", "X.x.y", "X.y.y", "X.x", "X.y") # Drop duplicated or unnecessary variables
+childout2 <- childout[,!(names(childout) %in% drop_names)]
+childout3 <- rename(childout2, c(HSGED_Last_Grade_1.x = "HSGED_Last_Grade_1", Client_Higher_Educ_1.x = "Client_Higher_Educ_1",
+								Client_Educ_Cur_Enroll_1.x = "Client_Educ_Cur_Enroll_1", Client_Cur_Enroll_Type_1.x =
+								"Client_Cur_Enroll_Type_1", Childgender.x = "Childgender"))
+write.csv(childout3,"Full_NFP_Data_Child_Development_Outcomes.csv")
+
+#### For mother's life outcomes: includes all obs with those outcomes (8,848 obs are NA for other outcomes)
+momsout <- merge(comb1, all_out, by = intersect("CL_EN_GEN_ID", "CL_EN_GEN_ID"), all.x = TRUE)
+momsout2 <- momsout[,!(names(momsout) %in% drop_names)]
+momsout3 <- rename(momsout2, c(HSGED_Last_Grade_1.x = "HSGED_Last_Grade_1", Client_Higher_Educ_1.x = "Client_Higher_Educ_1",
+								Client_Educ_Cur_Enroll_1.x = "Client_Educ_Cur_Enroll_1", Client_Cur_Enroll_Type_1.x =
+								"Client_Cur_Enroll_Type_1", Childgender.x = "Childgender"))
+write.csv(momsout3,"Full_NFP_Data_Mothers_Outcomes.csv")
+
+## Usually, saving these datasets as RData would make for easy workflow.
+## However, saving as CSVs allows us to start each analysis by importing a CSV, making our code easier to apply in other contexts.
