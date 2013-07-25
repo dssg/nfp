@@ -64,6 +64,12 @@ dual_missing <- merge(missings, miss, by = intersect("CL_EN_GEN_ID", "CL_EN_GEN_
 
 # Final working datasets:
 #### For breastfeeding, immunization, and growth outcomes: includes all obs with those outcomes (7 obs are NA for mom's life outcomes)
-
+childout <- merge(combine1, moms_life, by = intersect("CL_EN_GEN_ID", "CL_EN_GEN_ID"), all.x = TRUE)
+write.csv(childout,"Full_NFP_Data_Child_Development_Outcomes.csv")
 
 #### For mother's life outcomes: includes all obs with those outcomes (8,848 obs are NA for other outcomes)
+momsout <- merge(comb1, all_out, by = intersect("CL_EN_GEN_ID", "CL_EN_GEN_ID"), all.x = TRUE)
+write.csv(momsout,"Full_NFP_Data_Mothers_Outcomes.csv")
+
+## Usually, saving these datasets as RData would make for easy workflow.
+## However, saving as CSVs allows us to start each analysis by importing a CSV, making our code easier to apply in other contexts.
