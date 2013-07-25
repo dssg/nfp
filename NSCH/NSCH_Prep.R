@@ -82,7 +82,7 @@ nsch$State[nsch$STATE==50] <- "WI"
 nsch$State[nsch$STATE==51] <- "WY"
 
 # Recoding ID, higher ed, sex from NFP
-nfp$ID <- nfpdemo$CL_EN_GEN_ID
+nfp$ID <- nfp$CL_EN_GEN_ID
 nfp$highered <- 1 # Binary 1/0 for any post-HS education (original variable specifies kind of degree/schooling)
 nfp$highered[nfp$Client_Higher_Educ_1=="No"] <- 0
 nfp$highered[nfp$Client_Higher_Educ_1==""] <- NA
@@ -101,19 +101,30 @@ nsch$RE[nsch$HISPANIC==0 & nsch$RACER==1] <- "WhiteNH"
 nsch$RE[nsch$HISPANIC==0 & nsch$RACER==2] <- "BlackNH"
 nsch$RE[nsch$HISPANIC==0 & nsch$RACER==3] <- "Other"
 
-nfpdemo$RE <- as.character(nfp$MomsRE) # Renaming variable
-nfpdemo$RE[nfp$RE=="Hispanic or Latina"] <- "Hispanic" # Shortening description
-nfpdemo$RE[nfp$RE=="Declined or msg"] <- NA 
-nfpdemo$RE <- factor(nfp$RE) # Return to factor format with adjusted levels
+nfp$RE <- as.character(nfp$MomsRE) # Renaming variable
+nfp$RE[nfp$RE=="Hispanic or Latina"] <- "Hispanic" # Shortening description
+nfp$RE[nfp$RE=="Declined or msg"] <- NA 
+nfp$RE <- factor(nfp$RE) # Return to factor format with adjusted levels
+
+
+# Dependent variables!  Need a common set of outcomes.
+nsch$ever_breastfed <- factor(nsch$K6Q40) # Indicator variable for whether the child has ever been breastfed
+
+nsch$week_end_breast <- (K6Q41R/7)
+# Although NFP collects data for whether child is still breastfed at 6, 12, 18, and 24 months,
+#  the question "How old was your baby when s/he stopped getting breast milk?" most closely parallels
+#  NSCH's "How old was he/she when he/she completely stopped breastfeeding or being fed breast milk?"
+# Note: some inconsistency in respondents' answers between the interval questions and the final estimate.
 
 # Remove extra NSCH columns, obs for families with no children < age 2, families making more than 200% of FPL
 # (WIC/NFP criteria is generally 100-185% FPL, so these mothers are not valid matches)
 NSCH_Final <- subset(nsch, nsch$POVLEVEL_I <= 2 & nsch$AGEYR_CHILD <= 4, 
-	select = c(ID, male, premature, lbw, highschool, highered, marital_status, MomsAgeBirth, State, RE))
+	select = c(ID, male, premature, lbw, highschool, highered, marital_status, MomsAgeBirth, State, RE, 
+	ever_breastfed, week_end_breast))
 	
 # Remove extra NFP columns.
 NFP_Final <- subset(nfp, select = c(ID, male, premature, lbw, highschool, highered, 
-	marital_status, MomsAgeBirth, State, RE))
+	marital_status, MomsAgeBirth, State, RE, ever_breastfed, week_end_breast))
 
 # Add treatment indicator
 NSCH_Final$treatment <- 0
