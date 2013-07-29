@@ -154,10 +154,10 @@ NFP_Final$treatment <- 1
 
 # Combine final datasets to create analysis dataset.
 breastfeeding <- rbind(NSCH_Final, NFP_Final)
-save(breastfeeding, "Breastfeeding.RData")
+save(breastfeeding, file = "Breastfeeding.RData")
 
 
 # Creating one dataset without dropping any NSCH obs and keeping weights, to get general population statistics.
 NSCH_Full <- subset(nsch, select = c(ID, male, premature, lbw, highschool, highered, marital_status, 
 			MomsAgeBirth, State, RE, english, breastfed, week_end_breast, NSCHWT))
-save(NSCH_Full, "FullNSCH.RData")
+save(NSCH_Full, file = "FullNSCH.RData")
