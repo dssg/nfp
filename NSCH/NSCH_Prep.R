@@ -13,7 +13,7 @@ nsch$premature[nsch$K2Q05==1] <- 1
 nsch$lbw[nsch$K2Q04R<=88] <- 1 # Indicator for low birthweight; null if DK/refused
 nsch$lbw[89<=nsch$K2Q04R] <- 0
 nsch$marital_status[!is.na(nsch$FAM_MAR_COHAB)] <- 0
-nsch$marital_status[which(is.element(nsch$FAM_MAR_COHAB,c(1,3,5)] <- 1 # Not quite marital status - mother is married or child lives with married step family (could be married father)
+nsch$marital_status[which(is.element(nsch$FAM_MAR_COHAB,c(1,3,5))] <- 1 # Not quite marital status - mother is married or child lives with married step family (could be married father)
 nsch$english[nsch$PLANGUAGE==1] <- 1 # Indicator for English speaking household
 nsch$english[nsch$PLANGUAGE==2] <- 0
 
