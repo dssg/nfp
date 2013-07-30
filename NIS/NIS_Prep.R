@@ -16,128 +16,15 @@ setwd("/mnt/data/NIS/modified_data/")
 
 #####################################
 #####################################
-#  			                            #
+#                                   #
 #        Prepare NIS Data           #
-#				                            #
+#                                   #
 #####################################
 #####################################
 
 ## NIS provides R scripts to prepare the data for analysis.  Run each and make a few modifications.
 ## I'm commenting out the source lines that call NIS-provided code because 
 ## 1) once they're run they don't need to run again and 2) they take too long to run.
-
-
-#####################################
-## 2008 NIS data
-#source("/mnt/data/NIS/original_data/nispuf08.r")
-
-load("NISPUF08.RData")
-
-
-# Check validity of my coding by replicating estimates in the NIS 2008 documentation
-table(NISPUF08$EDUC1); sum(is.na(NISPUF08$EDUC1))         # Education matches
-table(NISPUF08$SC_431); sum(is.na(NISPUF08$SC_431))       # Shot card 4:3:1 matches
-table(NISPUF08$M_AGEGRP); sum(is.na(NISPUF08$M_AGEGRP))   # Mother's age matches
-
-UTD4313levels=c(0,1)
-UTD4313labels=c("NOT 4:3:1:3 UTD", "4:3:1:3 UTD")
-ESTIAPlevels=c(1, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 2, 20, 22, 24, 25, 27,
-               28, 29, 30, 31, 34, 35, 36, 38, 4, 40, 41, 44, 46, 47, 49, 5, 50, 51, 52, 53, 54,
-               55, 56, 57, 58, 59, 6, 60, 61, 62, 63, 64, 65, 66, 68, 69, 7, 70, 72, 73, 74, 75,
-               76, 77,
-               774, 8, 85, 91, 92, 93)
-ESTIAPlabels=c("CT", "NY-REST OF STATE", "NY-CITY OF NEW YORK", "DC", "DE", "MD-REST OF STATE", 
-               "MD-CITY OF BALTIMORE", "PA-REST OF STATE", "PA-PHILADELPHIA COUNTY", "VA", "WV", 
-               "MA", "AL", "FL-REST OF STATE", "FL-MIAMI-DADE COUNTY", "GA", "KY", "MS",
-               "NC", "SC", "TN", "IL-REST OF STATE", "IL-CITY OF CHICAGO", "IN", "MI", "ME", 
-               "MN-REST OF STATE", "OH", "WI", "AR", "LA", "NM", "NH", "OK", "TX-REST OF STATE", 
-               "TX-DALLAS COUNTY", "TX-EL PASO COUNTY", "TX-CITY OF HOUSTON", "TX-BEXAR COUNTY", 
-               "IA", "KS", "MO", "NE", "RI", "CO", "MT", "ND", "SD", "UT", "WY", "AZ", 
-               "CA-REST OF STATE", "CA-LOS ANGELES COUNTY", "VT", "CA-SANTA CLARA COUNTY", "HI", 
-               "NV", "AK", "ID", "OR", "WA-REST OF STATE", "WA-EASTERN/WESTERN WA", "NJ", 
-               "CA-NORTHERN CA", "FL-ORANGE COUNTY", "IL-MADISON/ST. CLAIR COUNTIES", "MN-TWIN CITIES")
-
-R_FILE <- subset(NISPUF08, select=c(SEQNUMHH, SEQNUMC, PUTD4313, ESTIAP08, PROVWT))
-names(R_FILE) <- c("SEQNUMHH", "SEQNUMC", "PUTD4313", "ESTIAP", "WT")
-R_FILE <- na.omit(R_FILE)
-#---ASSIGN LABELS---#
-R_FILE$PUTD4313 <- factor(R_FILE$PUTD4313, levels=UTD4313levels, labels=UTD4313labels)
-
-#---SPECIFY A SAMPLING DESIGN---#
-svydsg <- svydesign(id=~SEQNUMHH, strata=~ESTIAP, weights=~WT, data=R_FILE)
-
-#---NIS ESTIMATES AND STANDARD ERRORS---#
-r_nation <- svymean(~PUTD4313, svydsg)
-PERCENT_UTD <- round(r_nation*100,2) #CONVERT INTO PERCENT ESTIMATES(MEAN)
-SE_UTD <- round(SE(r_nation)*100,2) #CONVERT INTO PERCENT ESTIMATES(SE)
-cbind(PERCENT_UTD, SE_UTD)
-
-#---OUR ESTIMATES AND STANDARD ERRORS---#
-estimates <- rep(NA,1000)
-for(i in 1:1000){
-  rows <- sample(1:dim(NISPUF08)[1], dim(NISPUF08)[1], replace=TRUE)
-  temp <- NISPUF08[rows,]
-  estimates[i] <- sum(temp$PROVWT[temp$PUTD4313==1], na.rm=T) / sum(temp$PROVWT, na.rm=T)
-}
-cbind(100*sum(NISPUF08$PROVWT[NISPUF08$PUTD4313==1], na.rm=T) / sum(NISPUF08$PROVWT, na.rm=T), 
-      100*sd(estimates))
-# My results and NISPUF's results match the rates reported in the Data Use Guide
-
-
-# 2008 data has INS_4 and INS_5; other years have INS_4_5.  Create INS_4_5 and drop other two.
-NISPUF08$INS_4_5 <- 2
-NISPUF08$INS_4_5[NISPUF08$INS_4==1 | NISPUF08$INS_5==1] <- 1
-NISPUF08 <- NISPUF08[,!(names(NISPUF08) %in% c("INS_4","INS_5"))]
-
-# Drop variables missing in other years
-NISPUF08 <- NISPUF08[,!(names(NISPUF08) %in% c("HH_FLU","P_UTDHEP","P_UTDHIB_ROUT_S","P_UTDHIB_SHORT_S","P_UTDPCV","P_UTDPCVB13"))]
-
-# Other years rename MARITAL as MARITAL2.  Make consistent.  
-names(NISPUF08)[names(NISPUF08)=='MARITAL'] <- 'MARITAL2'
-
-# Recode MARITAL2 for consistency.
-NISPUF08$MARITAL2[NISPUF08$MARITAL2==1] <- 2  # not married 
-NISPUF08$MARITAL2[NISPUF08$MARITAL2==3] <- 1  # married
-
-# Only keep potentially useful columns
-NISPUF08 <- subset(NISPUF08, 
-	       select=(c(sort(names(NISPUF08)[grep("SEQNUM", names(NISPUF08))]),	# NIS respondent identifiers
-      "PDAT",               # whether there is adequate provider data
-      "PROVWT",             # weight for children with adequate provider data
-			"YEAR",								# year of interview
-			"STATE",							# state of residence
-			#"ESTIAP08",	inconsistently coded from year to year		# state or metropolitan statistical area of residence
-			"C5R", 								# relationship of respondent to child (match on mother?)
-			"LANGUAGE",							# language interview was conducted in
-			"D7",								# permission to contact providers
-			"EDUC1",							# mother's education level
-			"M_AGEGRP",							# mother's age group
-			"MARITAL2",							# mother's marital status
-			"INCQ298A",							# family income category
-			"INCPORAR",							# income to poverty ratio (eligibility criterion)
-			"FRSTBRN",							# whether child is first born
-			"AGEGRP",							# child's age group
-			"RACEETHK",		            # child's race
-			"SEX",								# child's sex
-			sort(names(NISPUF08)[grep("CWIC_", names(NISPUF08))]),		# WIC variables	
-			sort(names(NISPUF08)[grep("INS_", names(NISPUF08))]),		# insurance variables
-			sort(names(NISPUF08)[grep("BF_", names(NISPUF08))]),		# breastfeeding variables
-			sort(names(NISPUF08)[grep("SC_", names(NISPUF08))]),		# household shot card variables
-			sort(names(NISPUF08)[grep("HH_", names(NISPUF08))]),		# household-reported variables (not using shot card)
-			"SHOTCARD", 							# household uses shot card
-			sort(names(NISPUF08)[grep("DDTP", names(NISPUF08))]),		# provider-reported DT-containing shots
-			sort(names(NISPUF08)[grep("DHEP", names(NISPUF08))]),		# provider-reported HepA- and HepB-containing shots
-			sort(names(NISPUF08)[grep("DHIB_", names(NISPUF08))]),		# provider-reported Hib-containing shots
-			sort(names(NISPUF08)[grep("DMMR", names(NISPUF08))]),		# provider-reported measles-containing shots
-			sort(names(NISPUF08)[grep("DPCV", names(NISPUF08))]),		# provider-reported pneumococcal-containing shots
-			sort(names(NISPUF08)[grep("DPOLIO", names(NISPUF08))]),		# provider-reported polio-containing shots
-			sort(names(NISPUF08)[grep("DROT", names(NISPUF08))]),		# provider-reported rotavirus-containing shots
-			sort(names(NISPUF08)[grep("DVRC", names(NISPUF08))]),		# provider-reported Varicella-containing shots
-      "P_UTD431"                                              # provider-report up-to-date DTAP, polio, measles vaccinations
-			)
-		       )
-		)
-
 
 
 
@@ -147,7 +34,6 @@ NISPUF08 <- subset(NISPUF08,
 #source("/mnt/data/NIS/original_data/nispuf09.r")
 
 load("NISPUF09.RData")
-sort(names(NISPUF09))
 
 # Check validity of my coding by replicating estimates in the NIS 2009 documentation
 table(NISPUF09$EDUC1); sum(is.na(NISPUF09$EDUC1))         # Education matches
@@ -348,8 +234,6 @@ cbind(100*sum(NISPUF11$PROVWT_D[NISPUF11$PUTD4313==1], na.rm=T) / sum(NISPUF11$P
 
 
 
-
-
 # Drop variables not available in every year
 NISPUF11 <- NISPUF11[,!(names(NISPUF11) %in% c("HH_FLU","HH_H1N","P_UTDHEPA2","P_UTDHEP","P_UTDHIB_ROUT_S","P_UTDHIB_SHORT_S",
 						"P_UTDPCV","P_UTDPCVB13","P_UTDROT_S","P_UTDHEPA1"))]
@@ -402,11 +286,11 @@ NISPUF11 <- subset(NISPUF11,
 
 #####################################
 ## Combine NIS data 
-NISPUF <- rbind(NISPUF08, NISPUF09, NISPUF10, NISPUF11)
+NISPUF <- rbind(NISPUF09, NISPUF10, NISPUF11)
 
 
 # Drop old NISPUF datasets from memory
-rm(NISPUF08,NISPUF09,NISPUF10,NISPUF11)
+rm(NISPUF09,NISPUF10,NISPUF11)
 
 
 # Only keep NIS data on first-born children
@@ -416,7 +300,11 @@ NISPUF <- subset(NISPUF, subset=(FRSTBRN==2))
 # Recode PDAT (adequate provider data) to 0/1 
 NISPUF$PDAT[NISPUF$PDAT==2] <- 0
 
-
+# Recode provider weights.  Because the provider weights tell us how many people
+# an observation represents in that year and because we are sampling from roughly
+# the same population across three years, each observation in NISPUF represents
+# only about a third as many people (NIS Data Use Guide, 2011, p. 78).
+NISPUF$PROVWT <- NISPUF$PROVWT/3
 
 
 
@@ -494,14 +382,16 @@ NISPUF$STATE[NISPUF$STATE==56] <- "WY"
 
 #####################################
 #####################################
-#  			                            #
+#                                   #
 #   Determine Whether Child Is      #
 #   Up to Date on Vaccinations      #
 #     as Reported by Provider       #
-#				                            #
+#                                   #
 #####################################
 #####################################
 
+# The formula I use was developed with the help of Carla Black, CDC,
+# through email on July 17th.
 
 # HepB immunizations up to date
 NISPUF$HepB6 <- 0		# adequate immunizations at 6 months
@@ -511,7 +401,7 @@ NISPUF$HepB12 <- 0	# adequate immunizations at 12 months
 NISPUF$HepB18 <- 0	# adequate immunizations at 18 months
   NISPUF$HepB18[NISPUF$DHEPB3<3/2*366+30] <- 1
 NISPUF$HepB24 <- 0	# adequate immunizations at 24 months
-  NISPUF$HepB24[NISPUF$DHEPB3<31*24+30] <- 1
+  NISPUF$HepB24[NISPUF$DHEPB3<2*366+30] <- 1
 
 # DTaP immunizations up to date
 NISPUF$DTaP6 <- 0
@@ -556,17 +446,17 @@ NISPUF$PCV24 <- 0
 # MMR immunization up to date
 NISPUF$MMR6 <- 1
 NISPUF$MMR12 <- 1
-NISPUF$MMR18 <- 1
+NISPUF$MMR18 <- 0
   NISPUF$MMR18[NISPUF$DMMR1<3/2*366+30] <- 1
-NISPUF$MMR24 <- 1
+NISPUF$MMR24 <- 0
   NISPUF$MMR24[NISPUF$DMMR1<2*366+30] <- 1
 
 # Varicella immunization up to date
 NISPUF$Varicella6 <- 1
 NISPUF$Varicella12 <- 1
-NISPUF$Varicella18 <- 1
+NISPUF$Varicella18 <- 0
   NISPUF$Varicella18[NISPUF$DVRC1<3/2*366+30] <- 1
-NISPUF$Varicella24 <- 1
+NISPUF$Varicella24 <- 0
   NISPUF$Varicella24[NISPUF$DVRC1<2*366+30] <- 1
 
 # HepA immunization up to date
@@ -623,12 +513,12 @@ NISPUF$Immunizations_UptoDate_24 <- 0
 
 #####################################
 #####################################
-#  			            #
+#                                   #
 #   Determine Whether Child Is      #
 #   Up to Date on Vaccinations      #
 #    as Reported by Household       #
 #   (from memory, no shotcard)      #
-#				    #
+#                                   #
 #####################################
 #####################################
 
@@ -668,12 +558,12 @@ NISPUF$HH_UTD <- 0
 
 #####################################
 #####################################
-#                 			            #
+#                                   #
 #   Determine Whether Child Is      #
 #   Up to Date on Vaccinations      #
 #         as Reported by            #
 #       Household Shotcard          #
-#				                            #
+#                                   #
 #####################################
 #####################################
 
@@ -711,24 +601,30 @@ NISPUF$HHSC_UTD <- 0
         
 ###################################
 ## Save NIS data
-save(NISPUF, file="NISPUF.RData", ascii=TRUE)  # ASCII so it's readable years from now
+write.csv(NISPUF, file="NISPUF.csv")  # CSV so it's readable years from now
 
 
 
 
 #####################################
 #####################################
-#    		                            #
+#                                   #
 #         Variable Recodes          #
-#				                            #
+#                                   #
 #####################################
 #####################################
 
 
 
 ############################################
-# Load NFP data for recoding and preparation
+# Load NFP data 
 setwd("/mnt/data/nfp_data/csv_data")
+
+
+
+
+for recoding and preparation
+
 nfp_demographics <- read.csv("nfp_demographics_expanded.csv")
 nfp_centers <- read.csv("agency.csv")
 
@@ -825,9 +721,6 @@ nfp_centers[nfp_centers$Site_ID==281, names(nfp_centers) %in% "State"] <- "NJ"
 nfp_centers[nfp_centers$Site_ID==294, names(nfp_centers) %in% "State"] <- "FL"
 nfp_centers[nfp_centers$Site_ID==352, names(nfp_centers) %in% "State"] <- "VA"
 
-
-## Rename nfp_demographics$State as nfp_demographics$STATE
-names(nfp_demographics)[names(nfp_demographics)=='State'] <- 'STATE'
 
 
 
@@ -1026,51 +919,35 @@ names(NISPUF)[names(NISPUF)=="SEQNUMC"] <- "ID"
 # not all cases in NIS.  The kids in the 2008 dataset were born before the kids in 
 # the NFP dataset, so they should receive a weight of zero.  Only some of the cases
 # in the 2009 NIS dataset were born during the same time: we should drop all kids 
-# 24-35 months old in this dataset and give only 5/16 weight to the kids 19-23 months
-# (because those kids were born between 2/2007 and 5/2008, and only 1/2008-5/2008 
-# overlaps with the NFP dataset).  And so on.  See "When kids in NIS were born.xls"
+# 24-35 months old in this dataset and give 5/16 weight to the kids 19-23 months
+# because those kids were born between 2/2007 and 5/2008 and only 5/16 of them
+# overlap with the NFP dataset.  And so on.  See "When kids in NIS were born.xls"
 #
 # In addition, NIS offers survey weights that essentially indicate how many persons
 # each data point represents. 
-
-
-#---OUR ESTIMATES AND STANDARD ERRORS---#
-estimates <- rep(NA,1000)
-for(i in 1:1000){
-  rows <- sample(1:dim(NISPUF11)[1], dim(NISPUF11)[1], replace=TRUE)
-  temp <- NISPUF11[rows,]
-  estimates[i] <- sum(temp$PROVWT_D[temp$PUTD4313==1], na.rm=T) / sum(temp$PROVWT_D, na.rm=T)
-}
-cbind(100*sum(NISPUF11$PROVWT_D[NISPUF11$PUTD4313==1], na.rm=T) / sum(NISPUF11$PROVWT_D, na.rm=T), 
-      100*sd(estimates))
-dim(NISPUF11)
-
-temp1 <- subset(NISPUF11, subset=c(AGEGRP==2))
-dim(temp1)
-
-#---OUR ESTIMATES AND STANDARD ERRORS---#
-estimates <- rep(NA,1000)
-for(i in 1:1000){
-  rows <- sample(1:dim(temp1)[1], dim(temp1)[1], replace=TRUE)
-  temp <- temp1[rows,]
-  estimates[i] <- sum(temp1$PROVWT_D[temp1$PUTD4313==1], na.rm=T) / sum(temp1$PROVWT_D, na.rm=T)
-}
-cbind(100*sum(temp1$PROVWT_D[temp1$PUTD4313==1], na.rm=T) / sum(temp1$PROVWT_D, na.rm=T), 
-      100*sd(estimates))
-
-
+#
+# Who exactly is in the NFP dataset?  My understanding is that it includes anyone who
+# enrolled between January 1, 2008, and December 31, 2010.  If that's true, then
+# many children in the NFP data are not old enough to get have data at 6, 12, 18, 
+# and 24 months.  
+#
+# In addition, NIS includes kids between 19 and 23 months of age.  Those children are
+# not old enough to be up to date on their 24-month vaccinations.  Should I drop them?
+# Should I compare children of the same age?  (This is tough to do when the NFP data
+# do not include the child's age.)
 
 NFPfull$weight <- 1
 
 NISPUF$weight <- 0
-  NISPUF$weight[NISPUF$AGEGRP==1 & NISPUF$YEAR==2009] <- 5/16
+  NISPUF$weight[NISPUF$AGEGRP==1 & NISPUF$YEAR==2009] <- 16/5
 
   NISPUF$weight[NISPUF$AGEGRP==1 & NISPUF$YEAR==2010] <- 1
-  NISPUF$weight[NISPUF$AGEGRP==2 & NISPUF$YEAR==2010] <- 12/17
-  NISPUF$weight[NISPUF$AGEGRP==3 & NISPUF$YEAR==2010] <- 6/17
+  NISPUF$weight[NISPUF$AGEGRP==2 & NISPUF$YEAR==2010] <- 17/12
+  NISPUF$weight[NISPUF$AGEGRP==3 & NISPUF$YEAR==2010] <- 17/6
 
   NISPUF$weight[NISPUF$YEAR==2011] <- 1
 
+NISPUF$weight <- NISPUF$weight*NISPUF$PROVWT
 
 
 
