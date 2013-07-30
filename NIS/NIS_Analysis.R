@@ -359,28 +359,29 @@ summary(rr24)
 # Plot immunization rates
 
 setwd("/mnt/data/NIS/")
-png("Meetup_three_immunizations.png", width=13.3, height=7.5, units="in", res=100)
+png("Meetup_one_immunizations.png", width=13.3, height=7.5, units="in", res=100)
 y.coord <- c(mean(PSM_Matching$Immunizations_UptoDate_6[PSM_Matching$treatment==1 & PSM_Matching$PDAT6==1],na.rm=T),
              mean(PSM_Matching$Immunizations_UptoDate_12[PSM_Matching$treatment==1 & PSM_Matching$PDAT12==1],na.rm=T),
              mean(PSM_Matching$Immunizations_UptoDate_18[PSM_Matching$treatment==1 & PSM_Matching$PDAT18==1],na.rm=T),
              mean(PSM_Matching$Immunizations_UptoDate_24[PSM_Matching$treatment==1 & PSM_Matching$PDAT24==1],na.rm=T))
 par(mar=c(4.5,5.5,4,1.5), cex.main=2, cex.axis=1.5, cex.lab=2, las=1)
-plot(c(6,12,18,24), 100*y.coord, pch=19, xlim=c(6,24), ylim=c(0,100), 
-     axes=F, 
+plot(c(6,12,18,24), 100*c(0.7282518, 0.9184530, 0.7286034, 0.8451572), pch=19, 
+     xlim=c(6,24), ylim=c(0,100), 
+     axes=F, col='blue',
      type='l', lwd=4,
-     main='Up-to-Date Vaccination Rates',
+     main='Up-to-Date Vaccination Rates for the General Population',
      xlab='months since birth', 
      ylab='% of children UTD    ')
 axis(1,at=c(6,12,18,24))
 axis(2,at=c(0,25,50,75,100))
 box()
-points(c(6,12,18,24), 100*(y.coord-c(0.32563, 0.062674, 0.2865, 0.17554)), 
-       pch=19, col='red', type='l', lwd=4)
-points(c(6,12,18,24), 100*c(0.7282518, 0.9184530, 0.7286034, 0.8451572), 
-       pch=19, col='blue', type='l', lwd=4)
+#points(c(6,12,18,24), 100*(y.coord-c(0.32563, 0.062674, 0.2865, 0.17554)), 
+#       pch=19, col='red', type='l', lwd=4)
+#points(c(6,12,18,24), 100*c(0.7282518, 0.9184530, 0.7286034, 0.8451572), 
+#       pch=19, col='blue', type='l', lwd=4)
 
-legend('bottomright', lty=1, lwd=4, col=c("black","red","blue"), 
-       legend=c("NFP","Matched Group","General Population"),cex=1.5)
+#legend('bottomright', lty=1, lwd=4, col=c("black","red","blue"), 
+#       legend=c("NFP","Matched Group","General Population"),cex=1.5)
 dev.off()
 
 
