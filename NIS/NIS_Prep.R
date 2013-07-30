@@ -33,11 +33,11 @@ setwd("/mnt/data/NIS/modified_data/")
 
 load("NISPUF08.RData")
 
-# Check validity of my coding by replicating estimates in the NIS 2010 documentation
+
+# Check validity of my coding by replicating estimates in the NIS 2008 documentation
 table(NISPUF08$EDUC1); sum(is.na(NISPUF08$EDUC1))         # Education matches
 table(NISPUF08$SC_431); sum(is.na(NISPUF08$SC_431))       # Shot card 4:3:1 matches
 table(NISPUF08$M_AGEGRP); sum(is.na(NISPUF08$M_AGEGRP))   # Mother's age matches
-
 
 UTD4313levels=c(0,1)
 UTD4313labels=c("NOT 4:3:1:3 UTD", "4:3:1:3 UTD")
@@ -46,19 +46,16 @@ ESTIAPlevels=c(1, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 2, 20, 22, 24, 25, 27,
                55, 56, 57, 58, 59, 6, 60, 61, 62, 63, 64, 65, 66, 68, 69, 7, 70, 72, 73, 74, 75,
                76, 77,
                774, 8, 85, 91, 92, 93)
-ESTIAPlabels=c("CT", "NY-REST OF STATE", "NY-CITY OF NEW YORK", "DC", "DE", "MD-
-REST OF STATE", "MD-CITY OF BALTIMORE", "PA-REST OF STATE", "PA-PHILADELPHIA
-COUNTY", "VA", "WV", "MA", "AL", "FL-REST OF STATE", "FL-MIAMI-DADE COUNTY", "GA",
-               "KY", "MS",
-               "NC", "SC", "TN", "IL-REST OF STATE", "IL-CITY OF CHICAGO", "IN", "MI", "ME", "MN-
-REST OF STATE", "OH", "WI", "AR", "LA", "NM", "NH", "OK", "TX-REST OF STATE", "TX-
-DALLAS COUNTY", "TX-EL PASO COUNTY", "TX-CITY OF HOUSTON", "TX-BEXAR COUNTY", "IA",
-               "KS",
-               "MO", "NE", "RI", "CO", "MT", "ND", "SD", "UT", "WY", "AZ", "CA-REST OF STATE",
-               "CA-LOS ANGELES COUNTY", "VT", "CA-SANTA CLARA COUNTY", "HI", "NV", "AK", "ID",
-               "OR", "WA-REST OF STATE", "WA-EASTERN/WESTERN WA", "NJ", "CA-NORTHERN CA", "FL-
-ORANGE COUNTY",
-               "IL-MADISON/ST. CLAIR COUNTIES", "MN-TWIN CITIES")
+ESTIAPlabels=c("CT", "NY-REST OF STATE", "NY-CITY OF NEW YORK", "DC", "DE", "MD-REST OF STATE", 
+               "MD-CITY OF BALTIMORE", "PA-REST OF STATE", "PA-PHILADELPHIA COUNTY", "VA", "WV", 
+               "MA", "AL", "FL-REST OF STATE", "FL-MIAMI-DADE COUNTY", "GA", "KY", "MS",
+               "NC", "SC", "TN", "IL-REST OF STATE", "IL-CITY OF CHICAGO", "IN", "MI", "ME", 
+               "MN-REST OF STATE", "OH", "WI", "AR", "LA", "NM", "NH", "OK", "TX-REST OF STATE", 
+               "TX-DALLAS COUNTY", "TX-EL PASO COUNTY", "TX-CITY OF HOUSTON", "TX-BEXAR COUNTY", 
+               "IA", "KS", "MO", "NE", "RI", "CO", "MT", "ND", "SD", "UT", "WY", "AZ", 
+               "CA-REST OF STATE", "CA-LOS ANGELES COUNTY", "VT", "CA-SANTA CLARA COUNTY", "HI", 
+               "NV", "AK", "ID", "OR", "WA-REST OF STATE", "WA-EASTERN/WESTERN WA", "NJ", 
+               "CA-NORTHERN CA", "FL-ORANGE COUNTY", "IL-MADISON/ST. CLAIR COUNTIES", "MN-TWIN CITIES")
 
 R_FILE <- subset(NISPUF08, select=c(SEQNUMHH, SEQNUMC, PUTD4313, ESTIAP08, PROVWT))
 names(R_FILE) <- c("SEQNUMHH", "SEQNUMC", "PUTD4313", "ESTIAP", "WT")
@@ -69,18 +66,22 @@ R_FILE$PUTD4313 <- factor(R_FILE$PUTD4313, levels=UTD4313levels, labels=UTD4313l
 #---SPECIFY A SAMPLING DESIGN---#
 svydsg <- svydesign(id=~SEQNUMHH, strata=~ESTIAP, weights=~WT, data=R_FILE)
 
-#---U.S. TOTAL ESTIMATES AND STANDARD ERRORS---#
+#---NIS ESTIMATES AND STANDARD ERRORS---#
 r_nation <- svymean(~PUTD4313, svydsg)
-r_nation
 PERCENT_UTD <- round(r_nation*100,2) #CONVERT INTO PERCENT ESTIMATES(MEAN)
 SE_UTD <- round(SE(r_nation)*100,2) #CONVERT INTO PERCENT ESTIMATES(SE)
-r_nation_est <- cbind(PERCENT_UTD, SE_UTD)
-title <- "PERCENT 4:3:1:3 ESTIMATES AT A NATIONWIDE LEVEL"
-c(r_nation_est, title)
+cbind(PERCENT_UTD, SE_UTD)
 
-
-xxx
-
+#---OUR ESTIMATES AND STANDARD ERRORS---#
+estimates <- rep(NA,1000)
+for(i in 1:1000){
+  rows <- sample(1:dim(NISPUF08)[1], dim(NISPUF08)[1], replace=TRUE)
+  temp <- NISPUF08[rows,]
+  estimates[i] <- sum(temp$PROVWT[temp$PUTD4313==1], na.rm=T) / sum(temp$PROVWT, na.rm=T)
+}
+cbind(100*sum(NISPUF08$PROVWT[NISPUF08$PUTD4313==1], na.rm=T) / sum(NISPUF08$PROVWT, na.rm=T), 
+      100*sd(estimates))
+# My results and NISPUF's results match the rates reported in the Data Use Guide
 
 
 # 2008 data has INS_4 and INS_5; other years have INS_4_5.  Create INS_4_5 and drop other two.
@@ -139,11 +140,44 @@ NISPUF08 <- subset(NISPUF08,
 
 
 
+
+
 #####################################
 ## 2009 NIS data
 #source("/mnt/data/NIS/original_data/nispuf09.r")
 
 load("NISPUF09.RData")
+sort(names(NISPUF09))
+
+# Check validity of my coding by replicating estimates in the NIS 2009 documentation
+table(NISPUF09$EDUC1); sum(is.na(NISPUF09$EDUC1))         # Education matches
+table(NISPUF09$SC_431); sum(is.na(NISPUF09$SC_431))       # Shot card 4:3:1 matches
+table(NISPUF09$M_AGEGRP); sum(is.na(NISPUF09$M_AGEGRP))   # Mother's age matches
+
+R_FILE <- subset(NISPUF09, select=c(SEQNUMHH, SEQNUMC, P_UTD431, ESTIAP09, PROVWT))
+names(R_FILE) <- c("SEQNUMHH", "SEQNUMC", "P_UTD431", "ESTIAP", "WT")
+R_FILE <- na.omit(R_FILE)
+
+#---SPECIFY A SAMPLING DESIGN---#
+svydsg <- svydesign(id=~SEQNUMHH, strata=~ESTIAP, weights=~WT, data=R_FILE)
+
+#---NIS ESTIMATES AND STANDARD ERRORS---#
+r_nation <- svymean(~P_UTD431, svydsg)
+PERCENT_UTD <- round(r_nation*100,2) #CONVERT INTO PERCENT ESTIMATES(MEAN)
+SE_UTD <- round(SE(r_nation)*100,2) #CONVERT INTO PERCENT ESTIMATES(SE)
+cbind(PERCENT_UTD, SE_UTD)
+
+#---OUR ESTIMATES AND STANDARD ERRORS---#
+estimates <- rep(NA,1000)
+for(i in 1:1000){
+  rows <- sample(1:dim(NISPUF09)[1], dim(NISPUF09)[1], replace=TRUE)
+  temp <- NISPUF09[rows,]
+  estimates[i] <- sum(temp$PROVWT[temp$P_UTD431==1], na.rm=T) / sum(temp$PROVWT, na.rm=T)
+}
+cbind(100*sum(NISPUF09$PROVWT[NISPUF09$P_UTD431==1], na.rm=T) / sum(NISPUF09$PROVWT, na.rm=T), 
+      100*sd(estimates))
+
+
 
 # Drop variables not available in every year
 NISPUF09 <- NISPUF09[,!(names(NISPUF09) %in% c("HH_FLU","P_UTDHEP","P_UTDHIB_ROUT_S","P_UTDHIB_SHORT_S","P_UTDPCV",
@@ -197,6 +231,36 @@ NISPUF09 <- subset(NISPUF09,
 #source("/mnt/data/NIS/original_data/nispuf10.r")
 
 load("NISPUF10.RData")
+
+
+# Check validity of my coding by replicating estimates in the NIS 2010 documentation
+table(NISPUF10$EDUC1); sum(is.na(NISPUF10$EDUC1))         # Education matches
+table(NISPUF10$SC_431); sum(is.na(NISPUF10$SC_431))       # Shot card 4:3:1 matches
+table(NISPUF10$M_AGEGRP); sum(is.na(NISPUF10$M_AGEGRP))   # Mother's age matches
+
+R_FILE <- subset(NISPUF10, select=c(SEQNUMHH, SEQNUMC, PUTD4313, ESTIAP10, PROVWT))
+names(R_FILE) <- c("SEQNUMHH", "SEQNUMC", "PUTD4313", "ESTIAP", "WT")
+R_FILE <- na.omit(R_FILE)
+
+#---SPECIFY A SAMPLING DESIGN---#
+svydsg <- svydesign(id=~SEQNUMHH, strata=~ESTIAP, weights=~WT, data=R_FILE)
+
+#---NIS ESTIMATES AND STANDARD ERRORS---#
+r_nation <- svymean(~PUTD4313, svydsg)
+PERCENT_UTD <- round(r_nation*100,2) #CONVERT INTO PERCENT ESTIMATES(MEAN)
+SE_UTD <- round(SE(r_nation)*100,2) #CONVERT INTO PERCENT ESTIMATES(SE)
+cbind(PERCENT_UTD, SE_UTD)
+
+#---OUR ESTIMATES AND STANDARD ERRORS---#
+estimates <- rep(NA,1000)
+for(i in 1:1000){
+  rows <- sample(1:dim(NISPUF10)[1], dim(NISPUF10)[1], replace=TRUE)
+  temp <- NISPUF10[rows,]
+  estimates[i] <- sum(temp$PROVWT[temp$PUTD4313==1], na.rm=T) / sum(temp$PROVWT, na.rm=T)
+}
+cbind(100*sum(NISPUF10$PROVWT[NISPUF10$PUTD4313==1], na.rm=T) / sum(NISPUF10$PROVWT, na.rm=T), 
+      100*sd(estimates))
+
 
 
 # Drop variables not available in every year
@@ -253,6 +317,38 @@ NISPUF10 <- subset(NISPUF10,
 #source("/mnt/data/NIS/original_data/nispuf11.r")
 
 load("NISPUF11.RData")
+
+# Check validity of my coding by replicating estimates in the NIS 2011 documentation
+table(NISPUF11$EDUC1); sum(is.na(NISPUF11$EDUC1))         # Education matches
+table(NISPUF11$SC_431); sum(is.na(NISPUF11$SC_431))       # Shot card 4:3:1 matches
+table(NISPUF11$M_AGEGRP); sum(is.na(NISPUF11$M_AGEGRP))   # Mother's age matches
+
+R_FILE <- subset(NISPUF11, select=c(SEQNUMHH, SEQNUMC, PUTD4313, ESTIAP11, PROVWT_D))
+names(R_FILE) <- c("SEQNUMHH", "SEQNUMC", "PUTD4313", "ESTIAP", "WT")
+R_FILE <- na.omit(R_FILE)
+
+#---SPECIFY A SAMPLING DESIGN---#
+svydsg <- svydesign(id=~SEQNUMHH, strata=~ESTIAP, weights=~WT, data=R_FILE)
+
+#---NIS ESTIMATES AND STANDARD ERRORS---#
+r_nation <- svymean(~PUTD4313, svydsg)
+PERCENT_UTD <- round(r_nation*100,2) #CONVERT INTO PERCENT ESTIMATES(MEAN)
+SE_UTD <- round(SE(r_nation)*100,2) #CONVERT INTO PERCENT ESTIMATES(SE)
+cbind(PERCENT_UTD, SE_UTD)
+
+#---OUR ESTIMATES AND STANDARD ERRORS---#
+estimates <- rep(NA,1000)
+for(i in 1:1000){
+  rows <- sample(1:dim(NISPUF11)[1], dim(NISPUF11)[1], replace=TRUE)
+  temp <- NISPUF11[rows,]
+  estimates[i] <- sum(temp$PROVWT_D[temp$PUTD4313==1], na.rm=T) / sum(temp$PROVWT_D, na.rm=T)
+}
+cbind(100*sum(NISPUF11$PROVWT_D[NISPUF11$PUTD4313==1], na.rm=T) / sum(NISPUF11$PROVWT_D, na.rm=T), 
+      100*sd(estimates))
+
+
+
+
 
 # Drop variables not available in every year
 NISPUF11 <- NISPUF11[,!(names(NISPUF11) %in% c("HH_FLU","HH_H1N","P_UTDHEPA2","P_UTDHEP","P_UTDHIB_ROUT_S","P_UTDHIB_SHORT_S",
@@ -933,6 +1029,36 @@ names(NISPUF)[names(NISPUF)=="SEQNUMC"] <- "ID"
 # 24-35 months old in this dataset and give only 5/16 weight to the kids 19-23 months
 # (because those kids were born between 2/2007 and 5/2008, and only 1/2008-5/2008 
 # overlaps with the NFP dataset).  And so on.  See "When kids in NIS were born.xls"
+#
+# In addition, NIS offers survey weights that essentially indicate how many persons
+# each data point represents. 
+
+
+#---OUR ESTIMATES AND STANDARD ERRORS---#
+estimates <- rep(NA,1000)
+for(i in 1:1000){
+  rows <- sample(1:dim(NISPUF11)[1], dim(NISPUF11)[1], replace=TRUE)
+  temp <- NISPUF11[rows,]
+  estimates[i] <- sum(temp$PROVWT_D[temp$PUTD4313==1], na.rm=T) / sum(temp$PROVWT_D, na.rm=T)
+}
+cbind(100*sum(NISPUF11$PROVWT_D[NISPUF11$PUTD4313==1], na.rm=T) / sum(NISPUF11$PROVWT_D, na.rm=T), 
+      100*sd(estimates))
+dim(NISPUF11)
+
+temp1 <- subset(NISPUF11, subset=c(AGEGRP==2))
+dim(temp1)
+
+#---OUR ESTIMATES AND STANDARD ERRORS---#
+estimates <- rep(NA,1000)
+for(i in 1:1000){
+  rows <- sample(1:dim(temp1)[1], dim(temp1)[1], replace=TRUE)
+  temp <- temp1[rows,]
+  estimates[i] <- sum(temp1$PROVWT_D[temp1$PUTD4313==1], na.rm=T) / sum(temp1$PROVWT_D, na.rm=T)
+}
+cbind(100*sum(temp1$PROVWT_D[temp1$PUTD4313==1], na.rm=T) / sum(temp1$PROVWT_D, na.rm=T), 
+      100*sd(estimates))
+
+
 
 NFPfull$weight <- 1
 

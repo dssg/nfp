@@ -296,6 +296,10 @@ reg <- glm(treatment ~ factor(income_recode) + factor(language) +
              factor(Race) + married + HSgrad, 
            data=PSM_Matching, family=binomial(link='logit'))
 
+# match on poverty ratio instead of income buckets
+
+# Separation plot
+
 
 
 
@@ -406,6 +410,13 @@ dev.off()
 ## before the kid is even born, or not at all.  Then the women enrolled at 6 
 ## months and 24 months would be the same.  We can check this when we get dates
 ## for add/drop dates for each client from Bill.
+##
+## We can do another test to help reduce the bias that motivation introduces:
+## stratify by drop-out date.  We can look at the six-month immunization
+## rate for children who drop out a month or two later, which biases the test
+## against NFP in two ways: it reduces the sample size, thereby reducing the 
+## power of the test, and it drops the clients who are most likely to be immunized.
+
 
 
 
@@ -430,3 +441,18 @@ unique(NISPUF$AGEGRP)
 # How reliable are household shot cards?
 
 
+
+
+
+#############################
+## Breastfeeding rates
+summary(NISPUF08$CBF_01)
+
+NISPUF08$CBF_01[NISPUF08$CBF_01==99] <- NA
+NISPUF08$CBF_01[NISPUF08$CBF_01==77] <- NA
+NISPUF08$CBF_01[NISPUF08$CBF_01==2] <- 0
+
+mean(NISPUF08$CBF_01,na.rm=TRUE)
+mean(NISPUF08$CBF_01[NISPUF08$INCPORAR<=2],na.rm=TRUE)
+
+length(NISPUF08$MARITAL[NISPUF08$MARITAL==3 & NISPUF08$INCPORAR<=2]) / length(NISPUF08$MARITAL[NISPUF08$INCPORAR<=2])
