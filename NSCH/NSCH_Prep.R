@@ -140,7 +140,7 @@ nsch$week_end_breast[nsch$week_end_breast>104] <- NA
 	## Children who are not the oldest (note AGEPOS 1 = only child, 2 = oldest)
 	## Children from HH making more than 200% of FPL WIC/NFP criteria is generally 100-185% FPL)
 	## Children who do not live with their biological mother (however, keeping children who live in a two-parent step HH - unclear whether live with mother or father)
-NSCH_Final <- subset(nsch, nsch$POVLEVEL_I <= 2 & nsch$AGEYR_CHILD <= 4 & nsch$AGEPOS<=2 & which(!is.element(FAM_MAR_COHAB, c(7,8,9))), 
+NSCH_Final <- subset(nsch, nsch$POVLEVEL_I <= 2 & nsch$AGEYR_CHILD <= 4 & nsch$AGEPOS<=2 & (!is.element(nsch$FAM_MAR_COHAB, c(7,8,9))), 
 	select = c(ID, male, premature, lbw, highschool, highered, marital_status, MomsAgeBirth, 
 	State, RE, english, breastfed, week_end_breast))
 	
