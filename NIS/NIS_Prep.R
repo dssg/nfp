@@ -289,6 +289,7 @@ NISPUF11 <- subset(NISPUF11,
 NISPUF <- rbind(NISPUF09, NISPUF10, NISPUF11)
 
 
+
 # Drop old NISPUF datasets from memory
 rm(NISPUF09,NISPUF10,NISPUF11)
 
@@ -619,14 +620,15 @@ write.csv(NISPUF, file="NISPUF.csv")  # CSV so it's readable years from now
 ############################################
 # Load NFP data 
 setwd("/mnt/data/nfp_data/csv_data")
+NFPfull <- read.csv("Full_NFP_Data_Child_Development_Outcomes.csv", header=TRUE)
 
 
+# Rename NFPfull$CL_EN_GEN_ED as NFPfull$ID
+names(NFPfull)[names(NFPfull) %in% "CL_EN_GEN_ID"] <- "ID"
 
+# Rename NFPfull$State as NFPfull$STATE
+names(NFPfull)[names(NFPfull) %in% "State"] <- "STATE"
 
-for recoding and preparation
-
-nfp_demographics <- read.csv("nfp_demographics_expanded.csv")
-nfp_centers <- read.csv("agency.csv")
 
 
 
@@ -641,97 +643,15 @@ NISPUF$income_recode[which(is.element(NISPUF$INCQ298A, c(9,10)))] = 5 # Binning 
 NISPUF$income_recode[which(is.element(NISPUF$INCQ298A, c(11,12,13,14)))] = 6
 
 ### In NFP, must combine income brackets 2 and 3 ($7500-20K) to match NIS buckets.
-nfp_demographics$income_recode = nfp_demographics$INCOME
-nfp_demographics$income_recode[nfp_demographics$income_recode == 3] <- 2
+NFPfull$income_recode = NFPfull$INCOME
+NFPfull$income_recode[NFPfull$income_recode == 3] <- 2
 ### Note that in the NFP dataset an income code of 7 indicates a mother living off her parents.
 
 ### Drop NISPUF$INCQ298A and nfp_demographics$INCOME
 NISPUF <- NISPUF[,!(names(NISPUF) %in% "INCQ298A")]
-nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "INCOME")]
+NFPfull <- NFPfull[,!(names(NFPfull) %in% "INCOME")]
 
 
-# Palm Beach County NFP appears in agency.csv twice
-nfp_centers <- nfp_centers[-(nfp_centers$AGENCY_NAME=="Palm Beach County NFP" & is.na(nfp_centers$ZipCode)),]
-
-
-## Location - recoding NFP state data into FIPS codes (to match the NIS dataset)
-# make a character vector first
-nfp_centers$State <- as.character(nfp_centers$State)  
-
-nfp_centers$State[nfp_centers$State==1] <- "AL"
-nfp_centers$State[nfp_centers$State==2] <- "AK"
-nfp_centers$State[nfp_centers$State==4] <- "AZ"
-nfp_centers$State[nfp_centers$State==5] <- "AR"
-nfp_centers$State[nfp_centers$State==6] <- "CA"
-nfp_centers$State[nfp_centers$State==8] <- "CO"
-nfp_centers$State[nfp_centers$State==9] <- "CT"
-nfp_centers$State[nfp_centers$State==10] <- "DE"
-nfp_centers$State[nfp_centers$State==11] <- "DC"
-nfp_centers$State[nfp_centers$State==12] <- "FL"
-nfp_centers$State[nfp_centers$State==13] <- "GA"
-nfp_centers$State[nfp_centers$State==15] <- "HI"
-nfp_centers$State[nfp_centers$State==16] <- "ID"
-nfp_centers$State[nfp_centers$State==17] <- "IL"
-nfp_centers$State[nfp_centers$State==18] <- "IN"
-nfp_centers$State[nfp_centers$State==19] <- "IA"
-nfp_centers$State[nfp_centers$State==20] <- "KS"
-nfp_centers$State[nfp_centers$State==21] <- "KY"
-nfp_centers$State[nfp_centers$State==22] <- "LA"
-nfp_centers$State[nfp_centers$State==23] <- "ME"
-nfp_centers$State[nfp_centers$State==24] <- "MD"
-nfp_centers$State[nfp_centers$State==25] <- "MA"
-nfp_centers$State[nfp_centers$State==26] <- "MI"
-nfp_centers$State[nfp_centers$State==27] <- "MN"
-nfp_centers$State[nfp_centers$State==28] <- "MS"
-nfp_centers$State[nfp_centers$State==29] <- "MO"
-nfp_centers$State[nfp_centers$State==30] <- "MT"
-nfp_centers$State[nfp_centers$State==31] <- "NE"
-nfp_centers$State[nfp_centers$State==32] <- "NV"
-nfp_centers$State[nfp_centers$State==33] <- "NH"
-nfp_centers$State[nfp_centers$State==34] <- "NJ"
-nfp_centers$State[nfp_centers$State==35] <- "NM"
-nfp_centers$State[nfp_centers$State==36] <- "NY"
-nfp_centers$State[nfp_centers$State==37] <- "NC"
-nfp_centers$State[nfp_centers$State==38] <- "ND"
-nfp_centers$State[nfp_centers$State==39] <- "OH"
-nfp_centers$State[nfp_centers$State==40] <- "OK"
-nfp_centers$State[nfp_centers$State==41] <- "OR"
-nfp_centers$State[nfp_centers$State==42] <- "PA"
-nfp_centers$State[nfp_centers$State==44] <- "RI"
-nfp_centers$State[nfp_centers$State==45] <- "SC"
-nfp_centers$State[nfp_centers$State==46] <- "SD"
-nfp_centers$State[nfp_centers$State==47] <- "TN"
-nfp_centers$State[nfp_centers$State==48] <- "TX"
-nfp_centers$State[nfp_centers$State==49] <- "UT"
-nfp_centers$State[nfp_centers$State==50] <- "VT"
-nfp_centers$State[nfp_centers$State==51] <- "VA"
-nfp_centers$State[nfp_centers$State==53] <- "WA"
-nfp_centers$State[nfp_centers$State==54] <- "WV"
-nfp_centers$State[nfp_centers$State==55] <- "WI"
-nfp_centers$State[nfp_centers$State==56] <- "WY"
-
-# Rename nfp_centers$State nfp_centers$STATE
-names(nfp_centers)[names(nfp_centers)=='State'] <- 'STATE'
-
-
-# Some NFP agencies are missing State data.  Add them.
-nfp_centers[nfp_centers$Site_ID==274, names(nfp_centers) %in% "State"] <- "WA"
-nfp_centers[nfp_centers$Site_ID==280, names(nfp_centers) %in% "State"] <- "SC"
-nfp_centers[nfp_centers$Site_ID==281, names(nfp_centers) %in% "State"] <- "NJ"
-nfp_centers[nfp_centers$Site_ID==294, names(nfp_centers) %in% "State"] <- "FL"
-nfp_centers[nfp_centers$Site_ID==352, names(nfp_centers) %in% "State"] <- "VA"
-
-
-
-
-
-## What proportion of its state's NFP clients does each center have?
-## This is useful because NIS provides courser geographic info.  
-state_clients <- table(nfp_demographics$STATE)
-center_clients <- table(nfp_demographics$sitecode)
-
-nfp_centers$proportion_state <- center_clients[match(nfp_centers$AGENCY_NAME, names(center_clients))] / state_clients[match(nfp_centers$STATE, names(state_clients))]
-  nfp_centers$proportion_state[is.na(nfp_centers$proportion_state)] <- 0
 
 
 
@@ -741,13 +661,12 @@ NISPUF$Primary_language[NISPUF$LANGUAGE==2] <- "Spanish"
 NISPUF$Primary_language[NISPUF$LANGUAGE==3] <- "Other"
 NISPUF$language <- factor(NISPUF$Primary_language)
 
-nfp_demographics$language <- as.character(nfp_demographics$Primary_language)
-nfp_demographics$language[nfp_demographics$Primary_language==""] <- NA
-nfp_demographics$language <- factor(nfp_demographics$language)
+NFPfull$language <- as.character(NFPfull$Primary_language)
+NFPfull$language[NFPfull$Primary_language==""] <- NA
 
 # Drop NISPUF$Primary_language and nfp_demographics$language
 NISPUF <- NISPUF[,!(names(NISPUF) %in% "LANGUAGE")]
-nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "Primary_language")]
+NFPfull <- NFPfull[,!(names(NFPfull) %in% "Primary_language")]
 
 
 
@@ -757,15 +676,15 @@ nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "Primary_la
 ### True comparison to NFP MomsAgeBirth would be mother's age minus child's age in NIS, but both data points are bucketed.
 ### Explore ways to make this comparison more accurate, but start by ignoring this distinction.
 
-nfp_demographics$MothersAge[nfp_demographics$MomsAgeBirth <= 19] <- 1
-nfp_demographics$MothersAge[20 <= nfp_demographics$MomsAgeBirth & nfp_demographics$MomsAgeBirth <= 29] <- 2
-nfp_demographics$MothersAge[nfp_demographics$MomsAgeBirth >= 30] <- 3
-nfp_demographics$MothersAge <- factor(nfp_demographics$MothersAge, labels = c("<=19 Years", "20-29 Years", ">=30 Years"))
+NFPfull$MothersAge[NFPfull$MomsAgeBirth <= 19] <- 1
+NFPfull$MothersAge[20 <= NFPfull$MomsAgeBirth & NFPfull$MomsAgeBirth <= 29] <- 2
+NFPfull$MothersAge[NFPfull$MomsAgeBirth >= 30] <- 3
+NFPfull$MothersAge <- factor(NFPfull$MothersAge, labels = c("<=19 Years", "20-29 Years", ">=30 Years"))
 NISPUF$MothersAge <- factor(NISPUF$M_AGEGRP, labels = c("<=19 Years", "20-29 Years", ">=30 Years"))
 
 ### Delete NISPUF$M_AGEGRP and nfp_demographics$MomsAgeBirth
 NISPUF <- NISPUF[,!(names(NISPUF) %in% "M_AGEGRP")]
-nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "MomsAgeBirth")]
+NFPfull <- NFPfull[,!(names(NFPfull) %in% "MomsAgeBirth")]
 
 
 
@@ -775,14 +694,14 @@ nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "MomsAgeBir
 ### Must assume these are the same.
 
 NISPUF$Race <- factor(NISPUF$RACEETHK, labels = c("Hispanic", "WhiteNH", "BlackNH", "Other"))
-nfp_demographics$Race <- as.character(nfp_demographics$MomsRE) # Renaming variable
-nfp_demographics$Race[nfp_demographics$Race=="Hispanic or Latina"] <- "Hispanic" # Shortening description
-nfp_demographics$Race[nfp_demographics$Race=="Declined or msg"] <- NA 
-nfp_demographics$Race <- factor(nfp_demographics$Race) # Return to factor format with adjusted levels
+NFPfull$Race <- as.character(NFPfull$MomsRE) # Renaming variable
+  NFPfull$Race[NFPfull$Race=="Hispanic or Latina"] <- "Hispanic" # Shortening description
+  NFPfull$Race[NFPfull$Race=="Declined or msg"] <- NA 
+  NFPfull$Race <- factor(NFPfull$Race) # Return to factor format with adjusted levels
 
 ### Drop NISPUF$RACEETHK and nfp_demographics$MomsRE
 NISPUF <- NISPUF[,!(names(NISPUF) %in% "RACEETHK")]
-nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "MomsRE")]
+NFPfull <- NFPfull[,!(names(NFPfull) %in% "MomsRE")]
 
 
 
@@ -791,23 +710,26 @@ nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "MomsRE")]
 ## Child's gender: Create a binary dummy variable for "male"
 NISPUF$male[NISPUF$SEX==1] <- 1
 NISPUF$male[NISPUF$SEX==2] <- 0
-nfp_demographics$male[nfp_demographics$Childgender=="Female"] <- 0 # Recode factor variable
-nfp_demographics$male[nfp_demographics$Childgender=="Male"] <- 1 
+
+NFPfull$male[NFPfull$Childgender=="Female"] <- 0 # Recode factor variable
+NFPfull$male[NFPfull$Childgender=="Male"] <- 1 
+
 
 ### Drop NISPUF$SEX and nfp_demographics$Childgender
 NISPUF <- NISPUF[,!(names(NISPUF) %in% "SEX")]
-nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "Childgender")]
+NFPfull <- NFPfull[,!(names(NFPfull) %in% "Childgender")]
+
 
 
 
 ## Mother's marital status
-nfp_demographics$married <- nfp_demographics$marital_status # Rename variable so meaning of 1/0 is more evident
+NFPfull$married <- NFPfull$marital_status # Rename variable so meaning of 1/0 is more evident
 NISPUF$married[NISPUF$MARITAL2==1] <- 1
 NISPUF$married[NISPUF$MARITAL2==2] <- 0
 
 ### Drop NISPUF$MARITAL2 and nfp_demographics$marital_status
 NISPUF <- NISPUF[,!(names(NISPUF) %in% "MARITAL2")]
-nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "marital_status")]
+NFPfull <- NFPfull[,!(names(NFPfull) %in% "marital_status")]
 
 
 
@@ -818,15 +740,15 @@ nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "marital_st
 
 NISPUF$HSgrad[NISPUF$EDUC1==1] <- 0
 NISPUF$HSgrad[which(is.element(NISPUF$EDUC1,c(2,3,4)))] <- 1
-nfp_demographics$HSgrad[nfp_demographics$HSGED==1] <- 1
-nfp_demographics$HSgrad[nfp_demographics$HSGED==2] <- 1
-nfp_demographics$HSgrad[nfp_demographics$HSGED==3] <- 0
 
+NFPfull$HSgrad[NFPfull$HSGED==1] <- 1
+NFPfull$HSgrad[NFPfull$HSGED==2] <- 1
+NFPfull$HSgrad[NFPfull$HSGED==3] <- 0
 
 
 ### Drop NISPUF$EDUC1 & nfp_demographics$HSGED
 NISPUF <- NISPUF[,!(names(NISPUF) %in% "EDUC1")]
-nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "HSGED")]
+NFPfull <- NFPfull[,!(names(NFPfull) %in% "HSGED")]
 
 
 
@@ -845,66 +767,43 @@ nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "HSGED")]
 ########################################
 # Create common dataset to combine NIS and NFP data
 
-nfp_outcomes <- read.csv("growth_immunization_outcomes.csv")
-nfp_outcomes$Immunizations_UptoDate_6[nfp_outcomes$final_immun_1=="Yes"] <- 1
-  nfp_outcomes$Immunizations_UptoDate_6[nfp_outcomes$final_immun_1=="No"] <- 0
-nfp_outcomes$Immunizations_UptoDate_12[nfp_outcomes$final_immun_2=="Yes"] <- 1
-  nfp_outcomes$Immunizations_UptoDate_12[nfp_outcomes$final_immun_2=="No"] <- 0
-nfp_outcomes$Immunizations_UptoDate_18[nfp_outcomes$final_immun_3=="Yes"] <- 1
-  nfp_outcomes$Immunizations_UptoDate_18[nfp_outcomes$final_immun_3=="No"] <- 0
-nfp_outcomes$Immunizations_UptoDate_24[nfp_outcomes$final_immun_4=="Yes"] <- 1
-  nfp_outcomes$Immunizations_UptoDate_24[nfp_outcomes$final_immun_4=="No"] <- 0
 
-
+## Create indicator variables for whether NFP child is UTD at 6, 12, 18, 24 months
+NFPfull$Immunizations_UptoDate_6[NFPfull$final_immun_1=="Yes"] <- 1
+  NFPfull$Immunizations_UptoDate_6[NFPfull$final_immun_1=="No"] <- 0
+NFPfull$Immunizations_UptoDate_12[NFPfull$final_immun_2=="Yes"] <- 1
+  NFPfull$Immunizations_UptoDate_12[NFPfull$final_immun_2=="No"] <- 0
+NFPfull$Immunizations_UptoDate_18[NFPfull$final_immun_3=="Yes"] <- 1
+  NFPfull$Immunizations_UptoDate_18[NFPfull$final_immun_3=="No"] <- 0
+NFPfull$Immunizations_UptoDate_24[NFPfull$final_immun_4=="Yes"] <- 1
+  NFPfull$Immunizations_UptoDate_24[NFPfull$final_immun_4=="No"] <- 0
 
 # Drop nfp_outcomes$final_immun_*
-nfp_outcomes <- nfp_outcomes[,!(names(nfp_outcomes) %in% c("final_immun_1","final_immun_2","final_immun_3","final_immun_4"))]
+NFPfull <- NFPfull[,!(names(NFPfull) %in% c("final_immun_1","final_immun_2","final_immun_3","final_immun_4"))]
 
-# Read dataset that identifies the source of each NFP immunization value
-immun_record_source <- read.csv("immun_record_source.csv")
 
+
+
+## Source of immunization data
 # Some single-quotation marks came in as Unicode.  Replace.
-immun_record_source$immun_record_source_1 <- gsub("\U3e32393c", "'", as.character(immun_record_source$immun_record_source_1))
-immun_record_source$immun_record_source_2 <- gsub("\U3e32393c", "'", as.character(immun_record_source$immun_record_source_2))
-immun_record_source$immun_record_source_3 <- gsub("\U3e32393c", "'", as.character(immun_record_source$immun_record_source_3))
-immun_record_source$immun_record_source_4 <- gsub("\U3e32393c", "'", as.character(immun_record_source$immun_record_source_4))
+NFPfull$immun_record_source_1 <- gsub("\U3e32393c", "'", as.character(NFPfull$immun_record_source_1))
+NFPfull$immun_record_source_2 <- gsub("\U3e32393c", "'", as.character(NFPfull$immun_record_source_2))
+NFPfull$immun_record_source_3 <- gsub("\U3e32393c", "'", as.character(NFPfull$immun_record_source_3))
+NFPfull$immun_record_source_4 <- gsub("\U3e32393c", "'", as.character(NFPfull$immun_record_source_4))
 
 # Recode values
-immun_record_source$immun_record_source_1[immun_record_source$immun_record_source_1==""] <- NA
-  immun_record_source$immun_record_source_1[immun_record_source$immun_record_source_1=="Written record"] <- "record"
-  immun_record_source$immun_record_source_1[immun_record_source$immun_record_source_1=="Mother's self-report"] <- "mother"
-immun_record_source$immun_record_source_2[immun_record_source$immun_record_source_2==""] <- NA
-  immun_record_source$immun_record_source_2[immun_record_source$immun_record_source_2=="Written record"] <- "record"
-  immun_record_source$immun_record_source_2[immun_record_source$immun_record_source_2=="Mother's self-report"] <- "mother"
-immun_record_source$immun_record_source_3[immun_record_source$immun_record_source_3==""] <- NA
-  immun_record_source$immun_record_source_3[immun_record_source$immun_record_source_3=="Written record"] <- "record"
-  immun_record_source$immun_record_source_3[immun_record_source$immun_record_source_3=="Mother's self-report"] <- "mother"
-immun_record_source$immun_record_source_4[immun_record_source$immun_record_source_4==""] <- NA
-  immun_record_source$immun_record_source_4[immun_record_source$immun_record_source_4=="Written record"] <- "record"
-  immun_record_source$immun_record_source_4[immun_record_source$immun_record_source_4=="Mother's self-report"] <- "mother"
-
-
-
-# Rename immun_record_source$cl_en_gen_id as immun_record_source$CL_EN_GEN_ID
-names(immun_record_source)[names(immun_record_source)=='cl_en_gen_id'] <- 'CL_EN_GEN_ID'
-
-
-## CHECK THE DIMENSIONS BEFORE AND AFTER TO MAKE SURE IT MERGED CORRECTLY
-dim(nfp_outcomes)
-dim(immun_record_source)
-dim(nfp_demographics)
-
-# Merge the datasets
-nfp_outcomes <- merge(nfp_outcomes, immun_record_source, by="CL_EN_GEN_ID")
-dim(nfp_outcomes)
-
-
-
-
-# Merge NFP demographics and immunization datasets and rename ID variable
-NFPfull <- merge(nfp_demographics, nfp_outcomes, by="CL_EN_GEN_ID", all=TRUE)
-names(NFPfull)[names(NFPfull)=="CL_EN_GEN_ID"] <- "ID"
-dim(NFPfull)
+NFPfull$immun_record_source_1[NFPfull$immun_record_source_1==""] <- NA
+  NFPfull$immun_record_source_1[NFPfull$immun_record_source_1=="Written record"] <- "record"
+  NFPfull$immun_record_source_1[NFPfull$immun_record_source_1=="Mother's self-report"] <- "mother"
+NFPfull$immun_record_source_2[NFPfull$immun_record_source_2==""] <- NA
+  NFPfull$immun_record_source_2[NFPfull$immun_record_source_2=="Written record"] <- "record"
+  NFPfull$immun_record_source_2[NFPfull$immun_record_source_2=="Mother's self-report"] <- "mother"
+NFPfull$immun_record_source_3[NFPfull$immun_record_source_3==""] <- NA
+  NFPfull$immun_record_source_3[NFPfull$immun_record_source_3=="Written record"] <- "record"
+  NFPfull$immun_record_source_3[NFPfull$immun_record_source_3=="Mother's self-report"] <- "mother"
+NFPfull$immun_record_source_4[NFPfull$immun_record_source_4==""] <- NA
+  NFPfull$immun_record_source_4[NFPfull$immun_record_source_4=="Written record"] <- "record"
+  NFPfull$immun_record_source_4[NFPfull$immun_record_source_4=="Mother's self-report"] <- "mother"
 
 
 
@@ -915,13 +814,10 @@ names(NISPUF)[names(NISPUF)=="SEQNUMC"] <- "ID"
 
 
 
-# Create weight variable.  All cases in NFP should receive full weight, but
-# not all cases in NIS.  The kids in the 2008 dataset were born before the kids in 
-# the NFP dataset, so they should receive a weight of zero.  Only some of the cases
-# in the 2009 NIS dataset were born during the same time: we should drop all kids 
-# 24-35 months old in this dataset and give 5/16 weight to the kids 19-23 months
-# because those kids were born between 2/2007 and 5/2008 and only 5/16 of them
-# overlap with the NFP dataset.  And so on.  See "When kids in NIS were born.xls"
+# Some overlap between NIS and NFP children.  For example, kids in the 2009 NIS
+# dataset were born between February 2006 and May 2008, while kids in the NFP dataset
+# were born after December 31, 2007.  Therefore, the oldest kids in the 2009 NIS
+# data should be cut.  See "When kids in NIS were born.xls"
 #
 # In addition, NIS offers survey weights that essentially indicate how many persons
 # each data point represents. 
@@ -936,28 +832,11 @@ names(NISPUF)[names(NISPUF)=="SEQNUMC"] <- "ID"
 # Should I compare children of the same age?  (This is tough to do when the NFP data
 # do not include the child's age.)
 
-NFPfull$weight <- 1
-
-NISPUF$weight <- 0
-  NISPUF$weight[NISPUF$AGEGRP==1 & NISPUF$YEAR==2009] <- 16/5
-
-  NISPUF$weight[NISPUF$AGEGRP==1 & NISPUF$YEAR==2010] <- 1
-  NISPUF$weight[NISPUF$AGEGRP==2 & NISPUF$YEAR==2010] <- 17/12
-  NISPUF$weight[NISPUF$AGEGRP==3 & NISPUF$YEAR==2010] <- 17/6
-
-  NISPUF$weight[NISPUF$YEAR==2011] <- 1
-
-NISPUF$weight <- NISPUF$weight*NISPUF$PROVWT
 
 
 
 
-# Match on agency requirements?
-
-
-
-
-# Adequate provider data indicators for immunizations at 6, 12, 18, and 24 months
+# Adequate record indicators for immunizations at 6, 12, 18, and 24 months
 
 NFPfull$PDAT6 <- 0
   NFPfull$PDAT6[NFPfull$immun_record_source_1=="record"] <- 1
@@ -965,7 +844,7 @@ NFPfull$PDAT12 <- 0
   NFPfull$PDAT12[NFPfull$immun_record_source_2=="record"] <- 1
 NFPfull$PDAT18 <- 0
   NFPfull$PDAT18[NFPfull$immun_record_source_3=="record"] <- 1
-NFPfull$PDAT24 <- 0
+NFPfull$PDAT24 <- 0 
   NFPfull$PDAT24[NFPfull$immun_record_source_4=="record"] <- 1
 
 NISPUF$PDAT6 <- NISPUF$PDAT
@@ -976,7 +855,17 @@ NISPUF$PDAT24 <- NISPUF$PDAT
 
 
 
-# Rename 4:3:1 UTD variables
+# The NFP dataset asks the the nurse the following: "Based on your local immunization
+# schedule, (regardless of vaccine brand or manufacturer) is (child's name) up to date
+# on all vaccinations?"  This question does not make explicit which vaccines the children 
+# should have, but considering the much higher immunization rates we find in the NFP dataset, 
+# I'm biasing against NFP by setting a low bar for the general population: whether the
+# child has the recommended DTaP, polio, and MMR vaccines (e.g. variable 
+# Immunizations_UptoDate431_6), not whether she also has Hib, HepA and HepB, Varicella, 
+# and Rotavirus (e.g. variable Immunizations_UptoDate_6).  This means that I need to keep
+# the NIS Immunizations_UptoDate431 variables but that they need to be named 
+# Immunizations_UptoDate to match the NFP dataset.
+
 NISPUF <- NISPUF[,!(names(NISPUF) %in% c("Immunizations_UptoDate_6",
                                          "Immunizations_UptoDate_12",
                                          "Immunizations_UptoDate_18",
@@ -986,12 +875,11 @@ names(NISPUF)[names(NISPUF)=="Immunizations_UptoDate431_12"] <- "Immunizations_U
 names(NISPUF)[names(NISPUF)=="Immunizations_UptoDate431_18"] <- "Immunizations_UptoDate_18"
 names(NISPUF)[names(NISPUF)=="Immunizations_UptoDate431_24"] <- "Immunizations_UptoDate_24"
 
-sort(names(NFPfull))
 
   
 # Subset using only the variables we want to use in the analysis
-NIScommon <- subset(NISPUF, select = c(ID, STATE, PDAT6, PDAT12, PDAT18, PDAT24, weight, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
-NFPcommon <- subset(NFPfull, select = c(ID, STATE, PDAT6, PDAT12, PDAT18, PDAT24, weight, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
+NIScommon <- subset(NISPUF, select = c(ID, STATE, PDAT6, PDAT12, PDAT18, PDAT24, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
+NFPcommon <- subset(NFPfull, select = c(ID, STATE, PDAT6, PDAT12, PDAT18, PDAT24, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
 # Other NIS variables to potentially subset on: PDAT, C5R, INCPORAR, FRSTBRN, AGEGRP
 
 # Create treatment variable
@@ -1001,9 +889,6 @@ NFPcommon$treatment <- 1
 
 
 
-
-
 immunizations <- rbind(NIScommon, NFPcommon)
 
-save(immunizations, file = "/mnt/data/NIS/immunizations_analysis.RData", ascii = TRUE) # ASCII so it's readable years from now
-write.csv(immunizations, "immunizations_analysis.csv")
+write.csv(immunizations, "immunizations_analysis.csv")  # CSV so it's readable years from now
