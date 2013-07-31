@@ -95,8 +95,8 @@ nfp$highered[nfp$Client_Higher_Educ_1=="No"] <- 0
 nfp$highered[nfp$Client_Higher_Educ_1==""] <- NA
 nfp$male[nfp$Childgender=="Female"] <- 0 # Recode factor variable
 nfp$male[nfp$Childgender=="Male"] <- 1 
-nfp$english[nfp$Primary_language==1] <- 1
-nfp$english[which(is.element(nfp$Primary_language, c(2,3)))] <- 0
+nfp$english <- 1*(nfp$Primary_language=="English")
+nfp$english[nfp$Primary_language==''] <- NA
 
 # Race recodes: note that NSCH has only child's race and NFP has only mother's race.
 # Must assume for matching purposes that they are the same.
