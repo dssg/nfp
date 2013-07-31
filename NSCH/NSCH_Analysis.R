@@ -6,21 +6,28 @@ setwd("/mnt/data/NSCH/data")
 breast <- read.csv("breastfeeding_data.csv")
 pop <- read.csv("breast_pop_comparison.csv")
 
-# Prospensity score matching:
-
+# Prospensity score matching
 library(Matching)
 
-# Define D, X, Y, and Z.
-## D is an indicator of whether the observation came from the NFP data set (treatment indicator).
-## X are controls for the independent variables in the regression of Y on D.
-## Y is the outcome of interest (ever breastfed, weeks of breastfeeding).
-## Z include all X and the other variables that may impact likelihood of treatment, but do not independently impact the outcome.
+# Outcome 1: Child was ever breastfed
+ever_breast1 <- breast[,c(1:13, 15)] # Omit data for other outcome measure
+ever_breast <- subset(ever_breast1, complete.cases(ever_breast1))
+
+
+probit <- glm(ever_breast$treatment ~ ., family = binomial(link = "probit"), data = ever_breast[,!13])
+summary(probit)
+
+
+# Outcome 2: Weeks child was breastfed
+weeks_breast <- complete.cases(breast[,c(1:12, 14:15)])
+
+
 
 D <- breast$treatment
-X <- subset(breast, select = c('male', 'premature', 'lbw', 'highschool', 'highered', 'marital_status', 'MomsAgeBirth', 'State', 'RE', 'english'))
+Z <- subset(breast, select = c('male', 'premature', 'lbw', 'highschool', 'highered', 'marital_status', 
+	'MomsAgeBirth', 'State', 'RE', 'english'))
 Y1 <- breast$breastfed # Binary variable: 1 if child was ever breastfed, 0 if not
 Y2 <- breast$week_end_breast # Numeric variables: age in weeks of child when last breastfed
-Z <- X
 
 # Regress D on Z to create propensity scores (probit model)
 

@@ -12,8 +12,8 @@ nsch$premature[nsch$K2Q05==0] <- 0 # Indicator for prematurity; null if DK/refus
 nsch$premature[nsch$K2Q05==1] <- 1
 nsch$lbw[nsch$K2Q04R<=88] <- 1 # Indicator for low birthweight; null if DK/refused
 nsch$lbw[89<=nsch$K2Q04R] <- 0
-nsch$marital_status[!is.na(nsch$FAM_MAR_COHAB)] <- 0
-nsch$marital_status[which(is.element(nsch$FAM_MAR_COHAB,c(1,3,5)))] <- 1 # Not quite marital status - mother is married or child lives with married step family (could be married father)
+nsch$married[!is.na(nsch$FAM_MAR_COHAB)] <- 0
+nsch$married[which(is.element(nsch$FAM_MAR_COHAB,c(1,3,5)))] <- 1 # Not quite marital status - mother is married or child lives with married step family (could be married father)
 nsch$english[nsch$PLANGUAGE==1] <- 1 # Indicator for English speaking household
 nsch$english[nsch$PLANGUAGE==2] <- 0
 
@@ -95,8 +95,9 @@ nfp$highered[nfp$Client_Higher_Educ_1=="No"] <- 0
 nfp$highered[nfp$Client_Higher_Educ_1==""] <- NA
 nfp$male[nfp$Childgender=="Female"] <- 0 # Recode factor variable
 nfp$male[nfp$Childgender=="Male"] <- 1 
-nfp$english[nfp$Primary_language==1] <- 1
-nfp$english[which(is.element(nfp$Primary_language, c(2,3)))] <- 0
+nfp$english <- 1*(nfp$Primary_language=="English")
+nfp$english[nfp$Primary_language==''] <- NA
+nfp$married <- nfp$marital_status
 
 # Race recodes: note that NSCH has only child's race and NFP has only mother's race.
 # Must assume for matching purposes that they are the same.
@@ -141,12 +142,12 @@ nsch$week_end_breast[nsch$week_end_breast>104] <- NA
 	## Children from HH making more than 200% of FPL WIC/NFP criteria is generally 100-185% FPL)
 	## Children who do not live with their biological mother (however, keeping children who live in a two-parent step HH - unclear whether live with mother or father)
 NSCH_Final <- subset(nsch, nsch$POVLEVEL_I <= 2 & nsch$AGEYR_CHILD <= 4 & nsch$AGEPOS<=2 & (!is.element(nsch$FAM_MAR_COHAB, c(7,8,9))), 
-	select = c(ID, male, premature, lbw, highschool, highered, marital_status, MomsAgeBirth, 
+	select = c(ID, male, premature, lbw, highschool, highered, married, MomsAgeBirth, 
 	State, RE, english, breastfed, week_end_breast))
 	
 # Remove extra NFP columns.
 NFP_Final <- subset(nfp, select = c(ID, male, premature, lbw, highschool, highered, 
-	marital_status, MomsAgeBirth, State, RE, english, breastfed, week_end_breast))
+	married, MomsAgeBirth, State, RE, english, breastfed, week_end_breast))
 
 # Add treatment indicator
 NSCH_Final$treatment <- 0
@@ -158,6 +159,6 @@ write.csv(breastfeeding, "breastfeeding_data.csv")
 
 
 # Creating one dataset without dropping any NSCH obs and keeping weights, to get general population statistics.
-NSCH_Full <- subset(nsch, select = c(ID, male, premature, lbw, highschool, highered, marital_status, 
+NSCH_Full <- subset(nsch, select = c(ID, male, premature, lbw, highschool, highered, married, 
 			MomsAgeBirth, State, RE, english, breastfed, week_end_breast, NSCHWT))
 write.csv(NSCH_Full, file = "breast_pop_comparison.csv")
