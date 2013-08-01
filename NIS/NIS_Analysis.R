@@ -9,7 +9,7 @@
 
 require(ggplot2)
 
-load("/mnt/data/NIS/immunizations_analysis.RData")
+immunizations <- read.csv("/mnt/data/NIS/modified_data/immunizations_analysis.csv")
 
 
 
@@ -299,7 +299,8 @@ reg <- glm(treatment ~ factor(income_recode) + factor(language) +
 # match on poverty ratio instead of income buckets
 
 # Separation plot
-
+library(separationplot)
+separationplot(predict.glm(reg, type='response'), PSM_Matching$treatment)
 
 
 
@@ -441,6 +442,21 @@ unique(NISPUF$AGEGRP)
 
 
 # How reliable are household shot cards?
+
+
+
+
+
+
+# Do the analysis with complete data and with probability distributions for the missing data
+
+
+
+
+
+
+
+
 
 
 

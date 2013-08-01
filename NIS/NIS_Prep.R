@@ -598,11 +598,21 @@ NISPUF$HHSC_UTD <- 0
 
 
 
-
-        
+    
 ###################################
 ## Save NIS data
 write.csv(NISPUF, file="NISPUF.csv")  # CSV so it's readable years from now
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -891,4 +901,42 @@ NFPcommon$treatment <- 1
 
 immunizations <- rbind(NIScommon, NFPcommon)
 
-write.csv(immunizations, "immunizations_analysis.csv")  # CSV so it's readable years from now
+write.csv(immunizations, "/mnt/data/NIS/modified_data/immunizations_analysis.csv")  # CSV so it's readable years from now
+
+
+
+
+
+
+
+
+
+#####################################
+#####################################
+#                                   #
+#      Create a dataset with        #
+#      observations that are        #
+#         missing values.           #
+#        Can impute or use          #
+#    probability distributions      #
+#         in their place            #
+#                                   #
+#####################################
+#####################################
+
+
+
+setwd("/mnt/data/NIS/modified_data/")
+IDs_of_missing_mothers <- read.csv("/mnt/data/nfp_data/csv_data/IDsMissingOutcomes.csv", header=T)
+  IDs_of_missing_mothers <- IDs_of_missing_mothers$x
+length(IDs_of_missing_mothers)
+
+
+nfp_demographics <- read.csv("/mnt/data/nfp_data/csv_data/nfp_demographics_expanded.csv", header=T)
+dim(nfp_demographics)
+
+nfp_demographics_for_missing_mothers <- merge(nfp_demographics, IDs_of_missing_mothers, all.x=TRUE,
+                                              by=intersect("CL_EN_GEN_ID", "IDs_of_missing_mothers"))
+
+
+  
