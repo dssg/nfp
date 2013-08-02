@@ -707,9 +707,6 @@ nfp_centers$State[nfp_centers$State==54] <- "WV"
 nfp_centers$State[nfp_centers$State==55] <- "WI"
 nfp_centers$State[nfp_centers$State==56] <- "WY"
 
-# Rename nfp_centers$State nfp_centers$STATE
-names(nfp_centers)[names(nfp_centers)=='State'] <- 'STATE'
-
 
 # Some NFP agencies are missing State data.  Add them.
 nfp_centers[nfp_centers$Site_ID==274, names(nfp_centers) %in% "State"] <- "WA"
@@ -718,6 +715,9 @@ nfp_centers[nfp_centers$Site_ID==281, names(nfp_centers) %in% "State"] <- "NJ"
 nfp_centers[nfp_centers$Site_ID==294, names(nfp_centers) %in% "State"] <- "FL"
 nfp_centers[nfp_centers$Site_ID==352, names(nfp_centers) %in% "State"] <- "VA"
 
+
+# Rename nfp_centers$State nfp_centers$STATE
+names(nfp_centers)[names(nfp_centers)=='State'] <- 'STATE'
 
 
 
@@ -885,7 +885,7 @@ dim(immun_record_source)
 dim(nfp_demographics)
 
 # Merge the datasets
-nfp_outcomes <- merge(nfp_outcomes, immun_record_source, by="CL_EN_GEN_ID")
+nfp_outcomes <- merge(nfp_outcomes, immun_record_source, by="CL_EN_GEN_ID", all=TRUE)
 dim(nfp_outcomes)
 
 
@@ -894,8 +894,8 @@ dim(nfp_outcomes)
 # Merge NFP demographics and immunization datasets and rename ID variable
 NFPfull <- merge(nfp_demographics, nfp_outcomes, by="CL_EN_GEN_ID", all=TRUE)
 names(NFPfull)[names(NFPfull)=="CL_EN_GEN_ID"] <- "ID"
+names(NFPfull)[names(NFPfull)=="State"] <- "STATE"
 dim(NFPfull)
-
 
 
 
