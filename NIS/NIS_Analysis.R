@@ -22,7 +22,7 @@ m <- map("state", interior = FALSE, plot=FALSE)
 m$my.colors <- 0
 m$names
 m$my.colors[m$names %in% c("alabama","arizona","california","colorado","delaware",
-                           "florida","iowa","illinois","kentucky","louisiana",
+                           "florida","iowa","illinois","kansas","kentucky","louisiana",
                            "maryland","michigan:north","michigan:south",
                            "minnesota","missouri","north carolina:main",
                            "north carolina:knotts","north carolina:spit",
@@ -35,7 +35,7 @@ m$my.colors[m$names %in% c("alabama","arizona","california","colorado","delaware
                            "washington:san juan island","washington:orcas island",
                            "washington:whidbey island","wisconsin","wyoming")] <- "gray50"
 m$my.colors[m$names %in% c("arkansas","connecticut","district of columbia",
-                           "georgia","idaho","indiana","kansas","maine",
+                           "georgia","idaho","indiana","maine",
                            "massachusetts:main","massachusetts:martha's vineyard",
                            "massachusetts:nantucket","mississippi","montana",
                            "nebraska","new hampshire","new mexico","vermont",

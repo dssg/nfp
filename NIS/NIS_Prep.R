@@ -53,15 +53,15 @@ PERCENT_UTD <- round(r_nation*100,2) #CONVERT INTO PERCENT ESTIMATES(MEAN)
 SE_UTD <- round(SE(r_nation)*100,2) #CONVERT INTO PERCENT ESTIMATES(SE)
 cbind(PERCENT_UTD, SE_UTD)
 
-#---OUR ESTIMATES AND STANDARD ERRORS---#
-estimates <- rep(NA,1000)
-for(i in 1:1000){
-  rows <- sample(1:dim(NISPUF09)[1], dim(NISPUF09)[1], replace=TRUE)
-  temp <- NISPUF09[rows,]
-  estimates[i] <- sum(temp$PROVWT[temp$P_UTD431==1], na.rm=T) / sum(temp$PROVWT, na.rm=T)
-}
-cbind(100*sum(NISPUF09$PROVWT[NISPUF09$P_UTD431==1], na.rm=T) / sum(NISPUF09$PROVWT, na.rm=T), 
-      100*sd(estimates))
+#---OUR ESTIMATES AND STANDARD ERRORS (USES BOOTSTRAP)---#
+#estimates <- rep(NA,1000)
+#for(i in 1:1000){
+#  rows <- sample(1:dim(NISPUF09)[1], dim(NISPUF09)[1], replace=TRUE)
+#  temp <- NISPUF09[rows,]
+#  estimates[i] <- sum(temp$PROVWT[temp$P_UTD431==1], na.rm=T) / sum(temp$PROVWT, na.rm=T)
+#}
+#cbind(100*sum(NISPUF09$PROVWT[NISPUF09$P_UTD431==1], na.rm=T) / sum(NISPUF09$PROVWT, na.rm=T), 
+#      100*sd(estimates))
 
 
 
@@ -137,15 +137,15 @@ PERCENT_UTD <- round(r_nation*100,2) #CONVERT INTO PERCENT ESTIMATES(MEAN)
 SE_UTD <- round(SE(r_nation)*100,2) #CONVERT INTO PERCENT ESTIMATES(SE)
 cbind(PERCENT_UTD, SE_UTD)
 
-#---OUR ESTIMATES AND STANDARD ERRORS---#
-estimates <- rep(NA,1000)
-for(i in 1:1000){
-  rows <- sample(1:dim(NISPUF10)[1], dim(NISPUF10)[1], replace=TRUE)
-  temp <- NISPUF10[rows,]
-  estimates[i] <- sum(temp$PROVWT[temp$PUTD4313==1], na.rm=T) / sum(temp$PROVWT, na.rm=T)
-}
-cbind(100*sum(NISPUF10$PROVWT[NISPUF10$PUTD4313==1], na.rm=T) / sum(NISPUF10$PROVWT, na.rm=T), 
-      100*sd(estimates))
+#---OUR ESTIMATES AND STANDARD ERRORS (USES BOOTSTRAP)---#
+#estimates <- rep(NA,1000)
+#for(i in 1:1000){
+#  rows <- sample(1:dim(NISPUF10)[1], dim(NISPUF10)[1], replace=TRUE)
+#  temp <- NISPUF10[rows,]
+#  estimates[i] <- sum(temp$PROVWT[temp$PUTD4313==1], na.rm=T) / sum(temp$PROVWT, na.rm=T)
+#}
+#cbind(100*sum(NISPUF10$PROVWT[NISPUF10$PUTD4313==1], na.rm=T) / sum(NISPUF10$PROVWT, na.rm=T), 
+#      100*sd(estimates))
 
 
 
@@ -222,15 +222,15 @@ PERCENT_UTD <- round(r_nation*100,2) #CONVERT INTO PERCENT ESTIMATES(MEAN)
 SE_UTD <- round(SE(r_nation)*100,2) #CONVERT INTO PERCENT ESTIMATES(SE)
 cbind(PERCENT_UTD, SE_UTD)
 
-#---OUR ESTIMATES AND STANDARD ERRORS---#
-estimates <- rep(NA,1000)
-for(i in 1:1000){
-  rows <- sample(1:dim(NISPUF11)[1], dim(NISPUF11)[1], replace=TRUE)
-  temp <- NISPUF11[rows,]
-  estimates[i] <- sum(temp$PROVWT_D[temp$PUTD4313==1], na.rm=T) / sum(temp$PROVWT_D, na.rm=T)
-}
-cbind(100*sum(NISPUF11$PROVWT_D[NISPUF11$PUTD4313==1], na.rm=T) / sum(NISPUF11$PROVWT_D, na.rm=T), 
-      100*sd(estimates))
+#---OUR ESTIMATES AND STANDARD ERRORS (USES BOOTSTRAP)---#
+#estimates <- rep(NA,1000)
+#for(i in 1:1000){
+#  rows <- sample(1:dim(NISPUF11)[1], dim(NISPUF11)[1], replace=TRUE)
+#  temp <- NISPUF11[rows,]
+#  estimates[i] <- sum(temp$PROVWT_D[temp$PUTD4313==1], na.rm=T) / sum(temp$PROVWT_D, na.rm=T)
+#}
+#cbind(100*sum(NISPUF11$PROVWT_D[NISPUF11$PUTD4313==1], na.rm=T) / sum(NISPUF11$PROVWT_D, na.rm=T), 
+#      100*sd(estimates))
 
 
 
@@ -963,9 +963,7 @@ NFPcommon$treatment <- 1
 
 
 
-
-
 immunizations <- rbind(NIScommon, NFPcommon)
 
-write.csv(immunizations, "immunizations_analysis.csv")
+write.csv(immunizations, "/mnt/data/NIS/modified_data/immunizations_analysis.csv")
 
