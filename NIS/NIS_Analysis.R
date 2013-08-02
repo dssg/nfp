@@ -9,6 +9,8 @@
 
 require(ggplot2)
 
+setwd("/mnt/data/NIS/")
+
 immunizations <- read.csv("/mnt/data/NIS/modified_data/immunizations_analysis.csv")
 
 
@@ -60,9 +62,12 @@ legend("topright", legend=c("NFP state", "Not an NFP state"), pch=15,
 ## EXPLORATORY ANALYSIS
 
 summary(immunizations)
+dim(immunizations)
 
-# Lots of missing income_recode from the NFP data.  Impute.
+# Lots of missing income_recode from the NFP data.  We can impute.
 sum(is.na(immunizations$income_recode[immunizations$treatment==1]))
+sum(!is.na(immunizations$income_recode[immunizations$treatment==1])) / sum(immunizations$treatment==1)
+
 
 
 
@@ -117,30 +122,17 @@ text(.635,.075,results[2,2],cex=.75)
 
 
 # Comparing NIS/NFP mother's age
+# Estimate probability that mother is in the correct category?
+
 results <- table(immunizations$MothersAge, immunizations$treatment)
 colnames(results) <- c("~NFP", "NFP")
 results[,1] / sum(results[,1])
 
 
-# NOT BELIEVABLE.  NUMBERS DO NOT MATCH NATIONAL VITAL STATISTICS REPORTS
+# These numbers do not match the National Vital Statistics reports.
 # In 2010, about 300,000 first-time births for mothers under 20 years old
-# out of a total of 1.6 million first-time births, or about 19%.  Also, 56%
-# of first-time mothers seems too high.
-
-# Using Provider weights does not help much
-names(NISPUF)
-head(NISPUF)
-table(NISPUF$MothersAge[NISPUF$PDAT==1]) / sum(NISPUF$PDAT==1)
-table(NISPUF$MothersAge) / length(NISPUF$PDAT)
-sum(NISPUF$PROVWT[NISPUF$MothersAge=="<=19 Years"], na.rm=TRUE) / sum(NISPUF$PROVWT, na.rm=TRUE)
-sum(NISPUF$PROVWT[NISPUF$MothersAge=="20-29 Years"], na.rm=TRUE) / sum(NISPUF$PROVWT, na.rm=TRUE)
-sum(NISPUF$PROVWT[NISPUF$MothersAge==">=30 Years"], na.rm=TRUE) / sum(NISPUF$PROVWT, na.rm=TRUE)
-
-# Maybe if we just use NISPUF10
-table(NISPUF10$M_AGEGRP[NISPUF10$PDAT==1]) / sum(NISPUF10$PDAT==1)
-table(NISPUF10$M_AGEGRP) / length(NISPUF10$PDAT)
-
-# This appears to be because the NIS is recording the mother's age at the time
+# out of a total of 1.6 million first-time births, or about 19%.  This appears 
+# to be because the NIS is recording the mother's age at the time
 # of the interview, not at the time of birth.  If 19% of first-time mothers are
 # under 20 at the time of birth, and if 66% are 18-19 and 94% are 16-19, then 
 # it makes sense that only 2-3% would be 19 years old or younger when their

@@ -6,8 +6,24 @@
 ##        Adam Fishman          ##
 ##################################
 
+# This script proceeds in the following way:
+#
+#     NIS
+#     - Load NIS data for 2009, 2010, and 2011
+#     - Replicate NIS estimates to ensure data quality
+#     - Merge the NIS datasets
+#     - Generate immunization variables we need for analysis
+#     - Clean NIS data
+#
+#     NFP 
+
+
+
+# Load libraries
 library(survey)   #TO USE svydesign(), svymean(), and svyby()
 library(Hmisc)    #TO USE prn()
+library(sas7bdat)
+
 
 setwd("/mnt/data/NIS/modified_data/")
 
@@ -17,43 +33,65 @@ setwd("/mnt/data/NIS/modified_data/")
 #####################################
 #####################################
 #                                   #
-#        Prepare NIS Data           #
+#          Load NIS Data            #
+#     Replicate NIS estimates       #
+#        Rename variables           #
+#    Drop unncessary variables      #
+#   Merge 2009, 2010, 2011 data     #
 #                                   #
 #####################################
 #####################################
 
-## NIS provides R scripts to prepare the data for analysis.  Run each and make a few modifications.
-## I'm commenting out the source lines that call NIS-provided code because 
-## 1) once they're run they don't need to run again and 2) they take too long to run.
+
+
+## NOTE
+
+#  NIS provides R scripts to prepare the data for analysis.  Run each and make a few modifications.
+#  I'm commenting out the source lines that call NIS-provided code because 
+#  1) once they're run they don't need to run again and 2) they take too long to run.
+#
+#  The NIS provides code with each year's dataset to replicate some of their immunization estimates.  
+#  I included that code and my own, which uses a bootstrap, to ensure data quality.  Because the 
+#  bootstrap can take a long time, I commented it out.
+
+
 
 
 
 
 #####################################
 ## 2009 NIS data
+#####################################
 #source("/mnt/data/NIS/original_data/nispuf09.r")
 
 load("NISPUF09.RData")
 
-# Check validity of my coding by replicating estimates in the NIS 2009 documentation
+
+####################
+# Check validity of the data by replicating estimates in the NIS 2009 documentation
+
+# Start with a few empirical univariate distributions
 table(NISPUF09$EDUC1); sum(is.na(NISPUF09$EDUC1))         # Education matches
 table(NISPUF09$SC_431); sum(is.na(NISPUF09$SC_431))       # Shot card 4:3:1 matches
 table(NISPUF09$M_AGEGRP); sum(is.na(NISPUF09$M_AGEGRP))   # Mother's age matches
 
+
+#-- HERE'S THE NIS CODE -- #
 R_FILE <- subset(NISPUF09, select=c(SEQNUMHH, SEQNUMC, P_UTD431, ESTIAP09, PROVWT))
   names(R_FILE) <- c("SEQNUMHH", "SEQNUMC", "P_UTD431", "ESTIAP", "WT")
   R_FILE <- na.omit(R_FILE)
 
-#---SPECIFY A SAMPLING DESIGN---#
-svydsg <- svydesign(id=~SEQNUMHH, strata=~ESTIAP, weights=~WT, data=R_FILE)
+# Specify survey design
+svydsg <- svydesign(id=~SEQNUMHH, strata=~ESTIAP, weights=~WT, data=R_FILE)  
 
-#---NIS ESTIMATES AND STANDARD ERRORS---#
+# NIS estimates and standard errors
 r_nation <- svymean(~P_UTD431, svydsg)
 PERCENT_UTD <- round(r_nation*100,2) #CONVERT INTO PERCENT ESTIMATES(MEAN)
 SE_UTD <- round(SE(r_nation)*100,2) #CONVERT INTO PERCENT ESTIMATES(SE)
 cbind(PERCENT_UTD, SE_UTD)
 
-#---OUR ESTIMATES AND STANDARD ERRORS (USES BOOTSTRAP)---#
+
+#-- HERE ARE OUR ESTIMATES --#
 #estimates <- rep(NA,1000)
 #for(i in 1:1000){
 #  rows <- sample(1:dim(NISPUF09)[1], dim(NISPUF09)[1], replace=TRUE)
@@ -64,6 +102,9 @@ cbind(PERCENT_UTD, SE_UTD)
 #      100*sd(estimates))
 
 
+
+####################
+# Modify the dataset
 
 # Drop variables not available in every year
 NISPUF09 <- NISPUF09[,!(names(NISPUF09) %in% c("HH_FLU","P_UTDHEP","P_UTDHIB_ROUT_S","P_UTDHIB_SHORT_S","P_UTDPCV",
@@ -104,7 +145,7 @@ NISPUF09 <- subset(NISPUF09,
                              sort(names(NISPUF09)[grep("DROT", names(NISPUF09))]),		# provider-reported rotavirus-containing shots
                              sort(names(NISPUF09)[grep("DVRC", names(NISPUF09))]),		# provider-reported Varicella-containing shots
                              "P_UTD431"                                              # provider-report up-to-date DTAP, polio, measles vaccinations
-                   )
+                            )
                    )
 )
 
@@ -114,30 +155,38 @@ NISPUF09 <- subset(NISPUF09,
 
 #####################################
 ## 2010 NIS data
+#####################################
 #source("/mnt/data/NIS/original_data/nispuf10.r")
 
 load("NISPUF10.RData")
 
 
-# Check validity of my coding by replicating estimates in the NIS 2010 documentation
+
+####################
+# Check validity of the data by replicating estimates in the NIS 2010 documentation
+
+# Start with a few empirical univariate distributions
 table(NISPUF10$EDUC1); sum(is.na(NISPUF10$EDUC1))         # Education matches
 table(NISPUF10$SC_431); sum(is.na(NISPUF10$SC_431))       # Shot card 4:3:1 matches
 table(NISPUF10$M_AGEGRP); sum(is.na(NISPUF10$M_AGEGRP))   # Mother's age matches
 
+
+#-- HERE'S THE NIS CODE -- #
 R_FILE <- subset(NISPUF10, select=c(SEQNUMHH, SEQNUMC, PUTD4313, ESTIAP10, PROVWT))
   names(R_FILE) <- c("SEQNUMHH", "SEQNUMC", "PUTD4313", "ESTIAP", "WT")
   R_FILE <- na.omit(R_FILE)
 
-#---SPECIFY A SAMPLING DESIGN---#
+# Specify survey design
 svydsg <- svydesign(id=~SEQNUMHH, strata=~ESTIAP, weights=~WT, data=R_FILE)
 
-#---NIS ESTIMATES AND STANDARD ERRORS---#
+# NIS estimates and standard errors
 r_nation <- svymean(~PUTD4313, svydsg)
 PERCENT_UTD <- round(r_nation*100,2) #CONVERT INTO PERCENT ESTIMATES(MEAN)
 SE_UTD <- round(SE(r_nation)*100,2) #CONVERT INTO PERCENT ESTIMATES(SE)
 cbind(PERCENT_UTD, SE_UTD)
 
-#---OUR ESTIMATES AND STANDARD ERRORS (USES BOOTSTRAP)---#
+
+#-- HERE ARE OUR ESTIMATES --#
 #estimates <- rep(NA,1000)
 #for(i in 1:1000){
 #  rows <- sample(1:dim(NISPUF10)[1], dim(NISPUF10)[1], replace=TRUE)
@@ -148,6 +197,9 @@ cbind(PERCENT_UTD, SE_UTD)
 #      100*sd(estimates))
 
 
+
+####################
+# Modify the dataset
 
 # Drop variables not available in every year
 NISPUF10 <- NISPUF10[,!(names(NISPUF10) %in% c("HH_FLU","HH_H1N","P_UTDHEPA2","P_UTDHEP","P_UTDHIB_ROUT_S","P_UTDHIB_SHORT_S",
@@ -189,7 +241,7 @@ NISPUF10 <- subset(NISPUF10,
                              sort(names(NISPUF10)[grep("DROT", names(NISPUF10))]),		# provider-reported rotavirus-containing shots
                              sort(names(NISPUF10)[grep("DVRC", names(NISPUF10))]),		# provider-reported Varicella-containing shots
                              "P_UTD431"                                              # provider-report up-to-date DTAP, polio, measles vaccinations
-                   )
+                            )
                    )
 )
 
@@ -200,29 +252,38 @@ NISPUF10 <- subset(NISPUF10,
 
 #####################################
 ## 2011 NIS data
+#####################################
 #source("/mnt/data/NIS/original_data/nispuf11.r")
+
+
+####################
+# Check validity of the data by replicating estimates in the NIS 2011 documentation
 
 load("NISPUF11.RData")
 
-# Check validity of my coding by replicating estimates in the NIS 2011 documentation
+
+# Start with a few empirical univariate distributions
 table(NISPUF11$EDUC1); sum(is.na(NISPUF11$EDUC1))         # Education matches
 table(NISPUF11$SC_431); sum(is.na(NISPUF11$SC_431))       # Shot card 4:3:1 matches
 table(NISPUF11$M_AGEGRP); sum(is.na(NISPUF11$M_AGEGRP))   # Mother's age matches
 
+
+#-- HERE'S THE NIS CODE -- #
 R_FILE <- subset(NISPUF11, select=c(SEQNUMHH, SEQNUMC, PUTD4313, ESTIAP11, PROVWT_D))
   names(R_FILE) <- c("SEQNUMHH", "SEQNUMC", "PUTD4313", "ESTIAP", "WT")
   R_FILE <- na.omit(R_FILE)
 
-#---SPECIFY A SAMPLING DESIGN---#
+# Specify survey design
 svydsg <- svydesign(id=~SEQNUMHH, strata=~ESTIAP, weights=~WT, data=R_FILE)
 
-#---NIS ESTIMATES AND STANDARD ERRORS---#
+# NIS estimates and standard errors
 r_nation <- svymean(~PUTD4313, svydsg)
 PERCENT_UTD <- round(r_nation*100,2) #CONVERT INTO PERCENT ESTIMATES(MEAN)
 SE_UTD <- round(SE(r_nation)*100,2) #CONVERT INTO PERCENT ESTIMATES(SE)
 cbind(PERCENT_UTD, SE_UTD)
 
-#---OUR ESTIMATES AND STANDARD ERRORS (USES BOOTSTRAP)---#
+
+#-- HERE ARE OUR ESTIMATES --#
 #estimates <- rep(NA,1000)
 #for(i in 1:1000){
 #  rows <- sample(1:dim(NISPUF11)[1], dim(NISPUF11)[1], replace=TRUE)
@@ -233,6 +294,9 @@ cbind(PERCENT_UTD, SE_UTD)
 #      100*sd(estimates))
 
 
+
+####################
+# Modify the dataset
 
 # Drop variables not available in every year
 NISPUF11 <- NISPUF11[,!(names(NISPUF11) %in% c("HH_FLU","HH_H1N","P_UTDHEPA2","P_UTDHEP","P_UTDHIB_ROUT_S","P_UTDHIB_SHORT_S",
@@ -276,7 +340,7 @@ NISPUF11 <- subset(NISPUF11,
                              sort(names(NISPUF11)[grep("DROT", names(NISPUF11))]),		# provider-reported rotavirus-containing shots
                              sort(names(NISPUF11)[grep("DVRC", names(NISPUF11))]),		# provider-reported Varicella-containing shots
                              "P_UTD431"                                              # provider-report up-to-date DTAP, polio, measles vaccinations
-                   )
+                            )
                    )
 )
 
@@ -286,8 +350,19 @@ NISPUF11 <- subset(NISPUF11,
 
 #####################################
 ## Combine NIS data 
+#####################################
+
 NISPUF <- rbind(NISPUF09, NISPUF10, NISPUF11)
 
+
+
+
+
+
+
+#####################################
+## Recode, drop unwanted observations, etc.
+#####################################
 
 # Drop old NISPUF datasets from memory
 rm(NISPUF09,NISPUF10,NISPUF11)
@@ -308,7 +383,8 @@ NISPUF$PDAT[NISPUF$PDAT==2] <- 0
 NISPUF$PROVWT <- NISPUF$PROVWT/3
 
 
-
+# Rename NISPUF ID variable 
+names(NISPUF)[names(NISPUF)=="SEQNUMC"] <- "ID"
 
 
 
@@ -600,58 +676,92 @@ NISPUF$HHSC_UTD[NISPUF$HHSC_DTaP_UTD==50 & NISPUF$HHSC_HEPB_UTD==50 & NISPUF$HHS
 
 
 
+
+
 ###################################
 ## Save NIS data
+###################################
+
 write.csv(NISPUF, file="NISPUF.csv")  # CSV so it's readable years from now
 
 
 
 
+
+
+
+
+
+
+
+
+
 #####################################
 #####################################
 #                                   #
-#         Variable Recodes          #
+#          Load NFP Data            #
 #                                   #
 #####################################
 #####################################
+
+nfp_demographics <- read.csv("/mnt/data/nfp_data/csv_data/nfp_demographics_expanded.csv")
+nfp_centers <- read.csv("/mnt/data/nfp_data/csv_data/agency.csv")
+nfp_outcomes <- read.csv("growth_immunization_outcomes.csv")
+immun_record_source <- read.csv("immun_record_source.csv")
+discharge_reason <- read.sas7bdat("/mnt/data/nfp_data/raw_NFP_data/discharge_reason.sas7bdat")
+client_program_dates <- read.sas7bdat("/mnt/data/nfp_data/raw_NFP_data/date_range_visits.sas7bdat")
+
+
+
+
+
+
+
+
+
+#####################################
+#####################################
+#                                   #
+#        Make NIS, NFP Data         #
+#           Compatible              #
+#         Before the Merge          #
+#                                   #
+#####################################
+#####################################
+
 
 
 
 ############################################
-# Load NFP data 
+# HOUSEHOLD INCOME
+# Note that DK/Refused households are NA
 
-setwd("/mnt/data/nfp_data/csv_data")
-nfp_demographics <- read.csv("nfp_demographics_expanded.csv")
-nfp_centers <- read.csv("agency.csv")
-
-
-
-##Household income - note that DK/Refused households are NA
-
-### Although the lowest bins don't match exactly (6000 is the upper limit in NFP and 7500 in NIS),
-### assume that both skew heavily toward 0 and treat as comparable
+# Although the lowest bins don't match exactly (6000 is the upper limit in NFP and 7500 in NIS),
+# assume that both skew heavily toward 0 and treat as comparable
 NISPUF$income_recode[NISPUF$INCQ298A==3] <- 1
-NISPUF$income_recode[which(is.element(NISPUF$INCQ298A, c(4,5,6)))] = 2 # Binning 7500-20000/year together in both sets
-NISPUF$income_recode[which(is.element(NISPUF$INCQ298A, c(7,8)))] = 4 # Binning 20k-30k as in nfp
-NISPUF$income_recode[which(is.element(NISPUF$INCQ298A, c(9,10)))] = 5 # Binning 30k-40k in the same was as nfp
+NISPUF$income_recode[which(is.element(NISPUF$INCQ298A, c(4,5,6)))] = 2        # Binning 7500-20000/year together in both sets
+NISPUF$income_recode[which(is.element(NISPUF$INCQ298A, c(7,8)))] = 4          # Binning 20k-30k as in nfp
+NISPUF$income_recode[which(is.element(NISPUF$INCQ298A, c(9,10)))] = 5         # Binning 30k-40k in the same was as nfp
 NISPUF$income_recode[which(is.element(NISPUF$INCQ298A, c(11,12,13,14)))] = 6
 
-### In NFP, must combine income brackets 2 and 3 ($7500-20K) to match NIS buckets.
+# In NFP, must combine income brackets 2 and 3 ($7500-20K) to match NIS buckets.
+# Note that in the NFP dataset an income code of 7 indicates a mother living off her parents.
 nfp_demographics$income_recode = nfp_demographics$INCOME
 nfp_demographics$income_recode[nfp_demographics$income_recode == 3] <- 2
-### Note that in the NFP dataset an income code of 7 indicates a mother living off her parents.
 
-### Drop NISPUF$INCQ298A and nfp_demographics$INCOME
+# Drop NISPUF$INCQ298A and nfp_demographics$INCOME
 NISPUF <- NISPUF[,!(names(NISPUF) %in% "INCQ298A")]
 nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "INCOME")]
 
 
 
+############################################
+# NFP CENTERS
+
 # Palm Beach County NFP appears in agency.csv twice
 nfp_centers <- nfp_centers[-(nfp_centers$AGENCY_NAME=="Palm Beach County NFP" & is.na(nfp_centers$ZipCode)),]
 
-
-## Location - recoding NFP state data into FIPS codes (to match the NIS dataset)
+# Location - recoding NFP state data into FIPS codes (to match the NIS dataset)
 # make a character vector first
 nfp_centers$State <- as.character(nfp_centers$State)  
 
@@ -723,7 +833,10 @@ names(nfp_centers)[names(nfp_centers)=='State'] <- 'STATE'
 
 
 
-## Language - note that we are comparing primary language (NFP) to language in which interview was conducted (NIS)
+############################################
+# LANGUAGE
+# Note that we are comparing primary language (NFP) to language in which interview was conducted (NIS)
+
 NISPUF$Primary_language[NISPUF$LANGUAGE==1] <- "English"
 NISPUF$Primary_language[NISPUF$LANGUAGE==2] <- "Spanish"
 NISPUF$Primary_language[NISPUF$LANGUAGE==3] <- "Other"
@@ -733,6 +846,7 @@ nfp_demographics$language <- as.character(nfp_demographics$Primary_language)
 nfp_demographics$language[nfp_demographics$Primary_language==""] <- NA
 nfp_demographics$language <- factor(nfp_demographics$language)
 
+
 # Drop NISPUF$Primary_language and nfp_demographics$language
 NISPUF <- NISPUF[,!(names(NISPUF) %in% "LANGUAGE")]
 nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "Primary_language")]
@@ -740,10 +854,12 @@ nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "Primary_la
 
 
 
+############################################
+# MOTHER'S AGE
 
-## Mother's Age - Bucketed in NIS data as <=19, 20-29, >=30. 
-## True comparison to NFP MomsAgeBirth would be mother's age minus child's age in NIS, but both data points are bucketed.
-## Explore ways to make this comparison more accurate, but start by ignoring this distinction.
+# Bucketed in NIS data as <=19, 20-29, >=30. 
+# True comparison to NFP MomsAgeBirth would be mother's age minus child's age in NIS, but both data points are bucketed.
+# Explore ways to make this comparison more accurate, but start by ignoring this distinction.
 
 nfp_demographics$MothersAge[nfp_demographics$MomsAgeBirth <= 19] <- 1
 nfp_demographics$MothersAge[20 <= nfp_demographics$MomsAgeBirth & nfp_demographics$MomsAgeBirth <= 29] <- 2
@@ -751,16 +867,18 @@ nfp_demographics$MothersAge[nfp_demographics$MomsAgeBirth >= 30] <- 3
 nfp_demographics$MothersAge <- factor(nfp_demographics$MothersAge, labels = c("<=19 Years", "20-29 Years", ">=30 Years"))
 NISPUF$MothersAge <- factor(NISPUF$M_AGEGRP, labels = c("<=19 Years", "20-29 Years", ">=30 Years"))
 
-### Delete NISPUF$M_AGEGRP and nfp_demographics$MomsAgeBirth
+# Delete NISPUF$M_AGEGRP and nfp_demographics$MomsAgeBirth
 NISPUF <- NISPUF[,!(names(NISPUF) %in% "M_AGEGRP")]
 nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "MomsAgeBirth")]
 
 
 
 
+############################################
+# RACE
 
-## Race - Only child's race is available from NIS and only mother's race from NFP.
-### Must assume these are the same.
+# Only child's race is available from NIS and only mother's race from NFP.
+# Must assume these are the same.
 
 NISPUF$Race <- factor(NISPUF$RACEETHK, labels = c("Hispanic", "WhiteNH", "BlackNH", "Other"))
 nfp_demographics$Race <- as.character(nfp_demographics$MomsRE) # Renaming variable
@@ -768,7 +886,7 @@ nfp_demographics$Race[nfp_demographics$Race=="Hispanic or Latina"] <- "Hispanic"
 nfp_demographics$Race[nfp_demographics$Race=="Declined or msg"] <- NA 
 nfp_demographics$Race <- factor(nfp_demographics$Race) # Return to factor format with adjusted levels
 
-### Drop NISPUF$RACEETHK and nfp_demographics$MomsRE
+# Drop NISPUF$RACEETHK and nfp_demographics$MomsRE
 NISPUF <- NISPUF[,!(names(NISPUF) %in% "RACEETHK")]
 nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "MomsRE")]
 
@@ -776,33 +894,43 @@ nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "MomsRE")]
 
 
 
-## Child's gender: Create a binary dummy variable for "male"
+############################################
+# MALE
+
 NISPUF$male[NISPUF$SEX==1] <- 1
 NISPUF$male[NISPUF$SEX==2] <- 0
+
 nfp_demographics$male[nfp_demographics$Childgender=="Male"] <- 1 
 nfp_demographics$male[nfp_demographics$Childgender=="Female"] <- 0 
 
-### Drop NISPUF$SEX and nfp_demographics$Childgender
+# Drop NISPUF$SEX and nfp_demographics$Childgender
 NISPUF <- NISPUF[,!(names(NISPUF) %in% "SEX")]
 nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "Childgender")]
 
 
 
-## Mother's marital status
+
+
+############################################
+# MOTHER'S MARITAL STATUS
+
 nfp_demographics$married <- nfp_demographics$marital_status   # Rename variable so meaning of 1/0 is more evident
 NISPUF$married[NISPUF$MARITAL2==1] <- 1
 NISPUF$married[NISPUF$MARITAL2==2] <- 0
 
-### Drop NISPUF$MARITAL2 and nfp_demographics$marital_status
+# Drop NISPUF$MARITAL2 and nfp_demographics$marital_status
 NISPUF <- NISPUF[,!(names(NISPUF) %in% "MARITAL2")]
 nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "marital_status")]
 
 
 
 
-## Mother's education
-###NFP tracks HS diploma, GED, or neither (HSGED).
-###NIS has <12 years, 12 years, or 12+ years.  Original questionnaire wording buckets HS degrees and GEDs together.
+
+############################################
+# MOTHER'S EDUCATION
+
+# NFP tracks HS diploma, GED, or neither (HSGED).
+# NIS has <12 years, 12 years, or 12+ years.  Original questionnaire wording buckets HS degrees and GEDs together.
 
 NISPUF$HSgrad[NISPUF$EDUC1==1] <- 0
 NISPUF$HSgrad[which(is.element(NISPUF$EDUC1,c(2,3,4)))] <- 1
@@ -811,18 +939,43 @@ nfp_demographics$HSgrad[nfp_demographics$HSGED==1] <- 1
 nfp_demographics$HSgrad[nfp_demographics$HSGED==2] <- 1
 nfp_demographics$HSgrad[nfp_demographics$HSGED==3] <- 0
 
-
-
-
-### Drop NISPUF$EDUC1 & nfp_demographics$HSGED
+# Drop NISPUF$EDUC1 & nfp_demographics$HSGED
 NISPUF <- NISPUF[,!(names(NISPUF) %in% "EDUC1")]
 nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "HSGED")]
 
 
 
 
-# Matching variables TBD: WIC/Medicaid recipient status and insurance coverage.
 
+
+
+############################################
+# DISCHARGE REASON
+
+names(discharge_reason)[names(discharge_reason)=="clid"] <- "ID"
+nfp_demographics <- merge(nfp_demographics, discharge_reason, by=intersect("ID", "ID"), all=TRUE)
+
+
+
+
+
+
+############################################
+# DATES OF FIRST VISIT, LAST VISIT, AND DISCHARGE
+
+names(client_program_dates)[names(client_program_dates)=="cl_en_gen_id"] <- "ID"
+nfp_demographics <- merge(nfp_demographics, client_program_dates, by=intersect("ID", "ID"), all=TRUE)
+
+
+
+
+
+
+
+############################################
+# WIC/TANF/INSURANCE
+
+# NFP does not have good data for these variables
 
 
 
@@ -833,9 +986,8 @@ nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "HSGED")]
 
 
 ########################################
-# Create common dataset to combine NIS and NFP data
+# IMMUNIZATIONS UP TO DATE
 
-nfp_outcomes <- read.csv("growth_immunization_outcomes.csv")
 nfp_outcomes$Immunizations_UptoDate_6[nfp_outcomes$final_immun_1=="Yes"] <- 1
   nfp_outcomes$Immunizations_UptoDate_6[nfp_outcomes$final_immun_1=="No"] <- 0
 nfp_outcomes$Immunizations_UptoDate_12[nfp_outcomes$final_immun_2=="Yes"] <- 1
@@ -845,13 +997,17 @@ nfp_outcomes$Immunizations_UptoDate_18[nfp_outcomes$final_immun_3=="Yes"] <- 1
 nfp_outcomes$Immunizations_UptoDate_24[nfp_outcomes$final_immun_4=="Yes"] <- 1
   nfp_outcomes$Immunizations_UptoDate_24[nfp_outcomes$final_immun_4=="No"] <- 0
 
-
-
 # Drop nfp_outcomes$final_immun_*
 nfp_outcomes <- nfp_outcomes[,!(names(nfp_outcomes) %in% c("final_immun_1","final_immun_2","final_immun_3","final_immun_4"))]
 
-# Read dataset that identifies the source of each NFP immunization value
-immun_record_source <- read.csv("immun_record_source.csv")
+
+
+
+
+
+
+############################################
+# IMMUNIZATION DATA SOURCES
 
 # Some single-quotation marks came in as Unicode.  Replace.
 immun_record_source$immun_record_source_1 <- gsub("\U3e32393c", "'", as.character(immun_record_source$immun_record_source_1))
@@ -873,16 +1029,44 @@ immun_record_source$immun_record_source_4[immun_record_source$immun_record_sourc
   immun_record_source$immun_record_source_4[immun_record_source$immun_record_source_4=="Written record"] <- "record"
   immun_record_source$immun_record_source_4[immun_record_source$immun_record_source_4=="Mother's self-report"] <- "mother"
 
-
-
 # Rename immun_record_source$cl_en_gen_id as immun_record_source$CL_EN_GEN_ID
 names(immun_record_source)[names(immun_record_source)=='cl_en_gen_id'] <- 'CL_EN_GEN_ID'
 
 
-## CHECK THE DIMENSIONS BEFORE AND AFTER TO MAKE SURE IT MERGED CORRECTLY
+
+
+
+
+
+
+
+
+
+#####################################
+#####################################
+#                                   #
+#       Merge NFP, NIS data         #
+#                                   #
+#####################################
+#####################################
+
+
+############################################
+# AGENCY REQUIREMENTS
+
+# Cannot match on these because NIS data are not specific enough
+
+
+
+
+
+
+############################################
+# NFP_OUTCOMES and IMMUN_RECORD_SOURCE
+
+# Check the dimensions before and after to make sure it merged correctly
 dim(nfp_outcomes)
 dim(immun_record_source)
-dim(nfp_demographics)
 
 # Merge the datasets
 nfp_outcomes <- merge(nfp_outcomes, immun_record_source, by="CL_EN_GEN_ID", all=TRUE)
@@ -891,26 +1075,40 @@ dim(nfp_outcomes)
 
 
 
+
+############################################
+# NFP_DEMOGRAPHICS and NFP_OUTCOMES
+
+# Check the dimensions before and after to make sure it merged correctly
+dim(nfp_demographics)
+dim(nfp_outcomes)
+
 # Merge NFP demographics and immunization datasets and rename ID variable
 NFPfull <- merge(nfp_demographics, nfp_outcomes, by="CL_EN_GEN_ID", all=TRUE)
-names(NFPfull)[names(NFPfull)=="CL_EN_GEN_ID"] <- "ID"
-names(NFPfull)[names(NFPfull)=="State"] <- "STATE"
+  names(NFPfull)[names(NFPfull)=="CL_EN_GEN_ID"] <- "ID"
+  names(NFPfull)[names(NFPfull)=="State"] <- "STATE"
 dim(NFPfull)
 
 
 
-# Rename NISPUF ID variable 
-names(NISPUF)[names(NISPUF)=="SEQNUMC"] <- "ID"
 
 
 
 
-# Match on agency requirements?
 
 
+#####################################
+#####################################
+#                                   #
+#       More Variable Changes       #
+#       on the full NFP data        #
+#                                   #
+#####################################
+#####################################
 
 
-# Adequate provider data indicators for immunizations at 6, 12, 18, and 24 months
+############################################
+# ADEQUATE PROVIDER DATA AT 6, 12, 18, 24 MONTHS?
 
 NFPfull$PDAT6 <- 0
   NFPfull$PDAT6[NFPfull$immun_record_source_1=="record"] <- 1
@@ -928,6 +1126,10 @@ NISPUF$PDAT24 <- NISPUF$PDAT
 
 
 
+
+
+############################################
+# CHOOSE NIS IMMUNIZATION SOURCE (SELF REPORT, SHOTCARD, PROVIDER) FOR COMPARISON
 
 # The NFP dataset asks the the nurse the following: "Based on your local immunization
 # schedule, (regardless of vaccine brand or manufacturer) is (child's name) up to date
@@ -951,16 +1153,39 @@ names(NISPUF)[names(NISPUF)=="Immunizations_UptoDate431_24"] <- "Immunizations_U
 
 
 
-# Subset using only the variables we want to use in the analysis
-NIScommon <- subset(NISPUF, select = c(ID, STATE, PDAT6, PDAT12, PDAT18, PDAT24, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
-NFPcommon <- subset(NFPfull, select = c(ID, STATE, PDAT6, PDAT12, PDAT18, PDAT24, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
-# Other NIS variables to potentially subset on: PDAT, C5R, INCPORAR, FRSTBRN, AGEGRP
 
-# Create treatment variable
+
+
+
+############################################
+# TREATMENT VARIABLE
+
 NIScommon$treatment <- 0
 NFPcommon$treatment <- 1
 
 
+
+
+
+
+
+
+
+
+
+#####################################
+#####################################
+#                                   #
+#            Final merge            #
+#                                   #
+#####################################
+#####################################
+
+
+# Subset using only the variables we want to use in the analysis
+NIScommon <- subset(NISPUF, select = c(ID, STATE, PDAT6, PDAT12, PDAT18, PDAT24, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
+NFPcommon <- subset(NFPfull, select = c(ID, STATE, PDAT6, PDAT12, PDAT18, PDAT24, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
+# Other NIS variables to potentially subset on: PDAT, C5R, INCPORAR, FRSTBRN, AGEGRP
 
 
 immunizations <- rbind(NIScommon, NFPcommon)
