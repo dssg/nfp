@@ -7,6 +7,7 @@ breast <- read.csv("breastfeeding_data.csv")
 pop <- read.csv("breast_pop_comparison.csv")
 
 breast$RE <- relevel(breast$RE, ref = "WhiteNH") # change racial reference category for ease of analysis
+m_age <- floor(MomsAgeBirth) # simplify age decimal - decimal reporting may have differed between treatment and control
 
 # Propensity score matching
 library(Matching)
@@ -15,25 +16,108 @@ library(ggplot2)
 ##### Outcome 1: Child was ever breastfed
 
 ### Approach 1 - using all complete cases
+
 ever_breast1 <- breast[,c(3:13, 15)] # Omit data for other outcome measure, also IDs
 ever_breast <- subset(ever_breast1, complete.cases(ever_breast1))
 
-probit1_full <- glm(treatment ~ (highschool + highered + married +
-	MomsAgeBirth + RE + english), data = ever_breast, family = binomial(link = "probit"))
+# Start over and build from simple!  This model works:
+
+probit <- glm(treatment ~ (highschool + married + highered), data = ever_breast, family = binomial(link = "probit"))
+summary(probit)
+
+ever_breast$ps <- predict(probit, data = ever_breast, type = "response")
+qplot(ever_breast$ps, data = ever_breast, binwidth = .01) + facet_wrap(~treatment)
+
+ever_breastX <- cbind(ever_breast$ps, ever_breast$male, ever_breast$premature, ever_breast$lbw) # Vector of covariates for regression
+caliper <- 0.1 # Specify desired caliper for including observations (units are standard deviations)
+
+ever_match1 <- Match(Y = ever_breast$breastfed, Tr = ever_breast$treatment, X = ever_breastX, caliper = caliper, ties = FALSE)
+summary(ever_match1) 
+MatchBalance(treatment ~ (highschool + highered + married), 
+	data = ever_breast, match.out=ever_match1, nboots=1000)
+	
+	
+# Start elsewhere - this also works
+
+probit <- glm(treatment ~ (RE + highschool + married), data = ever_breast, family = binomial(link = "probit"))
+summary(probit)
+
+ever_breast$ps <- predict(probit, data = ever_breast, type = "response")
+qplot(ever_breast$ps, data = ever_breast, binwidth = .01) + facet_wrap(~treatment)
+
+ever_breastX <- cbind(ever_breast$ps, ever_breast$male, ever_breast$premature, ever_breast$lbw) # Vector of covariates for regression
+caliper <- 0.05 # Specify desired caliper for including observations (units are standard deviations)
+
+ever_match1 <- Match(Y = ever_breast$breastfed, Tr = ever_breast$treatment, X = ever_breastX, Weight = 2, caliper = caliper, ties = FALSE)
+summary(ever_match1) 
+MatchBalance(treatment ~ (RE + highschool + married), 
+	data = ever_breast, match.out=ever_match1, nboots=1000)
+
+
+# Start again - try age buckets
+
+ever_breast$MAge[ever_breast$MomsAgeBirth < 20] <- "Teenager"
+ever_breast$MAge[20 <= ever_breast$MomsAgeBirth] <- "Twenties"
+ever_breast$MAge[30 <= ever_breast$MomsAgeBirth] <- "Thirty Plus"
+ever_breast$MAge <- factor(ever_breast$MAge)
+
+probit <- glm(treatment ~ (MAge + RE), data = ever_breast, family = binomial(link = "probit"))
+summary(probit)
+
+ever_breast$ps <- predict(probit, data = ever_breast, type = "response")
+qplot(ever_breast$ps, data = ever_breast, binwidth = .01) + facet_wrap(~treatment)
+
+ever_breastX <- cbind(ever_breast$ps, ever_breast$male, ever_breast$premature, ever_breast$lbw) # Vector of covariates for regression
+caliper <- 0.05 # Specify desired caliper for including observations (units are standard deviations)
+
+ever_match1 <- Match(Y = ever_breast$breastfed, Tr = ever_breast$treatment, X = ever_breastX, Weight = 2, caliper = caliper, ties = FALSE)
+summary(ever_match1) 
+MatchBalance(treatment ~ (MAge + RE), 
+	data = ever_breast, match.out=ever_match1, nboots=1000)
+
+
+## Time to try GenMatch
+
+MatchVars <- cbind(ever_breast$highschool, ever_breast$married, ever_breast$highered, ever_breast$MomsAgeBirth, ever_breast$RE, ever_breast$english)
+
+GenMatrix <- GenMatch(Tr = ever_breast$treatment, X = MatchVars, pop.size = 1000) # helpful notes on genmatch: http://cgibbons.us/courses/ps236/GenMatch.r
+gen_match <- Match(Y = ever_breast$breastfed, Tr = ever_breast$treatment, X = ever_breastX, Weight.matrix = GenMatrix, ties = FALSE)
+MatchBalance(treatment ~ highschool + married + highered + MomsAgeBirth + RE + english, data = ever_breast, match.out=gen_match, nboots=1000)
+
+
+	
+	
+	
+	
+	
+## Initial stabs:
+
+probit1_full <- glm(treatment ~ (highschool + married +	highered + MomsAgeBirth + RE + english), data = ever_breast, family = binomial(link = "probit"))
 summary(probit1_full)
 # Drop state - too few obs in each state leading to near-perfect separation
 
 ever_breast$ps <- predict(probit1_full, data = ever_breast, type = "response")
-qplot(ever_breast$ps, data = ever_breast) + facet_wrap(~treatment)
+qplot(ever_breast$ps, data = ever_breast, binwidth = .01) + facet_wrap(~treatment)
 
 ever_breastX <- cbind(ever_breast$ps, ever_breast$male, ever_breast$premature, ever_breast$lbw) # Vector of covariates for regression
-k <- 5 # Specify desired number of matches for each observation
+caliper <- 0.05 # Specify desired caliper for including observations (units are standard deviations)
 
-ever_match1 <- Match(Y = ever_breast$breastfed, Tr = ever_breast$treatment, X = ever_breastX, M = k)
+ever_match1 <- Match(Y = ever_breast$breastfed, Tr = ever_breast$treatment, X = ever_breastX, caliper = caliper)
 summary(ever_match1) 
-MatchBalance(treatment ~ highschool + highered + married + MomsAgeBirth + RE + english, 
+MatchBalance(treatment ~ highschool + married + highered + MomsAgeBirth + RE + english, 
 	data = ever_breast, match.out=ever_match1, nboots=1000) # Check balance before and after match - not good.
 
+	
+### Limiting area of common support:	
+	
+cs1 <- ever_breast[ever_breast$ps < .90,]
+cs <- cs1[cs1$ps >.80,]
+
+cs_breastX <- cbind(cs$ps, cs$male, cs$premature, cs$lbw) # Vector of covariates for regression
+cs_match1 <- Match(Y = cs$breastfed, Tr = cs$treatment, X = cs_breastX, caliper = caliper)
+summary(cs_match1) 
+MatchBalance(treatment ~ highschool + highered + married + MomsAgeBirth + RE + english, 
+	data = cs, match.out=cs_match1, nboots=1000) # Check balance before and after match - not good.
 
 	
 ### Approach 2 - drop higher ed indicator (lots of NAs), THEN use all complete cases
@@ -52,7 +136,7 @@ ever_breast_restrX <- cbind(ever_breast_restricted$ps, ever_breast_restricted$ma
 
 ever_match_restr1 <- Match(Y = ever_breast_restricted$breastfed, Tr = ever_breast_restricted$treatment, X = ever_breast_restrX, M = k)
 summary(ever_match_restr1) 
-MatchBalance(treatment ~ highschool + highered + married + MomsAgeBirth + RE + english, 
+MatchBalance(treatment ~ highschool + married + MomsAgeBirth + RE + english, 
 	data = ever_breast_restricted, match.out=ever_match_restr1, nboots=1000) # Check balance before and after match - not good.	
 
 
