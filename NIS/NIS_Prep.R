@@ -4,6 +4,7 @@
 ##         Joe Walsh            ##
 ##         Emily Rowe           ##
 ##        Adam Fishman          ##
+##         Nick Mader           ##
 ##################################
 
 # This script proceeds in the following way:
@@ -955,6 +956,7 @@ nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "HSGED")]
 names(discharge_reason)[names(discharge_reason)=="clid"] <- "ID"
 nfp_demographics <- merge(nfp_demographics, discharge_reason, by=intersect("ID", "ID"), all=TRUE)
 
+NISPUF$ReasonforDismissal <- NA
 
 
 
@@ -966,6 +968,9 @@ nfp_demographics <- merge(nfp_demographics, discharge_reason, by=intersect("ID",
 names(client_program_dates)[names(client_program_dates)=="cl_en_gen_id"] <- "ID"
 nfp_demographics <- merge(nfp_demographics, client_program_dates, by=intersect("ID", "ID"), all=TRUE)
 
+NISPUF$First_Home_Visit <- NA
+NISPUF$Last_Home_Visit <- NA
+NISPUF$Discharge_Date <- NA
 
 
 
@@ -1183,9 +1188,9 @@ NFPcommon$treatment <- 1
 
 
 # Subset using only the variables we want to use in the analysis
-NIScommon <- subset(NISPUF, select = c(ID, STATE, PDAT6, PDAT12, PDAT18, PDAT24, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
-NFPcommon <- subset(NFPfull, select = c(ID, STATE, PDAT6, PDAT12, PDAT18, PDAT24, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
-# Other NIS variables to potentially subset on: PDAT, C5R, INCPORAR, FRSTBRN, AGEGRP
+NIScommon <- subset(NISPUF, select = c(ID, STATE, PDAT6, PDAT12, PDAT18, PDAT24, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24, ReasonforDismissal, First_Home_Visit, Last_Home_Visit, Discharge_Date))
+NFPcommon <- subset(NFPfull, select = c(ID, STATE, PDAT6, PDAT12, PDAT18, PDAT24, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24, ReasonforDismissal, First_Home_Visit, Last_Home_Visit, Discharge_Date))
+# Other NIS variables to potentially subset on: C5R, INCPORAR, AGEGRP
 
 
 immunizations <- rbind(NIScommon, NFPcommon)
