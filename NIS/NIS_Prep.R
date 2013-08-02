@@ -41,8 +41,8 @@ table(NISPUF09$SC_431); sum(is.na(NISPUF09$SC_431))       # Shot card 4:3:1 matc
 table(NISPUF09$M_AGEGRP); sum(is.na(NISPUF09$M_AGEGRP))   # Mother's age matches
 
 R_FILE <- subset(NISPUF09, select=c(SEQNUMHH, SEQNUMC, P_UTD431, ESTIAP09, PROVWT))
-names(R_FILE) <- c("SEQNUMHH", "SEQNUMC", "P_UTD431", "ESTIAP", "WT")
-R_FILE <- na.omit(R_FILE)
+  names(R_FILE) <- c("SEQNUMHH", "SEQNUMC", "P_UTD431", "ESTIAP", "WT")
+  R_FILE <- na.omit(R_FILE)
 
 #---SPECIFY A SAMPLING DESIGN---#
 svydsg <- svydesign(id=~SEQNUMHH, strata=~ESTIAP, weights=~WT, data=R_FILE)
@@ -67,46 +67,46 @@ cbind(100*sum(NISPUF09$PROVWT[NISPUF09$P_UTD431==1], na.rm=T) / sum(NISPUF09$PRO
 
 # Drop variables not available in every year
 NISPUF09 <- NISPUF09[,!(names(NISPUF09) %in% c("HH_FLU","P_UTDHEP","P_UTDHIB_ROUT_S","P_UTDHIB_SHORT_S","P_UTDPCV",
-						"P_UTDPCVB13","P_UTDROT_S"))]
+                                               "P_UTDPCVB13","P_UTDROT_S"))]
 
 # Only keep potentially useful columns
 NISPUF09 <- subset(NISPUF09, 
-	       select=(c(sort(names(NISPUF09)[grep("SEQNUM", names(NISPUF09))]),	# NIS respondent identifiers
-     "PDAT",               # whether there is adequate provider data			
-	   "PROVWT",             # weight for children with adequate provider data
-     "YEAR",								# year of interview
-			"STATE",							# state of residence
-			#"ESTIAP09",	inconsistently coded from year to year		# state or metropolitan statistical area of residence
-			"C5R", 								# relationship of respondent to child (match on mother?)
-			"LANGUAGE",							# language interview was conducted in
-			"D7",								# permission to contact providers
-			"EDUC1",							# mother's education level
-			"M_AGEGRP",							# mother's age group
-			"MARITAL2",							# mother's marital status
-			"INCQ298A",							# family income category
-			"INCPORAR",							# income to poverty ratio (eligibility criterion)
-			"FRSTBRN",							# whether child is first born
-			"AGEGRP",							# child's age group
-			"RACEETHK",		            # child's race
-			"SEX",								# child's sex
-			sort(names(NISPUF09)[grep("CWIC_", names(NISPUF09))]),		# WIC variables	
-			sort(names(NISPUF09)[grep("INS_", names(NISPUF09))]),		# insurance variables
-			sort(names(NISPUF09)[grep("BF_", names(NISPUF09))]),		# breastfeeding variables
-			sort(names(NISPUF09)[grep("SC_", names(NISPUF09))]),		# household shot card variables
-			sort(names(NISPUF09)[grep("HH_", names(NISPUF09))]),		# household-reported variables (not using shot card)
-			"SHOTCARD", 							# household uses shot card
-			sort(names(NISPUF09)[grep("DDTP", names(NISPUF09))]),		# provider-reported DT-containing shots
-			sort(names(NISPUF09)[grep("DHEP", names(NISPUF09))]),		# provider-reported HepA- and HepB-containing shots
-			sort(names(NISPUF09)[grep("DHIB_", names(NISPUF09))]),		# provider-reported Hib-containing shots
-			sort(names(NISPUF09)[grep("DMMR", names(NISPUF09))]),		# provider-reported measles-containing shots
-			sort(names(NISPUF09)[grep("DPCV", names(NISPUF09))]),		# provider-reported pneumococcal-containing shots
-			sort(names(NISPUF09)[grep("DPOLIO", names(NISPUF09))]),		# provider-reported polio-containing shots
-			sort(names(NISPUF09)[grep("DROT", names(NISPUF09))]),		# provider-reported rotavirus-containing shots
-			sort(names(NISPUF09)[grep("DVRC", names(NISPUF09))]),		# provider-reported Varicella-containing shots
-	    "P_UTD431"                                              # provider-report up-to-date DTAP, polio, measles vaccinations
-			)
-		       )
-		)
+                   select=(c(sort(names(NISPUF09)[grep("SEQNUM", names(NISPUF09))]),	# NIS respondent identifiers
+                             "PDAT",               # whether there is adequate provider data			
+                             "PROVWT",             # weight for children with adequate provider data
+                             "YEAR",								# year of interview
+                             "STATE",							# state of residence
+                             #"ESTIAP09",	inconsistently coded from year to year		# state or metropolitan statistical area of residence
+                             "C5R", 								# relationship of respondent to child (match on mother?)
+                             "LANGUAGE",							# language interview was conducted in
+                             "D7",								# permission to contact providers
+                             "EDUC1",							# mother's education level
+                             "M_AGEGRP",							# mother's age group
+                             "MARITAL2",							# mother's marital status
+                             "INCQ298A",							# family income category
+                             "INCPORAR",							# income to poverty ratio (eligibility criterion)
+                             "FRSTBRN",							# whether child is first born
+                             "AGEGRP",							# child's age group
+                             "RACEETHK",		            # child's race
+                             "SEX",								# child's sex
+                             sort(names(NISPUF09)[grep("CWIC_", names(NISPUF09))]),		# WIC variables	
+                             sort(names(NISPUF09)[grep("INS_", names(NISPUF09))]),		# insurance variables
+                             sort(names(NISPUF09)[grep("BF_", names(NISPUF09))]),		# breastfeeding variables
+                             sort(names(NISPUF09)[grep("SC_", names(NISPUF09))]),		# household shot card variables
+                             sort(names(NISPUF09)[grep("HH_", names(NISPUF09))]),		# household-reported variables (not using shot card)
+                             "SHOTCARD", 							# household uses shot card
+                             sort(names(NISPUF09)[grep("DDTP", names(NISPUF09))]),		# provider-reported DT-containing shots
+                             sort(names(NISPUF09)[grep("DHEP", names(NISPUF09))]),		# provider-reported HepA- and HepB-containing shots
+                             sort(names(NISPUF09)[grep("DHIB_", names(NISPUF09))]),		# provider-reported Hib-containing shots
+                             sort(names(NISPUF09)[grep("DMMR", names(NISPUF09))]),		# provider-reported measles-containing shots
+                             sort(names(NISPUF09)[grep("DPCV", names(NISPUF09))]),		# provider-reported pneumococcal-containing shots
+                             sort(names(NISPUF09)[grep("DPOLIO", names(NISPUF09))]),		# provider-reported polio-containing shots
+                             sort(names(NISPUF09)[grep("DROT", names(NISPUF09))]),		# provider-reported rotavirus-containing shots
+                             sort(names(NISPUF09)[grep("DVRC", names(NISPUF09))]),		# provider-reported Varicella-containing shots
+                             "P_UTD431"                                              # provider-report up-to-date DTAP, polio, measles vaccinations
+                   )
+                   )
+)
 
 
 
@@ -125,8 +125,8 @@ table(NISPUF10$SC_431); sum(is.na(NISPUF10$SC_431))       # Shot card 4:3:1 matc
 table(NISPUF10$M_AGEGRP); sum(is.na(NISPUF10$M_AGEGRP))   # Mother's age matches
 
 R_FILE <- subset(NISPUF10, select=c(SEQNUMHH, SEQNUMC, PUTD4313, ESTIAP10, PROVWT))
-names(R_FILE) <- c("SEQNUMHH", "SEQNUMC", "PUTD4313", "ESTIAP", "WT")
-R_FILE <- na.omit(R_FILE)
+  names(R_FILE) <- c("SEQNUMHH", "SEQNUMC", "PUTD4313", "ESTIAP", "WT")
+  R_FILE <- na.omit(R_FILE)
 
 #---SPECIFY A SAMPLING DESIGN---#
 svydsg <- svydesign(id=~SEQNUMHH, strata=~ESTIAP, weights=~WT, data=R_FILE)
@@ -151,47 +151,47 @@ cbind(100*sum(NISPUF10$PROVWT[NISPUF10$PUTD4313==1], na.rm=T) / sum(NISPUF10$PRO
 
 # Drop variables not available in every year
 NISPUF10 <- NISPUF10[,!(names(NISPUF10) %in% c("HH_FLU","HH_H1N","P_UTDHEPA2","P_UTDHEP","P_UTDHIB_ROUT_S","P_UTDHIB_SHORT_S",
-						"P_UTDPCV","P_UTDPCVB13","P_UTDROT_S"))]
+                                               "P_UTDPCV","P_UTDPCVB13","P_UTDROT_S"))]
 
 
 # Only keep potentially useful columns
 NISPUF10 <- subset(NISPUF10, 
-	       select=(c(sort(names(NISPUF10)[grep("SEQNUM", names(NISPUF10))]),	# NIS respondent identifiers
-	    "PDAT",               # whether there is adequate provider data
-      "PROVWT",             # weight for children with adequate provider data
-      "YEAR",								# year of interview
-			"STATE",							# state of residence
-			#"ESTIAP10",	inconsistently coded from year to year		# state or metropolitan statistical area of residence
-			"C5R", 								# relationship of respondent to child (match on mother?)
-			"LANGUAGE",							# language interview was conducted in
-			"D7",								# permission to contact providers
-			"EDUC1",							# mother's education level
-			"M_AGEGRP",							# mother's age group
-			"MARITAL2",							# mother's marital status
-			"INCQ298A",							# family income category
-			"INCPORAR",							# income to poverty ratio (eligibility criterion)
-			"FRSTBRN",							# whether child is first born
-			"AGEGRP",							# child's age group
-			"RACEETHK",		            # child's race
-			"SEX",								# child's sex
-			sort(names(NISPUF10)[grep("CWIC_", names(NISPUF10))]),		# WIC variables	
-			sort(names(NISPUF10)[grep("INS_", names(NISPUF10))]),		# insurance variables
-			sort(names(NISPUF10)[grep("BF_", names(NISPUF10))]),		# breastfeeding variables
-			sort(names(NISPUF10)[grep("SC_", names(NISPUF10))]),		# household shot card variables
-			sort(names(NISPUF10)[grep("HH_", names(NISPUF10))]),		# household-reported variables (not using shot card)
-			"SHOTCARD", 							# household uses shot card
-			sort(names(NISPUF10)[grep("DDTP", names(NISPUF10))]),		# provider-reported DT-containing shots
-			sort(names(NISPUF10)[grep("DHEP", names(NISPUF10))]),		# provider-reported HepA- and HepB-containing shots
-			sort(names(NISPUF10)[grep("DHIB_", names(NISPUF10))]),		# provider-reported Hib-containing shots
-			sort(names(NISPUF10)[grep("DMMR", names(NISPUF10))]),		# provider-reported measles-containing shots
-			sort(names(NISPUF10)[grep("DPCV", names(NISPUF10))]),		# provider-reported pneumococcal-containing shots
-			sort(names(NISPUF10)[grep("DPOLIO", names(NISPUF10))]),		# provider-reported polio-containing shots
-			sort(names(NISPUF10)[grep("DROT", names(NISPUF10))]),		# provider-reported rotavirus-containing shots
-			sort(names(NISPUF10)[grep("DVRC", names(NISPUF10))]),		# provider-reported Varicella-containing shots
-	    "P_UTD431"                                              # provider-report up-to-date DTAP, polio, measles vaccinations
-			)
-		       )
-		)
+                   select=(c(sort(names(NISPUF10)[grep("SEQNUM", names(NISPUF10))]),	# NIS respondent identifiers
+                             "PDAT",               # whether there is adequate provider data
+                             "PROVWT",             # weight for children with adequate provider data
+                             "YEAR",								# year of interview
+                             "STATE",							# state of residence
+                             #"ESTIAP10",	inconsistently coded from year to year		# state or metropolitan statistical area of residence
+                             "C5R", 								# relationship of respondent to child (match on mother?)
+                             "LANGUAGE",							# language interview was conducted in
+                             "D7",								# permission to contact providers
+                             "EDUC1",							# mother's education level
+                             "M_AGEGRP",							# mother's age group
+                             "MARITAL2",							# mother's marital status
+                             "INCQ298A",							# family income category
+                             "INCPORAR",							# income to poverty ratio (eligibility criterion)
+                             "FRSTBRN",							# whether child is first born
+                             "AGEGRP",							# child's age group
+                             "RACEETHK",		            # child's race
+                             "SEX",								# child's sex
+                             sort(names(NISPUF10)[grep("CWIC_", names(NISPUF10))]),		# WIC variables	
+                             sort(names(NISPUF10)[grep("INS_", names(NISPUF10))]),		# insurance variables
+                             sort(names(NISPUF10)[grep("BF_", names(NISPUF10))]),		# breastfeeding variables
+                             sort(names(NISPUF10)[grep("SC_", names(NISPUF10))]),		# household shot card variables
+                             sort(names(NISPUF10)[grep("HH_", names(NISPUF10))]),		# household-reported variables (not using shot card)
+                             "SHOTCARD", 							# household uses shot card
+                             sort(names(NISPUF10)[grep("DDTP", names(NISPUF10))]),		# provider-reported DT-containing shots
+                             sort(names(NISPUF10)[grep("DHEP", names(NISPUF10))]),		# provider-reported HepA- and HepB-containing shots
+                             sort(names(NISPUF10)[grep("DHIB_", names(NISPUF10))]),		# provider-reported Hib-containing shots
+                             sort(names(NISPUF10)[grep("DMMR", names(NISPUF10))]),		# provider-reported measles-containing shots
+                             sort(names(NISPUF10)[grep("DPCV", names(NISPUF10))]),		# provider-reported pneumococcal-containing shots
+                             sort(names(NISPUF10)[grep("DPOLIO", names(NISPUF10))]),		# provider-reported polio-containing shots
+                             sort(names(NISPUF10)[grep("DROT", names(NISPUF10))]),		# provider-reported rotavirus-containing shots
+                             sort(names(NISPUF10)[grep("DVRC", names(NISPUF10))]),		# provider-reported Varicella-containing shots
+                             "P_UTD431"                                              # provider-report up-to-date DTAP, polio, measles vaccinations
+                   )
+                   )
+)
 
 
 
@@ -210,8 +210,8 @@ table(NISPUF11$SC_431); sum(is.na(NISPUF11$SC_431))       # Shot card 4:3:1 matc
 table(NISPUF11$M_AGEGRP); sum(is.na(NISPUF11$M_AGEGRP))   # Mother's age matches
 
 R_FILE <- subset(NISPUF11, select=c(SEQNUMHH, SEQNUMC, PUTD4313, ESTIAP11, PROVWT_D))
-names(R_FILE) <- c("SEQNUMHH", "SEQNUMC", "PUTD4313", "ESTIAP", "WT")
-R_FILE <- na.omit(R_FILE)
+  names(R_FILE) <- c("SEQNUMHH", "SEQNUMC", "PUTD4313", "ESTIAP", "WT")
+  R_FILE <- na.omit(R_FILE)
 
 #---SPECIFY A SAMPLING DESIGN---#
 svydsg <- svydesign(id=~SEQNUMHH, strata=~ESTIAP, weights=~WT, data=R_FILE)
@@ -236,49 +236,49 @@ cbind(100*sum(NISPUF11$PROVWT_D[NISPUF11$PUTD4313==1], na.rm=T) / sum(NISPUF11$P
 
 # Drop variables not available in every year
 NISPUF11 <- NISPUF11[,!(names(NISPUF11) %in% c("HH_FLU","HH_H1N","P_UTDHEPA2","P_UTDHEP","P_UTDHIB_ROUT_S","P_UTDHIB_SHORT_S",
-						"P_UTDPCV","P_UTDPCVB13","P_UTDROT_S","P_UTDHEPA1"))]
+                                               "P_UTDPCV","P_UTDPCVB13","P_UTDROT_S","P_UTDHEPA1"))]
 
 # Rename provider-weight variable
 names(NISPUF11)[names(NISPUF11)=='PROVWT_D'] <- 'PROVWT'
 
 # Only keep potentially useful columns
 NISPUF11 <- subset(NISPUF11, 
-	       select=(c(sort(names(NISPUF11)[grep("SEQNUM", names(NISPUF11))]),	# NIS respondent identifiers
-	    "PDAT",               # whether there is adequate provider data
-      "PROVWT",             # weight for children with adequate provider data
-      "YEAR",								# year of interview
-			"STATE",							# state of residence
-			#"ESTIAP11",	inconsistently coded from year to year		# state or metropolitan statistical area of residence
-			"C5R", 								# relationship of respondent to child (match on mother?)
-			"LANGUAGE",							# language interview was conducted in
-			"D7",								# permission to contact providers
-			"EDUC1",							# mother's education level
-			"M_AGEGRP",							# mother's age group
-			"MARITAL2",							# mother's marital status
-			"INCQ298A",							# family income category
-			"INCPORAR",							# income to poverty ratio (eligibility criterion)
-			"FRSTBRN",							# whether child is first born
-			"AGEGRP",							# child's age group
-			"RACEETHK",		            # child's race
-			"SEX",								# child's sex
-			sort(names(NISPUF11)[grep("CWIC_", names(NISPUF11))]),		# WIC variables	
-			sort(names(NISPUF11)[grep("INS_", names(NISPUF11))]),		# insurance variables
-			sort(names(NISPUF11)[grep("BF_", names(NISPUF11))]),		# breastfeeding variables
-			sort(names(NISPUF11)[grep("SC_", names(NISPUF11))]),		# household shot card variables
-			sort(names(NISPUF11)[grep("HH_", names(NISPUF11))]),		# household-reported variables (not using shot card)
-			"SHOTCARD", 							# household uses shot card
-			sort(names(NISPUF11)[grep("DDTP", names(NISPUF11))]),		# provider-reported DT-containing shots
-			sort(names(NISPUF11)[grep("DHEP", names(NISPUF11))]),		# provider-reported HepA- and HepB-containing shots
-			sort(names(NISPUF11)[grep("DHIB_", names(NISPUF11))]),		# provider-reported Hib-containing shots
-			sort(names(NISPUF11)[grep("DMMR", names(NISPUF11))]),		# provider-reported measles-containing shots
-			sort(names(NISPUF11)[grep("DPCV", names(NISPUF11))]),		# provider-reported pneumococcal-containing shots
-			sort(names(NISPUF11)[grep("DPOLIO", names(NISPUF11))]),		# provider-reported polio-containing shots
-			sort(names(NISPUF11)[grep("DROT", names(NISPUF11))]),		# provider-reported rotavirus-containing shots
-			sort(names(NISPUF11)[grep("DVRC", names(NISPUF11))]),		# provider-reported Varicella-containing shots
-	    "P_UTD431"                                              # provider-report up-to-date DTAP, polio, measles vaccinations
-			)
-		       )
-		)
+                   select=(c(sort(names(NISPUF11)[grep("SEQNUM", names(NISPUF11))]),	# NIS respondent identifiers
+                             "PDAT",               # whether there is adequate provider data
+                             "PROVWT",             # weight for children with adequate provider data
+                             "YEAR",								# year of interview
+                             "STATE",							# state of residence
+                             #"ESTIAP11",	inconsistently coded from year to year		# state or metropolitan statistical area of residence
+                             "C5R", 								# relationship of respondent to child (match on mother?)
+                             "LANGUAGE",							# language interview was conducted in
+                             "D7",								# permission to contact providers
+                             "EDUC1",							# mother's education level
+                             "M_AGEGRP",							# mother's age group
+                             "MARITAL2",							# mother's marital status
+                             "INCQ298A",							# family income category
+                             "INCPORAR",							# income to poverty ratio (eligibility criterion)
+                             "FRSTBRN",							# whether child is first born
+                             "AGEGRP",							# child's age group
+                             "RACEETHK",		            # child's race
+                             "SEX",								# child's sex
+                             sort(names(NISPUF11)[grep("CWIC_", names(NISPUF11))]),		# WIC variables	
+                             sort(names(NISPUF11)[grep("INS_", names(NISPUF11))]),		# insurance variables
+                             sort(names(NISPUF11)[grep("BF_", names(NISPUF11))]),		# breastfeeding variables
+                             sort(names(NISPUF11)[grep("SC_", names(NISPUF11))]),		# household shot card variables
+                             sort(names(NISPUF11)[grep("HH_", names(NISPUF11))]),		# household-reported variables (not using shot card)
+                             "SHOTCARD", 							# household uses shot card
+                             sort(names(NISPUF11)[grep("DDTP", names(NISPUF11))]),		# provider-reported DT-containing shots
+                             sort(names(NISPUF11)[grep("DHEP", names(NISPUF11))]),		# provider-reported HepA- and HepB-containing shots
+                             sort(names(NISPUF11)[grep("DHIB_", names(NISPUF11))]),		# provider-reported Hib-containing shots
+                             sort(names(NISPUF11)[grep("DMMR", names(NISPUF11))]),		# provider-reported measles-containing shots
+                             sort(names(NISPUF11)[grep("DPCV", names(NISPUF11))]),		# provider-reported pneumococcal-containing shots
+                             sort(names(NISPUF11)[grep("DPOLIO", names(NISPUF11))]),		# provider-reported polio-containing shots
+                             sort(names(NISPUF11)[grep("DROT", names(NISPUF11))]),		# provider-reported rotavirus-containing shots
+                             sort(names(NISPUF11)[grep("DVRC", names(NISPUF11))]),		# provider-reported Varicella-containing shots
+                             "P_UTD431"                                              # provider-report up-to-date DTAP, polio, measles vaccinations
+                   )
+                   )
+)
 
 
 
@@ -287,7 +287,6 @@ NISPUF11 <- subset(NISPUF11,
 #####################################
 ## Combine NIS data 
 NISPUF <- rbind(NISPUF09, NISPUF10, NISPUF11)
-
 
 
 # Drop old NISPUF datasets from memory
@@ -300,6 +299,7 @@ NISPUF <- subset(NISPUF, subset=(FRSTBRN==2))
 
 # Recode PDAT (adequate provider data) to 0/1 
 NISPUF$PDAT[NISPUF$PDAT==2] <- 0
+
 
 # Recode provider weights.  Because the provider weights tell us how many people
 # an observation represents in that year and because we are sampling from roughly
@@ -494,16 +494,16 @@ NISPUF$Immunizations_UptoDate431_24 <- 0
 # Overall immunizations up to date
 NISPUF$Immunizations_UptoDate_6 <- 0
   NISPUF$Immunizations_UptoDate_6[NISPUF$HepB6==1 & NISPUF$DTaP6==1 & NISPUF$Hib6==1 & NISPUF$Polio6==1 & NISPUF$PCV6==1 & 
-				  NISPUF$MMR6==1 & NISPUF$Varicella6==1 & NISPUF$HepA6==1 & NISPUF$Rotavirus6==1] <- 1
+                                  NISPUF$MMR6==1 & NISPUF$Varicella6==1 & NISPUF$HepA6==1 & NISPUF$Rotavirus6==1] <- 1
 NISPUF$Immunizations_UptoDate_12 <- 0
   NISPUF$Immunizations_UptoDate_12[NISPUF$HepB12==1 & NISPUF$DTaP12==1 & NISPUF$Hib12==1 & NISPUF$Polio12==1 & NISPUF$PCV12==1 & 
-				   NISPUF$MMR12==1 & NISPUF$Varicella12==1 & NISPUF$HepA12==1 & NISPUF$Rotavirus12==1] <- 1
+                                   NISPUF$MMR12==1 & NISPUF$Varicella12==1 & NISPUF$HepA12==1 & NISPUF$Rotavirus12==1] <- 1
 NISPUF$Immunizations_UptoDate_18 <- 0
   NISPUF$Immunizations_UptoDate_18[NISPUF$HepB18==1 & NISPUF$DTaP18==1 & NISPUF$Hib18==1 & NISPUF$Polio18==1 & NISPUF$PCV18==1 & 
-				   NISPUF$MMR18==1 & NISPUF$Varicella18==1 & NISPUF$HepA18==1 & NISPUF$Rotavirus18==1] <- 1
+                                   NISPUF$MMR18==1 & NISPUF$Varicella18==1 & NISPUF$HepA18==1 & NISPUF$Rotavirus18==1] <- 1
 NISPUF$Immunizations_UptoDate_24 <- 0
   NISPUF$Immunizations_UptoDate_24[NISPUF$HepB6==1 & NISPUF$DTaP24==1 & NISPUF$Hib24==1 & NISPUF$Polio24==1 & NISPUF$PCV24==1 & 
-				   NISPUF$MMR24==1 & NISPUF$Varicella24==1 & NISPUF$HepA24==1 & NISPUF$Rotavirus24==1] <- 1
+                                   NISPUF$MMR24==1 & NISPUF$Varicella24==1 & NISPUF$HepA24==1 & NISPUF$Rotavirus24==1] <- 1
 
 
 
@@ -544,11 +544,11 @@ NISPUF$HH_VARICELLA_UTD <- 0
 
 NISPUF$HH_UTD <- 0
   NISPUF$HH_UTD[(NISPUF$HH_DTaP_UTD>0 & NISPUF$HH_HEPB_UTD>0 & NISPUF$HH_HIB_UTD>0 & NISPUF$HH_MMR_UTD>0 & 
-		 NISPUF$HH_POLIO_UTD>0 & NISPUF$HH_VARICELLA_UTD>0) &
-		(NISPUF$HH_DTaP_UTD!=50 & NISPUF$HH_HEPB_UTD!=50 & NISPUF$HH_HIB_UTD!=50 & NISPUF$HH_MMR_UTD!=50 & 
-		 NISPUF$HH_POLIO_UTD!=50 & NISPUF$HH_VARICELLA_UTD!=50)] <- 1
-  NISPUF$HH_UTD[NISPUF$HH_DTaP_UTD==50 & NISPUF$HH_HEPB_UTD==50 & NISPUF$HH_HIB_UTD==50 & NISPUF$HH_MMR_UTD==50 & 
-		 NISPUF$HH_POLIO_UTD==50 & NISPUF$HH_VARICELLA_UTD==50] <- 50
+                 NISPUF$HH_POLIO_UTD>0 & NISPUF$HH_VARICELLA_UTD>0) &
+                (NISPUF$HH_DTaP_UTD!=50 & NISPUF$HH_HEPB_UTD!=50 & NISPUF$HH_HIB_UTD!=50 & NISPUF$HH_MMR_UTD!=50 & 
+                   NISPUF$HH_POLIO_UTD!=50 & NISPUF$HH_VARICELLA_UTD!=50)] <- 1
+NISPUF$HH_UTD[NISPUF$HH_DTaP_UTD==50 & NISPUF$HH_HEPB_UTD==50 & NISPUF$HH_HIB_UTD==50 & NISPUF$HH_MMR_UTD==50 & 
+                NISPUF$HH_POLIO_UTD==50 & NISPUF$HH_VARICELLA_UTD==50] <- 50
 
 
 
@@ -588,31 +588,21 @@ NISPUF$HHSC_VARICELLA_UTD <- 0
   NISPUF$HHSC_VARICELLA_UTD[NISPUF$SC_VRC==50] <- 50
 
 NISPUF$HHSC_UTD <- 0
-  NISPUF$HHSC_UTD[(NISPUF$HHSC_DTaP_UTD>0 & NISPUF$HHSC_HEPB_UTD>0 & NISPUF$HHSC_HIB_UTD>0 & NISPUF$HHSC_MMR_UTD>0 & 
-		 NISPUF$HHSC_POLIO_UTD>0 & NISPUF$HHSC_VARICELLA_UTD>0) &
-		(NISPUF$HHSC_DTaP_UTD!=50 & NISPUF$HHSC_HEPB_UTD!=50 & NISPUF$HHSC_HIB_UTD!=50 & NISPUF$HHSC_MMR_UTD!=50 & 
-		 NISPUF$HHSC_POLIO_UTD!=50 & NISPUF$HHSC_VARICELLA_UTD!=50)] <- 1
-  NISPUF$HHSC_UTD[NISPUF$HHSC_DTaP_UTD==50 & NISPUF$HHSC_HEPB_UTD==50 & NISPUF$HHSC_HIB_UTD==50 & NISPUF$HHSC_MMR_UTD==50 & 
-		 NISPUF$HHSC_POLIO_UTD==50 & NISPUF$HHSC_VARICELLA_UTD==50] <- 50
+NISPUF$HHSC_UTD[(NISPUF$HHSC_DTaP_UTD>0 & NISPUF$HHSC_HEPB_UTD>0 & NISPUF$HHSC_HIB_UTD>0 & NISPUF$HHSC_MMR_UTD>0 & 
+                   NISPUF$HHSC_POLIO_UTD>0 & NISPUF$HHSC_VARICELLA_UTD>0) &
+                  (NISPUF$HHSC_DTaP_UTD!=50 & NISPUF$HHSC_HEPB_UTD!=50 & NISPUF$HHSC_HIB_UTD!=50 & NISPUF$HHSC_MMR_UTD!=50 & 
+                     NISPUF$HHSC_POLIO_UTD!=50 & NISPUF$HHSC_VARICELLA_UTD!=50)] <- 1
+NISPUF$HHSC_UTD[NISPUF$HHSC_DTaP_UTD==50 & NISPUF$HHSC_HEPB_UTD==50 & NISPUF$HHSC_HIB_UTD==50 & NISPUF$HHSC_MMR_UTD==50 & 
+                  NISPUF$HHSC_POLIO_UTD==50 & NISPUF$HHSC_VARICELLA_UTD==50] <- 50
 
 
 
 
-    
+
+
 ###################################
 ## Save NIS data
 write.csv(NISPUF, file="NISPUF.csv")  # CSV so it's readable years from now
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -629,16 +619,10 @@ write.csv(NISPUF, file="NISPUF.csv")  # CSV so it's readable years from now
 
 ############################################
 # Load NFP data 
+
 setwd("/mnt/data/nfp_data/csv_data")
-NFPfull <- read.csv("Full_NFP_Data_Child_Development_Outcomes.csv", header=TRUE)
-
-
-# Rename NFPfull$CL_EN_GEN_ED as NFPfull$ID
-names(NFPfull)[names(NFPfull) %in% "CL_EN_GEN_ID"] <- "ID"
-
-# Rename NFPfull$State as NFPfull$STATE
-names(NFPfull)[names(NFPfull) %in% "State"] <- "STATE"
-
+nfp_demographics <- read.csv("nfp_demographics_expanded.csv")
+nfp_centers <- read.csv("agency.csv")
 
 
 
@@ -653,13 +637,87 @@ NISPUF$income_recode[which(is.element(NISPUF$INCQ298A, c(9,10)))] = 5 # Binning 
 NISPUF$income_recode[which(is.element(NISPUF$INCQ298A, c(11,12,13,14)))] = 6
 
 ### In NFP, must combine income brackets 2 and 3 ($7500-20K) to match NIS buckets.
-NFPfull$income_recode = NFPfull$INCOME
-NFPfull$income_recode[NFPfull$income_recode == 3] <- 2
+nfp_demographics$income_recode = nfp_demographics$INCOME
+nfp_demographics$income_recode[nfp_demographics$income_recode == 3] <- 2
 ### Note that in the NFP dataset an income code of 7 indicates a mother living off her parents.
 
 ### Drop NISPUF$INCQ298A and nfp_demographics$INCOME
 NISPUF <- NISPUF[,!(names(NISPUF) %in% "INCQ298A")]
-NFPfull <- NFPfull[,!(names(NFPfull) %in% "INCOME")]
+nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "INCOME")]
+
+
+
+# Palm Beach County NFP appears in agency.csv twice
+nfp_centers <- nfp_centers[-(nfp_centers$AGENCY_NAME=="Palm Beach County NFP" & is.na(nfp_centers$ZipCode)),]
+
+
+## Location - recoding NFP state data into FIPS codes (to match the NIS dataset)
+# make a character vector first
+nfp_centers$State <- as.character(nfp_centers$State)  
+
+nfp_centers$State[nfp_centers$State==1] <- "AL"
+nfp_centers$State[nfp_centers$State==2] <- "AK"
+nfp_centers$State[nfp_centers$State==4] <- "AZ"
+nfp_centers$State[nfp_centers$State==5] <- "AR"
+nfp_centers$State[nfp_centers$State==6] <- "CA"
+nfp_centers$State[nfp_centers$State==8] <- "CO"
+nfp_centers$State[nfp_centers$State==9] <- "CT"
+nfp_centers$State[nfp_centers$State==10] <- "DE"
+nfp_centers$State[nfp_centers$State==11] <- "DC"
+nfp_centers$State[nfp_centers$State==12] <- "FL"
+nfp_centers$State[nfp_centers$State==13] <- "GA"
+nfp_centers$State[nfp_centers$State==15] <- "HI"
+nfp_centers$State[nfp_centers$State==16] <- "ID"
+nfp_centers$State[nfp_centers$State==17] <- "IL"
+nfp_centers$State[nfp_centers$State==18] <- "IN"
+nfp_centers$State[nfp_centers$State==19] <- "IA"
+nfp_centers$State[nfp_centers$State==20] <- "KS"
+nfp_centers$State[nfp_centers$State==21] <- "KY"
+nfp_centers$State[nfp_centers$State==22] <- "LA"
+nfp_centers$State[nfp_centers$State==23] <- "ME"
+nfp_centers$State[nfp_centers$State==24] <- "MD"
+nfp_centers$State[nfp_centers$State==25] <- "MA"
+nfp_centers$State[nfp_centers$State==26] <- "MI"
+nfp_centers$State[nfp_centers$State==27] <- "MN"
+nfp_centers$State[nfp_centers$State==28] <- "MS"
+nfp_centers$State[nfp_centers$State==29] <- "MO"
+nfp_centers$State[nfp_centers$State==30] <- "MT"
+nfp_centers$State[nfp_centers$State==31] <- "NE"
+nfp_centers$State[nfp_centers$State==32] <- "NV"
+nfp_centers$State[nfp_centers$State==33] <- "NH"
+nfp_centers$State[nfp_centers$State==34] <- "NJ"
+nfp_centers$State[nfp_centers$State==35] <- "NM"
+nfp_centers$State[nfp_centers$State==36] <- "NY"
+nfp_centers$State[nfp_centers$State==37] <- "NC"
+nfp_centers$State[nfp_centers$State==38] <- "ND"
+nfp_centers$State[nfp_centers$State==39] <- "OH"
+nfp_centers$State[nfp_centers$State==40] <- "OK"
+nfp_centers$State[nfp_centers$State==41] <- "OR"
+nfp_centers$State[nfp_centers$State==42] <- "PA"
+nfp_centers$State[nfp_centers$State==44] <- "RI"
+nfp_centers$State[nfp_centers$State==45] <- "SC"
+nfp_centers$State[nfp_centers$State==46] <- "SD"
+nfp_centers$State[nfp_centers$State==47] <- "TN"
+nfp_centers$State[nfp_centers$State==48] <- "TX"
+nfp_centers$State[nfp_centers$State==49] <- "UT"
+nfp_centers$State[nfp_centers$State==50] <- "VT"
+nfp_centers$State[nfp_centers$State==51] <- "VA"
+nfp_centers$State[nfp_centers$State==53] <- "WA"
+nfp_centers$State[nfp_centers$State==54] <- "WV"
+nfp_centers$State[nfp_centers$State==55] <- "WI"
+nfp_centers$State[nfp_centers$State==56] <- "WY"
+
+# Rename nfp_centers$State nfp_centers$STATE
+names(nfp_centers)[names(nfp_centers)=='State'] <- 'STATE'
+
+
+# Some NFP agencies are missing State data.  Add them.
+nfp_centers[nfp_centers$Site_ID==274, names(nfp_centers) %in% "State"] <- "WA"
+nfp_centers[nfp_centers$Site_ID==280, names(nfp_centers) %in% "State"] <- "SC"
+nfp_centers[nfp_centers$Site_ID==281, names(nfp_centers) %in% "State"] <- "NJ"
+nfp_centers[nfp_centers$Site_ID==294, names(nfp_centers) %in% "State"] <- "FL"
+nfp_centers[nfp_centers$Site_ID==352, names(nfp_centers) %in% "State"] <- "VA"
+
 
 
 
@@ -671,30 +729,31 @@ NISPUF$Primary_language[NISPUF$LANGUAGE==2] <- "Spanish"
 NISPUF$Primary_language[NISPUF$LANGUAGE==3] <- "Other"
 NISPUF$language <- factor(NISPUF$Primary_language)
 
-NFPfull$language <- as.character(NFPfull$Primary_language)
-NFPfull$language[NFPfull$Primary_language==""] <- NA
+nfp_demographics$language <- as.character(nfp_demographics$Primary_language)
+nfp_demographics$language[nfp_demographics$Primary_language==""] <- NA
+nfp_demographics$language <- factor(nfp_demographics$language)
 
 # Drop NISPUF$Primary_language and nfp_demographics$language
 NISPUF <- NISPUF[,!(names(NISPUF) %in% "LANGUAGE")]
-NFPfull <- NFPfull[,!(names(NFPfull) %in% "Primary_language")]
+nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "Primary_language")]
 
 
 
 
 
 ## Mother's Age - Bucketed in NIS data as <=19, 20-29, >=30. 
-### True comparison to NFP MomsAgeBirth would be mother's age minus child's age in NIS, but both data points are bucketed.
-### Explore ways to make this comparison more accurate, but start by ignoring this distinction.
+## True comparison to NFP MomsAgeBirth would be mother's age minus child's age in NIS, but both data points are bucketed.
+## Explore ways to make this comparison more accurate, but start by ignoring this distinction.
 
-NFPfull$MothersAge[NFPfull$MomsAgeBirth <= 19] <- 1
-NFPfull$MothersAge[20 <= NFPfull$MomsAgeBirth & NFPfull$MomsAgeBirth <= 29] <- 2
-NFPfull$MothersAge[NFPfull$MomsAgeBirth >= 30] <- 3
-NFPfull$MothersAge <- factor(NFPfull$MothersAge, labels = c("<=19 Years", "20-29 Years", ">=30 Years"))
+nfp_demographics$MothersAge[nfp_demographics$MomsAgeBirth <= 19] <- 1
+nfp_demographics$MothersAge[20 <= nfp_demographics$MomsAgeBirth & nfp_demographics$MomsAgeBirth <= 29] <- 2
+nfp_demographics$MothersAge[nfp_demographics$MomsAgeBirth >= 30] <- 3
+nfp_demographics$MothersAge <- factor(nfp_demographics$MothersAge, labels = c("<=19 Years", "20-29 Years", ">=30 Years"))
 NISPUF$MothersAge <- factor(NISPUF$M_AGEGRP, labels = c("<=19 Years", "20-29 Years", ">=30 Years"))
 
 ### Delete NISPUF$M_AGEGRP and nfp_demographics$MomsAgeBirth
 NISPUF <- NISPUF[,!(names(NISPUF) %in% "M_AGEGRP")]
-NFPfull <- NFPfull[,!(names(NFPfull) %in% "MomsAgeBirth")]
+nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "MomsAgeBirth")]
 
 
 
@@ -704,14 +763,14 @@ NFPfull <- NFPfull[,!(names(NFPfull) %in% "MomsAgeBirth")]
 ### Must assume these are the same.
 
 NISPUF$Race <- factor(NISPUF$RACEETHK, labels = c("Hispanic", "WhiteNH", "BlackNH", "Other"))
-NFPfull$Race <- as.character(NFPfull$MomsRE) # Renaming variable
-  NFPfull$Race[NFPfull$Race=="Hispanic or Latina"] <- "Hispanic" # Shortening description
-  NFPfull$Race[NFPfull$Race=="Declined or msg"] <- NA 
-  NFPfull$Race <- factor(NFPfull$Race) # Return to factor format with adjusted levels
+nfp_demographics$Race <- as.character(nfp_demographics$MomsRE) # Renaming variable
+nfp_demographics$Race[nfp_demographics$Race=="Hispanic or Latina"] <- "Hispanic" # Shortening description
+nfp_demographics$Race[nfp_demographics$Race=="Declined or msg"] <- NA 
+nfp_demographics$Race <- factor(nfp_demographics$Race) # Return to factor format with adjusted levels
 
 ### Drop NISPUF$RACEETHK and nfp_demographics$MomsRE
 NISPUF <- NISPUF[,!(names(NISPUF) %in% "RACEETHK")]
-NFPfull <- NFPfull[,!(names(NFPfull) %in% "MomsRE")]
+nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "MomsRE")]
 
 
 
@@ -720,26 +779,23 @@ NFPfull <- NFPfull[,!(names(NFPfull) %in% "MomsRE")]
 ## Child's gender: Create a binary dummy variable for "male"
 NISPUF$male[NISPUF$SEX==1] <- 1
 NISPUF$male[NISPUF$SEX==2] <- 0
-
-NFPfull$male[NFPfull$Childgender=="Female"] <- 0 # Recode factor variable
-NFPfull$male[NFPfull$Childgender=="Male"] <- 1 
-
+nfp_demographics$male[nfp_demographics$Childgender=="Male"] <- 1 
+nfp_demographics$male[nfp_demographics$Childgender=="Female"] <- 0 
 
 ### Drop NISPUF$SEX and nfp_demographics$Childgender
 NISPUF <- NISPUF[,!(names(NISPUF) %in% "SEX")]
-NFPfull <- NFPfull[,!(names(NFPfull) %in% "Childgender")]
-
+nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "Childgender")]
 
 
 
 ## Mother's marital status
-NFPfull$married <- NFPfull$marital_status # Rename variable so meaning of 1/0 is more evident
+nfp_demographics$married <- nfp_demographics$marital_status   # Rename variable so meaning of 1/0 is more evident
 NISPUF$married[NISPUF$MARITAL2==1] <- 1
 NISPUF$married[NISPUF$MARITAL2==2] <- 0
 
 ### Drop NISPUF$MARITAL2 and nfp_demographics$marital_status
 NISPUF <- NISPUF[,!(names(NISPUF) %in% "MARITAL2")]
-NFPfull <- NFPfull[,!(names(NFPfull) %in% "marital_status")]
+nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "marital_status")]
 
 
 
@@ -751,14 +807,16 @@ NFPfull <- NFPfull[,!(names(NFPfull) %in% "marital_status")]
 NISPUF$HSgrad[NISPUF$EDUC1==1] <- 0
 NISPUF$HSgrad[which(is.element(NISPUF$EDUC1,c(2,3,4)))] <- 1
 
-NFPfull$HSgrad[NFPfull$HSGED==1] <- 1
-NFPfull$HSgrad[NFPfull$HSGED==2] <- 1
-NFPfull$HSgrad[NFPfull$HSGED==3] <- 0
+nfp_demographics$HSgrad[nfp_demographics$HSGED==1] <- 1
+nfp_demographics$HSgrad[nfp_demographics$HSGED==2] <- 1
+nfp_demographics$HSgrad[nfp_demographics$HSGED==3] <- 0
+
+
 
 
 ### Drop NISPUF$EDUC1 & nfp_demographics$HSGED
 NISPUF <- NISPUF[,!(names(NISPUF) %in% "EDUC1")]
-NFPfull <- NFPfull[,!(names(NFPfull) %in% "HSGED")]
+nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "HSGED")]
 
 
 
@@ -777,43 +835,66 @@ NFPfull <- NFPfull[,!(names(NFPfull) %in% "HSGED")]
 ########################################
 # Create common dataset to combine NIS and NFP data
 
+nfp_outcomes <- read.csv("growth_immunization_outcomes.csv")
+nfp_outcomes$Immunizations_UptoDate_6[nfp_outcomes$final_immun_1=="Yes"] <- 1
+  nfp_outcomes$Immunizations_UptoDate_6[nfp_outcomes$final_immun_1=="No"] <- 0
+nfp_outcomes$Immunizations_UptoDate_12[nfp_outcomes$final_immun_2=="Yes"] <- 1
+  nfp_outcomes$Immunizations_UptoDate_12[nfp_outcomes$final_immun_2=="No"] <- 0
+nfp_outcomes$Immunizations_UptoDate_18[nfp_outcomes$final_immun_3=="Yes"] <- 1
+  nfp_outcomes$Immunizations_UptoDate_18[nfp_outcomes$final_immun_3=="No"] <- 0
+nfp_outcomes$Immunizations_UptoDate_24[nfp_outcomes$final_immun_4=="Yes"] <- 1
+  nfp_outcomes$Immunizations_UptoDate_24[nfp_outcomes$final_immun_4=="No"] <- 0
 
-## Create indicator variables for whether NFP child is UTD at 6, 12, 18, 24 months
-NFPfull$Immunizations_UptoDate_6[NFPfull$final_immun_1=="Yes"] <- 1
-  NFPfull$Immunizations_UptoDate_6[NFPfull$final_immun_1=="No"] <- 0
-NFPfull$Immunizations_UptoDate_12[NFPfull$final_immun_2=="Yes"] <- 1
-  NFPfull$Immunizations_UptoDate_12[NFPfull$final_immun_2=="No"] <- 0
-NFPfull$Immunizations_UptoDate_18[NFPfull$final_immun_3=="Yes"] <- 1
-  NFPfull$Immunizations_UptoDate_18[NFPfull$final_immun_3=="No"] <- 0
-NFPfull$Immunizations_UptoDate_24[NFPfull$final_immun_4=="Yes"] <- 1
-  NFPfull$Immunizations_UptoDate_24[NFPfull$final_immun_4=="No"] <- 0
+
 
 # Drop nfp_outcomes$final_immun_*
-NFPfull <- NFPfull[,!(names(NFPfull) %in% c("final_immun_1","final_immun_2","final_immun_3","final_immun_4"))]
+nfp_outcomes <- nfp_outcomes[,!(names(nfp_outcomes) %in% c("final_immun_1","final_immun_2","final_immun_3","final_immun_4"))]
 
+# Read dataset that identifies the source of each NFP immunization value
+immun_record_source <- read.csv("immun_record_source.csv")
 
-
-
-## Source of immunization data
 # Some single-quotation marks came in as Unicode.  Replace.
-NFPfull$immun_record_source_1 <- gsub("\U3e32393c", "'", as.character(NFPfull$immun_record_source_1))
-NFPfull$immun_record_source_2 <- gsub("\U3e32393c", "'", as.character(NFPfull$immun_record_source_2))
-NFPfull$immun_record_source_3 <- gsub("\U3e32393c", "'", as.character(NFPfull$immun_record_source_3))
-NFPfull$immun_record_source_4 <- gsub("\U3e32393c", "'", as.character(NFPfull$immun_record_source_4))
+immun_record_source$immun_record_source_1 <- gsub("\U3e32393c", "'", as.character(immun_record_source$immun_record_source_1))
+immun_record_source$immun_record_source_2 <- gsub("\U3e32393c", "'", as.character(immun_record_source$immun_record_source_2))
+immun_record_source$immun_record_source_3 <- gsub("\U3e32393c", "'", as.character(immun_record_source$immun_record_source_3))
+immun_record_source$immun_record_source_4 <- gsub("\U3e32393c", "'", as.character(immun_record_source$immun_record_source_4))
 
 # Recode values
-NFPfull$immun_record_source_1[NFPfull$immun_record_source_1==""] <- NA
-  NFPfull$immun_record_source_1[NFPfull$immun_record_source_1=="Written record"] <- "record"
-  NFPfull$immun_record_source_1[NFPfull$immun_record_source_1=="Mother's self-report"] <- "mother"
-NFPfull$immun_record_source_2[NFPfull$immun_record_source_2==""] <- NA
-  NFPfull$immun_record_source_2[NFPfull$immun_record_source_2=="Written record"] <- "record"
-  NFPfull$immun_record_source_2[NFPfull$immun_record_source_2=="Mother's self-report"] <- "mother"
-NFPfull$immun_record_source_3[NFPfull$immun_record_source_3==""] <- NA
-  NFPfull$immun_record_source_3[NFPfull$immun_record_source_3=="Written record"] <- "record"
-  NFPfull$immun_record_source_3[NFPfull$immun_record_source_3=="Mother's self-report"] <- "mother"
-NFPfull$immun_record_source_4[NFPfull$immun_record_source_4==""] <- NA
-  NFPfull$immun_record_source_4[NFPfull$immun_record_source_4=="Written record"] <- "record"
-  NFPfull$immun_record_source_4[NFPfull$immun_record_source_4=="Mother's self-report"] <- "mother"
+immun_record_source$immun_record_source_1[immun_record_source$immun_record_source_1==""] <- NA
+  immun_record_source$immun_record_source_1[immun_record_source$immun_record_source_1=="Written record"] <- "record"
+  immun_record_source$immun_record_source_1[immun_record_source$immun_record_source_1=="Mother's self-report"] <- "mother"
+immun_record_source$immun_record_source_2[immun_record_source$immun_record_source_2==""] <- NA
+  immun_record_source$immun_record_source_2[immun_record_source$immun_record_source_2=="Written record"] <- "record"
+  immun_record_source$immun_record_source_2[immun_record_source$immun_record_source_2=="Mother's self-report"] <- "mother"
+immun_record_source$immun_record_source_3[immun_record_source$immun_record_source_3==""] <- NA
+  immun_record_source$immun_record_source_3[immun_record_source$immun_record_source_3=="Written record"] <- "record"
+  immun_record_source$immun_record_source_3[immun_record_source$immun_record_source_3=="Mother's self-report"] <- "mother"
+immun_record_source$immun_record_source_4[immun_record_source$immun_record_source_4==""] <- NA
+  immun_record_source$immun_record_source_4[immun_record_source$immun_record_source_4=="Written record"] <- "record"
+  immun_record_source$immun_record_source_4[immun_record_source$immun_record_source_4=="Mother's self-report"] <- "mother"
+
+
+
+# Rename immun_record_source$cl_en_gen_id as immun_record_source$CL_EN_GEN_ID
+names(immun_record_source)[names(immun_record_source)=='cl_en_gen_id'] <- 'CL_EN_GEN_ID'
+
+
+## CHECK THE DIMENSIONS BEFORE AND AFTER TO MAKE SURE IT MERGED CORRECTLY
+dim(nfp_outcomes)
+dim(immun_record_source)
+dim(nfp_demographics)
+
+# Merge the datasets
+nfp_outcomes <- merge(nfp_outcomes, immun_record_source, by="CL_EN_GEN_ID")
+dim(nfp_outcomes)
+
+
+
+
+# Merge NFP demographics and immunization datasets and rename ID variable
+NFPfull <- merge(nfp_demographics, nfp_outcomes, by="CL_EN_GEN_ID", all=TRUE)
+names(NFPfull)[names(NFPfull)=="CL_EN_GEN_ID"] <- "ID"
+dim(NFPfull)
 
 
 
@@ -824,29 +905,12 @@ names(NISPUF)[names(NISPUF)=="SEQNUMC"] <- "ID"
 
 
 
-# Some overlap between NIS and NFP children.  For example, kids in the 2009 NIS
-# dataset were born between February 2006 and May 2008, while kids in the NFP dataset
-# were born after December 31, 2007.  Therefore, the oldest kids in the 2009 NIS
-# data should be cut.  See "When kids in NIS were born.xls"
-#
-# In addition, NIS offers survey weights that essentially indicate how many persons
-# each data point represents. 
-#
-# Who exactly is in the NFP dataset?  My understanding is that it includes anyone who
-# enrolled between January 1, 2008, and December 31, 2010.  If that's true, then
-# many children in the NFP data are not old enough to get have data at 6, 12, 18, 
-# and 24 months.  
-#
-# In addition, NIS includes kids between 19 and 23 months of age.  Those children are
-# not old enough to be up to date on their 24-month vaccinations.  Should I drop them?
-# Should I compare children of the same age?  (This is tough to do when the NFP data
-# do not include the child's age.)
+# Match on agency requirements?
 
 
 
 
-
-# Adequate record indicators for immunizations at 6, 12, 18, and 24 months
+# Adequate provider data indicators for immunizations at 6, 12, 18, and 24 months
 
 NFPfull$PDAT6 <- 0
   NFPfull$PDAT6[NFPfull$immun_record_source_1=="record"] <- 1
@@ -854,7 +918,7 @@ NFPfull$PDAT12 <- 0
   NFPfull$PDAT12[NFPfull$immun_record_source_2=="record"] <- 1
 NFPfull$PDAT18 <- 0
   NFPfull$PDAT18[NFPfull$immun_record_source_3=="record"] <- 1
-NFPfull$PDAT24 <- 0 
+NFPfull$PDAT24 <- 0
   NFPfull$PDAT24[NFPfull$immun_record_source_4=="record"] <- 1
 
 NISPUF$PDAT6 <- NISPUF$PDAT
@@ -886,7 +950,7 @@ names(NISPUF)[names(NISPUF)=="Immunizations_UptoDate431_18"] <- "Immunizations_U
 names(NISPUF)[names(NISPUF)=="Immunizations_UptoDate431_24"] <- "Immunizations_UptoDate_24"
 
 
-  
+
 # Subset using only the variables we want to use in the analysis
 NIScommon <- subset(NISPUF, select = c(ID, STATE, PDAT6, PDAT12, PDAT18, PDAT24, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
 NFPcommon <- subset(NFPfull, select = c(ID, STATE, PDAT6, PDAT12, PDAT18, PDAT24, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))
@@ -899,44 +963,9 @@ NFPcommon$treatment <- 1
 
 
 
+
+
 immunizations <- rbind(NIScommon, NFPcommon)
 
-write.csv(immunizations, "/mnt/data/NIS/modified_data/immunizations_analysis.csv")  # CSV so it's readable years from now
+write.csv(immunizations, "immunizations_analysis.csv")
 
-
-
-
-
-
-
-
-
-#####################################
-#####################################
-#                                   #
-#      Create a dataset with        #
-#      observations that are        #
-#         missing values.           #
-#        Can impute or use          #
-#    probability distributions      #
-#         in their place            #
-#                                   #
-#####################################
-#####################################
-
-
-
-setwd("/mnt/data/NIS/modified_data/")
-IDs_of_missing_mothers <- read.csv("/mnt/data/nfp_data/csv_data/IDsMissingOutcomes.csv", header=T)
-  IDs_of_missing_mothers <- IDs_of_missing_mothers$x
-length(IDs_of_missing_mothers)
-
-
-nfp_demographics <- read.csv("/mnt/data/nfp_data/csv_data/nfp_demographics_expanded.csv", header=T)
-dim(nfp_demographics)
-
-nfp_demographics_for_missing_mothers <- merge(nfp_demographics, IDs_of_missing_mothers, all.x=TRUE,
-                                              by=intersect("CL_EN_GEN_ID", "IDs_of_missing_mothers"))
-
-
-  
