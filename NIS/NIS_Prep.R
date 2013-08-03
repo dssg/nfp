@@ -377,6 +377,11 @@ rm(NISPUF09,NISPUF10,NISPUF11)
 NISPUF <- subset(NISPUF, subset=(FRSTBRN==2))
 
 
+# Only keep NIS with incomes at or below 300% of the poverty level
+NISPUF <- subset(NISPUF, subset=(INCPORAR<2.5))
+
+
+
 # Recode PDAT (adequate provider data) to 0/1 
 NISPUF$PDAT[NISPUF$PDAT==2] <- 0
 
