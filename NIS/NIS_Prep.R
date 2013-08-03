@@ -381,6 +381,9 @@ NISPUF <- subset(NISPUF, subset=(FRSTBRN==2))
 NISPUF <- subset(NISPUF, subset=(INCPORAR<2.5))
 
 
+# Only keep NIS data where the mother was the respondent
+NISPUF <- subset(NISPUF, subset=(C5R==1))
+
 
 # Recode PDAT (adequate provider data) to 0/1 
 NISPUF$PDAT[NISPUF$PDAT==2] <- 0
@@ -1200,7 +1203,6 @@ NFPfull$treatment <- 1
 # Subset using only the variables we want to use in the analysis
 NIScommon <- subset(NISPUF, select = c(ID, STATE, treatment, PDAT6, PDAT12, PDAT18, PDAT24, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24, ReasonForDismissal, First_Home_Visit, Last_Home_Visit, Discharge_Date))
 NFPcommon <- subset(NFPfull, select = c(ID, STATE, treatment, PDAT6, PDAT12, PDAT18, PDAT24, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24, ReasonForDismissal, First_Home_Visit, Last_Home_Visit, Discharge_Date))
-# Other NIS variables to potentially subset on: C5R, INCPORAR, AGEGRP
 
 
 immunizations <- rbind(NIScommon, NFPcommon)
