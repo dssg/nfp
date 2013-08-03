@@ -7,7 +7,7 @@
 ##         Nick Mader           ##
 ##################################
 
-# This script proceeds in the following way:
+# This script basically proceeds in the following way:
 #
 #     NIS
 #     - Load NIS data for 2009, 2010, and 2011
@@ -17,6 +17,10 @@
 #     - Clean NIS data
 #
 #     NFP 
+#     - Load NFP data
+#     - Make variables across NIS and NFP compatible
+#
+#     MERGE NIS and NFP data
 
 
 
@@ -705,11 +709,11 @@ write.csv(NISPUF, file="NISPUF.csv")  # CSV so it's readable years from now
 #####################################
 #####################################
 
-nfp_demographics <- read.csv("/mnt/data/nfp_data/csv_data/nfp_demographics_expanded.csv")
-nfp_centers <- read.csv("/mnt/data/nfp_data/csv_data/agency.csv")
-nfp_outcomes <- read.csv("growth_immunization_outcomes.csv")
-immun_record_source <- read.csv("immun_record_source.csv")
-discharge_reason <- read.sas7bdat("/mnt/data/nfp_data/raw_NFP_data/discharge_reason.sas7bdat")
+nfp_demographics     <- read.csv("/mnt/data/nfp_data/csv_data/nfp_demographics_expanded.csv")
+nfp_centers          <- read.csv("/mnt/data/nfp_data/csv_data/agency.csv")
+nfp_outcomes         <- read.csv("/mnt/data/nfp_data/csv_data/growth_immunization_outcomes.csv")
+immun_record_source  <- read.csv("/mnt/data/nfp_data/csv_data/immun_record_source.csv")
+discharge_reason     <- read.sas7bdat("/mnt/data/nfp_data/raw_NFP_data/discharge_reason.sas7bdat")
 client_program_dates <- read.sas7bdat("/mnt/data/nfp_data/raw_NFP_data/date_range_visits.sas7bdat")
 
 
@@ -954,9 +958,10 @@ nfp_demographics <- nfp_demographics[,!(names(nfp_demographics) %in% "HSGED")]
 # DISCHARGE REASON
 
 names(discharge_reason)[names(discharge_reason)=="clid"] <- "ID"
+names(nfp_demographics)[names(nfp_demographics)=="CL_EN_GEN_ID"] <- "ID"
 nfp_demographics <- merge(nfp_demographics, discharge_reason, by=intersect("ID", "ID"), all=TRUE)
 
-NISPUF$ReasonforDismissal <- NA
+NISPUF$ReasonForDismissal <- NA
 
 
 
@@ -1089,8 +1094,8 @@ dim(nfp_demographics)
 dim(nfp_outcomes)
 
 # Merge NFP demographics and immunization datasets and rename ID variable
-NFPfull <- merge(nfp_demographics, nfp_outcomes, by="CL_EN_GEN_ID", all=TRUE)
-  names(NFPfull)[names(NFPfull)=="CL_EN_GEN_ID"] <- "ID"
+names(nfp_outcomes)[names(nfp_outcomes)=="CL_EN_GEN_ID"] <- "ID"
+NFPfull <- merge(nfp_demographics, nfp_outcomes, by="ID", all=TRUE)
   names(NFPfull)[names(NFPfull)=="State"] <- "STATE"
 dim(NFPfull)
 
@@ -1165,8 +1170,8 @@ names(NISPUF)[names(NISPUF)=="Immunizations_UptoDate431_24"] <- "Immunizations_U
 ############################################
 # TREATMENT VARIABLE
 
-NIScommon$treatment <- 0
-NFPcommon$treatment <- 1
+NISPUF$treatment <- 0
+NFPfull$treatment <- 1
 
 
 
@@ -1188,8 +1193,8 @@ NFPcommon$treatment <- 1
 
 
 # Subset using only the variables we want to use in the analysis
-NIScommon <- subset(NISPUF, select = c(ID, STATE, PDAT6, PDAT12, PDAT18, PDAT24, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24, ReasonforDismissal, First_Home_Visit, Last_Home_Visit, Discharge_Date))
-NFPcommon <- subset(NFPfull, select = c(ID, STATE, PDAT6, PDAT12, PDAT18, PDAT24, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24, ReasonforDismissal, First_Home_Visit, Last_Home_Visit, Discharge_Date))
+NIScommon <- subset(NISPUF, select = c(ID, STATE, treatment, PDAT6, PDAT12, PDAT18, PDAT24, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24, ReasonForDismissal, First_Home_Visit, Last_Home_Visit, Discharge_Date))
+NFPcommon <- subset(NFPfull, select = c(ID, STATE, treatment, PDAT6, PDAT12, PDAT18, PDAT24, income_recode, language, MothersAge, Race, married, male, HSgrad, Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24, ReasonForDismissal, First_Home_Visit, Last_Home_Visit, Discharge_Date))
 # Other NIS variables to potentially subset on: C5R, INCPORAR, AGEGRP
 
 
@@ -1197,3 +1202,5 @@ immunizations <- rbind(NIScommon, NFPcommon)
 
 write.csv(immunizations, "/mnt/data/NIS/modified_data/immunizations_analysis.csv")
 
+
+rm(list=ls())

@@ -202,11 +202,6 @@ colnames(results) <- c("~NFP", "NFP")
 ###############################
 ## Unmatched NIS immunization rates
 
-# For general population estimates, need to weight by the year
-# These weights should be accounted for when matching (e.g. an observation with
-# a weight of 10 should be 10 times as likely to be matched as an observation
-# with a weight of 1.)  
-
 bootstrap_genpop_immunizations <- matrix(NA, 10000, 4)
 for(i in 1:10000){
   temp <- NISPUF[sample(1:nrow(NISPUF), nrow(NISPUF), replace=TRUE),]
@@ -260,9 +255,7 @@ NIS_24 <- NIS_2008_24*mean(temp$YEAR==2008) + NIS_2009_24*mean(temp$YEAR==2009) 
 }
 
 apply(bootstrap_genpop_immunizations,2,mean)
-  # [1] 0.7282518 0.9184530 0.7286034 0.8451572
 apply(bootstrap_genpop_immunizations,2,sd)
-  # 0.004611423 0.002827793 0.004478049 0.003759230
 
 
 
@@ -284,6 +277,7 @@ PSM_Matching <- subset(PSM_Matching, subset=c(PDAT6==1 & PDAT12==1 & PDAT18==1 &
 
 
 # PSM
+# Do I need to account for NIS weights?
 reg <- glm(treatment ~ factor(income_recode) + factor(language) + 
              factor(Race) + married + HSgrad, 
            data=PSM_Matching, family=binomial(link='logit'))
@@ -303,8 +297,6 @@ MatchBalance(treatment ~ factor(income_recode) + factor(language) +
                factor(Race) + married + HSgrad, data=PSM_Matching, match.out=rr6, 
              nboots=1000)
 summary(rr6)
-# Estimate...  0.32563 
-# AI SE......  0.011635
 
 
 
@@ -315,8 +307,6 @@ MatchBalance(treatment ~ factor(income_recode) + factor(language) +
                factor(Race) + married + HSgrad, data=PSM_Matching, match.out=rr12, 
              nboots=1000)
 summary(rr12)
-# Estimate...  0.062674 
-# AI SE......  0.011114 
 
 
 
@@ -328,8 +318,6 @@ MatchBalance(treatment ~ factor(income_recode) + factor(language) +
                factor(Race) + married + HSgrad, data=PSM_Matching, match.out=rr18, 
              nboots=1000)
 summary(rr18)
-# Estimate...  0.2865 
-# AI SE......  0.010358 
 
 
 
@@ -340,8 +328,6 @@ MatchBalance(treatment ~ factor(income_recode) + factor(language) +
                factor(Race) + married + HSgrad, data=PSM_Matching, match.out=rr24, 
              nboots=1000)
 summary(rr24)
-# Estimate...  0.17554 
-# AI SE......  0.0088374 
 
 
 
@@ -359,7 +345,7 @@ y.coord <- c(mean(PSM_Matching$Immunizations_UptoDate_6[PSM_Matching$treatment==
              mean(PSM_Matching$Immunizations_UptoDate_18[PSM_Matching$treatment==1 & PSM_Matching$PDAT18==1],na.rm=T),
              mean(PSM_Matching$Immunizations_UptoDate_24[PSM_Matching$treatment==1 & PSM_Matching$PDAT24==1],na.rm=T))
 par(mar=c(4.5,5.5,4,1.5), cex.main=2, cex.axis=1.5, cex.lab=2, las=1)
-plot(c(6,12,18,24), 100*c(0.7282518, 0.9184530, 0.7286034, 0.8451572), pch=19, 
+plot(c(6,12,18,24), 100*c(), pch=19, 
      xlim=c(6,24), ylim=c(0,100), 
      axes=F, col='blue',
      type='l', lwd=4,
@@ -369,9 +355,9 @@ plot(c(6,12,18,24), 100*c(0.7282518, 0.9184530, 0.7286034, 0.8451572), pch=19,
 axis(1,at=c(6,12,18,24))
 axis(2,at=c(0,25,50,75,100))
 box()
-points(c(6,12,18,24), 100*(y.coord-c(0.32563, 0.062674, 0.2865, 0.17554)), 
+points(c(6,12,18,24), 100*(y.coord-c()), 
        pch=19, col='red', type='l', lwd=4)
-#points(c(6,12,18,24), 100*c(0.7282518, 0.9184530, 0.7286034, 0.8451572), 
+#points(c(6,12,18,24), 100*c(), 
 #       pch=19, col='blue', type='l', lwd=4)
 
 legend('bottomright', lty=1, lwd=4, col=c("blue","red"),#,"blue"), 
