@@ -16,6 +16,7 @@ immunizations <- read.csv("/mnt/data/NIS/modified_data/immunizations_analysis.cs
 
 
 
+
 ##########################################
 ## Plot states with NFP programs
 library(maps)
