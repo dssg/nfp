@@ -160,5 +160,5 @@ write.csv(breastfeeding, "breastfeeding_data.csv")
 
 # Creating one dataset without dropping any NSCH obs and keeping weights/strata, to get general population statistics.
 NSCH_Full <- subset(nsch, select = c(ID, male, premature, lbw, highschool, highered, married, 
-			MomsAgeBirth, State, RE, english, breastfed, week_end_breast, NSCHWT, SAMPLE))
+			MomsAgeBirth, State, RE, english, breastfed, week_end_breast, NSCHWT, SAMPLE, AGEYR_CHILD, AGEPOS, FAM_MAR_COHAB, POVLEVEL_I))
 write.csv(NSCH_Full, file = "breast_pop_comparison.csv")
