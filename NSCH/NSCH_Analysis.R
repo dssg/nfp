@@ -13,11 +13,26 @@ pop <- read.csv("breast_pop_comparison.csv")
 
 breast$RE <- relevel(breast$RE, ref = "WhiteNH") # change racial reference category for ease of analysis
 breast$momsage <- floor(breast$MomsAgeBirth) # simplify age decimal - decimal reporting may have differed between treatment and control
+pop$RE <- relevel(pop$RE, ref = "WhiteNH")
+pop$momsage <- floor(pop$MomsAgeBirth)
 
-## General comparison between NFP moms and population
-######  Need to look into R's survey package and add code to find subpopulation means
-#popsvy <- svydesign(id = ID, strata = __, weights = NSCHWT, data = pop, 
+## Prepare full population sample for general comparison
+### Notes about NSCH:
+########### Strata: STATE and SAMPLE
+########### PSU: ID
+########### Weight: NSCHWT
 #http://faculty.washington.edu/tlumley/survey/example-design.html
+
+popsvy <- svydesign(id = ~ID, strata = ~State * SAMPLE, weights = ~NSCHWT, data = pop) 
+popcomp <- subset(popsvy, AGEYR_CHILD <= 4 & AGEPOS4<=2 & (!is.element(FAM_MAR_COHAB, c(7,8,9))))
+# Limited to the population of first time moms
+
+# Population level comparisons of breastfeeding outcomes!
+svymean(~breastfed, popcomp, na.rm = TRUE) # Full population of first time moms
+mean(breast$breastfed[breast$treatment == 1], na.rm = TRUE)  # NFP mothers
+
+svymean(~week_end_breast, popcomp, na.rm = TRUE) 
+mean(breast$week_end_breast[breast$treatment == 1], na.rm = TRUE)
 
 ##### Outcome 1: Child was ever breastfed
 ### Approach 1 - using all complete cases
@@ -26,9 +41,6 @@ breast$momsage <- floor(breast$MomsAgeBirth) # simplify age decimal - decimal re
 ever_breast1 <- breast[,c(3:13, 15:16)] # Omit data for other outcome measure, also IDs
 ever_breast <- subset(ever_breast1, complete.cases(ever_breast1))
 matchvars <- c("highschool", "highered", "married", "momsage", "RE", "english")
-
-#Let's do a raw means comparison
-mean(ever_breast$breastfed[ever_breast$treatment==1]) - mean(ever_breast$breastfed[ever_breast$treatment==0])
 
 ## PROPENSITY SCORE MATCHING
 
