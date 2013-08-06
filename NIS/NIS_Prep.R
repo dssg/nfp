@@ -378,11 +378,11 @@ NISPUF <- subset(NISPUF, subset=(FRSTBRN==2))
 
 
 # Only keep NIS with incomes at or below 300% of the poverty level
-NISPUF <- subset(NISPUF, subset=(INCPORAR<2.5))
+#NISPUF <- subset(NISPUF, subset=(INCPORAR<2.5))
 
 
 # Only keep NIS data where the mother was the respondent
-NISPUF <- subset(NISPUF, subset=(C5R==1))
+#NISPUF <- subset(NISPUF, subset=(C5R==1))
 
 
 # Recode PDAT (adequate provider data) to 0/1 
@@ -753,9 +753,9 @@ client_program_dates <- read.sas7bdat("/mnt/data/nfp_data/raw_NFP_data/date_rang
 # assume that both skew heavily toward 0 and treat as comparable
 NISPUF$income_recode[NISPUF$INCQ298A==3] <- 1
 NISPUF$income_recode[which(is.element(NISPUF$INCQ298A, c(4,5,6)))] = 2        # Binning 7500-20000/year together in both sets
-NISPUF$income_recode[which(is.element(NISPUF$INCQ298A, c(7,8)))] = 4          # Binning 20k-30k as in nfp
-NISPUF$income_recode[which(is.element(NISPUF$INCQ298A, c(9,10)))] = 5         # Binning 30k-40k in the same was as nfp
-NISPUF$income_recode[which(is.element(NISPUF$INCQ298A, c(11,12,13,14)))] = 6
+NISPUF$income_recode[which(is.element(NISPUF$INCQ298A, c(7,8)))] = 4          # Binning 20k-30k as in NFP
+NISPUF$income_recode[which(is.element(NISPUF$INCQ298A, c(9,10)))] = 5         # Binning 30k-40k as in NFP 
+NISPUF$income_recode[which(is.element(NISPUF$INCQ298A, c(11,12,13,14)))] = 6  # Binning 40k+ as in NFP
 
 # In NFP, must combine income brackets 2 and 3 ($7500-20K) to match NIS buckets.
 # Note that in the NFP dataset an income code of 7 indicates a mother living off her parents.
@@ -843,6 +843,9 @@ nfp_centers[nfp_centers$Site_ID==352, names(nfp_centers) %in% "State"] <- "VA"
 names(nfp_centers)[names(nfp_centers)=='State'] <- 'STATE'
 
 
+names(nfp_centers)
+t <- data.frame(nfp_centers$AGENCY_LOWINCOME_CRITERA, nfp_centers$AGENCY_LOWINCOME_DESCRIPTION)
+t[1:25,]
 
 
 
