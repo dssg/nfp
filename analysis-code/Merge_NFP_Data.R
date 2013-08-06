@@ -33,7 +33,19 @@ deAgWg <- merge(demoAgency, weight_gain, by = intersect("CL_EN_GEN_ID","CL_EN_GE
 
 attrition <- read.csv("discharge_reason.csv")
 attrition <- rename(attrition, c(clid = "CL_EN_GEN_ID"))
-deAgWgAt <- merge(deAgWg, attrition, by = intersect("CL_EN_GEN_ID","CL_EN_GEN_ID"))
+
+# Remove EndDate from attrition because the dates in date_range_visits are more consistent. This is the fifth column
+attr1 <- attrition[,-5]
+
+# Add in date_range_visits and merge with attrition
+date_range_visits = read.csv('date_range_visits.csv')
+date_range_visits <- rename(date_range_visits, c(cl_en_gen_id = "CL_EN_GEN_ID"))
+AtDt <- merge(date_range_visits, attr1, by = intersect("CL_EN_GEN_ID","CL_EN_GEN_ID"))
+
+
+deAgWgAt <- merge(deAgWg, AtDt, by = intersect("CL_EN_GEN_ID","CL_EN_GEN_ID"))
+
+
 
 # Read in and merge outcome datasets that share a common pool of individuals
 breast <- read.csv("breast_feeding_variables.csv")
@@ -61,6 +73,10 @@ comb <- merge(deAgWgAt, moms_life, by = intersect("CL_EN_GEN_ID", "CL_EN_GEN_ID"
 miss <- comb[which(!is.element(comb$CL_EN_GEN_ID, comb1$CL_EN_GEN_ID)),]
 dual_missing <- merge(missings, miss, by = intersect("CL_EN_GEN_ID", "CL_EN_GEN_ID")) # Note that 8 observations that are missing mom's life are NOT missing other outcome data!
 # write.csv(miss$CL_EN_GEN_ID, "IDsMissingMothersOutcomes.csv")
+
+
+
+
 
 # Final working datasets:
 #### For breastfeeding, immunization, and growth outcomes: includes all obs with those outcomes (7 obs are NA for mom's life outcomes)

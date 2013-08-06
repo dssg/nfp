@@ -16,6 +16,7 @@ immunizations <- read.csv("/mnt/data/NIS/modified_data/immunizations_analysis.cs
 
 
 
+
 ##########################################
 ## Plot states with NFP programs
 library(maps)
@@ -273,6 +274,7 @@ PSM_Matching <- immunizations[complete.cases(immunizations),]
 summary(PSM_Matching)
 # lots of the treatments dropped
 
+# Complete provider data only
 PSM_Matching <- subset(PSM_Matching, subset=c(PDAT6==1 & PDAT12==1 & PDAT18==1 & PDAT24==1))
 
 
