@@ -121,7 +121,6 @@ text(.635,.075,results[2,2],cex=.75)
 
 
 
-
 # Comparing NIS/NFP mother's age
 # Estimate probability that mother is in the correct category?
 

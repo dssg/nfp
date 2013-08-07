@@ -462,8 +462,40 @@ NISPUF$STATE[NISPUF$STATE==55] <- "WI"
 NISPUF$STATE[NISPUF$STATE==56] <- "WY"
 
 
-
-
+# Only keep NIS data for states that NFP had a presence between 2008 and 2010
+NISPUF <- subset(NISPUF, subset=(STATE=="PA" |
+                                 STATE=="DE" |
+                                 STATE=="TX" |
+                                 STATE=="RI" |
+                                 STATE=="NY" |
+                                 STATE=="CA" |
+                                 STATE=="MO" |
+                                 STATE=="AZ" |
+                                 STATE=="OH" |
+                                 STATE=="NJ" |
+                                 STATE=="CO" |
+                                 STATE=="ND" |
+                                 STATE=="NC" |
+                                 STATE=="MI" |
+                                 STATE=="WA" |
+                                 STATE=="OR" |
+                                 STATE=="MN" |
+                                 STATE=="LA" |
+                                 STATE=="SC" |
+                                 STATE=="SD" |
+                                 STATE=="IL" |
+                                 STATE=="KY" |
+                                 STATE=="IA" |
+                                 STATE=="NV" |
+                                 STATE=="TN" |
+                                 STATE=="WI" |
+                                 STATE=="UT" |
+                                 STATE=="OK" |
+                                 STATE=="WY" |
+                                 STATE=="MD" |
+                                 STATE=="AL" |
+                                 STATE=="FL"))   
+  
 
 
 
@@ -843,9 +875,6 @@ nfp_centers[nfp_centers$Site_ID==352, names(nfp_centers) %in% "State"] <- "VA"
 names(nfp_centers)[names(nfp_centers)=='State'] <- 'STATE'
 
 
-names(nfp_centers)
-t <- data.frame(nfp_centers$AGENCY_LOWINCOME_CRITERA, nfp_centers$AGENCY_LOWINCOME_DESCRIPTION)
-t[1:25,]
 
 
 
