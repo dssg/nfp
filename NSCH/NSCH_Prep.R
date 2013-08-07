@@ -135,6 +135,8 @@ nsch$week_end_breast <- (nsch$days_breast/7)
 
 nsch$week_end_breast[nsch$week_end_breast>104] <- NA
 # Omit NSCH responses for which we have no comparable from NFP
+nfp$week_end_breast[nfp$week_end_breast>104] <- NA
+# Eliminate a couple data anomalies in NFP data
 
 # Remove extra NSCH columns and ineligible observations including:
 	## Children > age 4
