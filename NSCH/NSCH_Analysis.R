@@ -2,6 +2,7 @@ library(Matching)
 library(ggplot2)
 library(cem)
 library(survey)
+library(hexbin)
 
 # Import data: 
 ## one dataset for breastfeeding analysis (includes treatment and control obs)
@@ -16,6 +17,18 @@ breast$momsage <- floor(breast$MomsAgeBirth) # simplify age decimal - decimal re
 pop$RE <- relevel(pop$RE, ref = "WhiteNH")
 pop$momsage <- floor(pop$MomsAgeBirth)
 
+# Need factor values for plotting:
+pop$highschool <- factor(pop$highschool)
+pop$married <- factor(pop$married)
+pop$english <- factor(pop$english)
+pop$highered <- factor(pop$highered)
+pop$breastfed <- factor(pop$breastfed)
+breast$highschool <- factor(breast$highschool)
+breast$married <- factor(breast$married)
+breast$english <- factor(breast$english)
+breast$highered <- factor(breast$highered)
+breast$breastfed <- factor(breast$breastfed)
+
 ## Prepare full population sample for general comparison
 ### Notes about NSCH:
 ########### Strata: STATE and SAMPLE
@@ -23,16 +36,69 @@ pop$momsage <- floor(pop$MomsAgeBirth)
 ########### Weight: NSCHWT
 #http://faculty.washington.edu/tlumley/survey/example-design.html
 
-popsvy <- svydesign(id = ~ID, strata = ~State * SAMPLE, weights = ~NSCHWT, data = pop) 
+popsvy <- svydesign(id = ~ID, strata = ~State + SAMPLE, weights = ~NSCHWT, data = pop) 
 popcomp <- subset(popsvy, AGEYR_CHILD <= 4 & AGEPOS4<=2 & (!is.element(FAM_MAR_COHAB, c(7,8,9))))
 # Limited to the population of first time moms
 
+##### Comparing NSCH and NFP Populations
+
+# Mother's Age
+par(mfrow = c(1,2))
+svyhist(~momsage, popcomp, main = "Mother's Age at Birth - NCHS Population", xlab = "Mother's Age", col = "navy blue", 
+	border = 'navy blue', ylim = c(0,0.12), breaks = seq(10, 60, by = 2))
+hist(breast$momsage[breast$treatment==1], freq = FALSE, main = "Mother's Age at Birth - NFP Population", 
+	xlab = "Mother's Age", col = 'dark red', border = 'dark red', ylim = c(0,0.12), breaks = seq(10, 60, by =2))
+
+svymean(~momsage, popcomp, na.rm = TRUE)
+mean(breast$momsage[breast$treatment==1], na.rm = TRUE)
+
+# Race
+par(mfrow = c(1,2))
+barplot(svymean(~RE, popcomp, na.rm = TRUE), names.arg = c('White', 'Black', 'Hispanic', 'Other'), 
+	main = "Mother's Race - NCHS Population", xlab = "Mother's Race", col = "navy blue", border = 'navy blue', ylim = c(0,0.55))
+barplot(prop.table(table(breast$RE[breast$treatment==1], row.names = revalue(breast$RE, c('WhiteNH' = 'White', 'BlackNH' = 'Black'))[breast$treatment==1])), 
+	main = "Mother's Race - NFP Population", xlab = "Mother's Race", col = 'dark red', border = 'dark red', ylim = c(0,0.55))
+
+svymean(~RE, popcomp, na.rm = TRUE)
+prop.table(table(breast$RE[breast$treatment==1]))
+	
+# Marital Status
+par(mfrow = c(1,2))
+barplot(svymean(~married, popcomp, na.rm = TRUE), names.arg = c('Unmarried', 'Married'), 
+	main = "Marital Status- NCHS Population", xlab = "Marital Status", col = "navy blue", border = 'navy blue')
+barplot(prop.table(table(breast$RE, row.names = revalue(breast$married, c('0' = 'Unmarried', '1' = 'married')))), 
+	main = "Marital Status - NFP Population", xlab = "Marital Status", col = 'dark red', border = 'dark red')
+
+svymean(~married, popcomp, na.rm = TRUE)
+prop.table(table(breast$married))
+
+
+# High School Attendance
+
+# Higher Education
+
+# English Language Household
+
+# Ever Breastfed
 # Population level comparisons of breastfeeding outcomes!
 svymean(~breastfed, popcomp, na.rm = TRUE) # Full population of first time moms
 mean(breast$breastfed[breast$treatment == 1], na.rm = TRUE)  # NFP mothers
 
+# Weeks Breastfed	
+svyhist(~momsage, popcomp, main = "Mother's Age at Birth - NCHS Population", xlab = "Mother's Age", col = "navy blue", 
+	border = 'navy blue', ylim = c(0,0.12), breaks = seq(10, 60, by = 2))
+hist(breast$momsage[breast$treatment==1], freq = FALSE, main = "Mother's Age at Birth - NFP Population", 
+	xlab = "Mother's Age", col = 'dark red', border = 'dark red', ylim = c(0,0.12), breaks = seq(10, 60, by =2))
+
+par(mfrow = c(1,2))
+svyhist(~week_end_breast, popcomp, main = "Weeks Breastfed - NCHS Population", xlab = "Weeks Breastfed", col = "navy blue", 
+	border = 'navy blue')
+hist(breast$week_end_breast[breast$treatment==1], freq = FALSE, main = "Weeks Breastfed - NFP Population",
+	xlab = "Weeks Breastfed", col = 'dark red', border = 'dark red')
+
 svymean(~week_end_breast, popcomp, na.rm = TRUE) 
 mean(breast$week_end_breast[breast$treatment == 1], na.rm = TRUE)
+
 
 ##### Outcome 1: Child was ever breastfed
 ### Approach 1 - using all complete cases
