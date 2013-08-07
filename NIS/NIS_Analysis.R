@@ -121,7 +121,6 @@ text(.635,.075,results[2,2],cex=.75)
 
 
 
-
 # Comparing NIS/NFP mother's age
 # Estimate probability that mother is in the correct category?
 
@@ -283,7 +282,7 @@ PSM_Matching <- subset(PSM_Matching, subset=c(PDAT6==1 & PDAT12==1 & PDAT18==1 &
 reg <- glm(treatment ~ factor(income_recode) + factor(language) + 
              factor(Race) + married + HSgrad, 
            data=PSM_Matching, family=binomial(link='logit'))
-
+summary(reg)
 # match on poverty ratio instead of income buckets
 
 # Separation plot
