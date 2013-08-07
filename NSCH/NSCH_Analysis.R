@@ -3,6 +3,7 @@ library(ggplot2)
 library(cem)
 library(survey)
 library(hexbin)
+library(plyr)
 
 # Import data: 
 ## one dataset for breastfeeding analysis (includes treatment and control obs)
@@ -65,17 +66,33 @@ prop.table(table(breast$RE[breast$treatment==1]))
 # Marital Status
 par(mfrow = c(1,2))
 barplot(svymean(~married, popcomp, na.rm = TRUE), names.arg = c('Unmarried', 'Married'), 
-	main = "Marital Status- NCHS Population", xlab = "Marital Status", col = "navy blue", border = 'navy blue')
-barplot(prop.table(table(breast$RE, row.names = revalue(breast$married, c('0' = 'Unmarried', '1' = 'married')))), 
-	main = "Marital Status - NFP Population", xlab = "Marital Status", col = 'dark red', border = 'dark red')
+	main = "Marital Status- NCHS Population", xlab = "Marital Status", col = "navy blue", border = 'navy blue', ylim = c(0,1))
+barplot(prop.table(table(breast$married[breast$treatment==1], row.names = revalue(breast$married, c('0' = 'Unmarried', '1' = 'married'))[breast$treatment==1])), 
+	main = "Marital Status - NFP Population", xlab = "Marital Status", col = 'dark red', border = 'dark red', ylim = c(0,1))
 
 svymean(~married, popcomp, na.rm = TRUE)
-prop.table(table(breast$married))
+prop.table(table(breast$married[breast$treatment==1]))
 
 
 # High School Attendance
+par(mfrow = c(1,2))
+barplot(svymean(~highschool, popcomp, na.rm = TRUE), names.arg = c('No HS Degree', 'HS Degree'), 
+	main = "Education - NCHS Population", xlab = "Education", col = "navy blue", border = 'navy blue', ylim = c(0,1))
+barplot(prop.table(table(breast$highschool[breast$treatment==1], row.names = revalue(breast$highschool, c('0' = 'No HS Degree', '1' = 'HS Degree'))[breast$treatment==1])), 
+	main = "Education - NFP Population", xlab = "Education", col = 'dark red', border = 'dark red', ylim = c(0,1))
+
+svymean(~highschool, popcomp, na.rm = TRUE)
+prop.table(table(breast$highschool[breast$treatment==1]))
 
 # Higher Education
+par(mfrow = c(1,2))
+barplot(svymean(~highered, popcomp, na.rm = TRUE), names.arg = c('No Post-HS Education', 'Some Post-HS Education'), 
+	main = "Higher Education - NCHS Population", xlab = "Education", col = "navy blue", border = 'navy blue', ylim = c(0,1))
+barplot(prop.table(table(breast$highered[breast$treatment==1], row.names = revalue(breast$highered, c('0' = 'No Post-HS Education', '1' = 'Some Post-HS Education'))[breast$treatment==1])), 
+	main = "Higher Education - NFP Population", xlab = "Education", col = 'dark red', border = 'dark red', ylim = c(0,1))
+
+svymean(~highered, popcomp, na.rm = TRUE)
+prop.table(table(breast$highered[breast$treatment==1]))
 
 # English Language Household
 
@@ -85,16 +102,11 @@ svymean(~breastfed, popcomp, na.rm = TRUE) # Full population of first time moms
 mean(breast$breastfed[breast$treatment == 1], na.rm = TRUE)  # NFP mothers
 
 # Weeks Breastfed	
-svyhist(~momsage, popcomp, main = "Mother's Age at Birth - NCHS Population", xlab = "Mother's Age", col = "navy blue", 
-	border = 'navy blue', ylim = c(0,0.12), breaks = seq(10, 60, by = 2))
-hist(breast$momsage[breast$treatment==1], freq = FALSE, main = "Mother's Age at Birth - NFP Population", 
-	xlab = "Mother's Age", col = 'dark red', border = 'dark red', ylim = c(0,0.12), breaks = seq(10, 60, by =2))
-
 par(mfrow = c(1,2))
 svyhist(~week_end_breast, popcomp, main = "Weeks Breastfed - NCHS Population", xlab = "Weeks Breastfed", col = "navy blue", 
-	border = 'navy blue')
+	border = 'navy blue', ylim = c(0,.09))
 hist(breast$week_end_breast[breast$treatment==1], freq = FALSE, main = "Weeks Breastfed - NFP Population",
-	xlab = "Weeks Breastfed", col = 'dark red', border = 'dark red')
+	xlab = "Weeks Breastfed", col = 'dark red', border = 'dark red', ylim = c(0, .09))
 
 svymean(~week_end_breast, popcomp, na.rm = TRUE) 
 mean(breast$week_end_breast[breast$treatment == 1], na.rm = TRUE)
