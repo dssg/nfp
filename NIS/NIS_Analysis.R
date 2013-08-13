@@ -8,18 +8,27 @@
 
 
 require(ggplot2)
+library(maps)
+library(Matching)
+library(ggplot2)
+library(cem)
+library(survey)
+library(hexbin)
+library(plyr)
+
 
 setwd("/mnt/data/NIS/")
 
 immunizations <- read.csv("/mnt/data/NIS/modified_data/immunizations_analysis.csv")
 
-
-
+immunizations$Race <- relevel(immunizations$Race,  ref="BlackNH")
+immunizations$Race <- relevel(immunizations$Race,  ref="Hispanic")
+immunizations$Race <- relevel(immunizations$Race,  ref="WhiteNH")
 
 
 ##########################################
 ## Plot states with NFP programs
-library(maps)
+
 m <- map("state", interior = FALSE, plot=FALSE)
 
 m$my.colors <- 0
@@ -68,6 +77,88 @@ dim(immunizations)
 # Lots of missing income_recode from the NFP data.  We can impute.
 sum(is.na(immunizations$income_recode[immunizations$treatment==1]))
 sum(!is.na(immunizations$income_recode[immunizations$treatment==1])) / sum(immunizations$treatment==1)
+
+
+load("NISPUF10.RData")
+
+R_FILE <- subset(NISPUF10, select=c(SEQNUMHH, SEQNUMC, P_UTD431, ESTIAP10, PROVWT, RACEETHK, 
+                                    M_AGEGRP, MARITAL2, EDUC1, LANGUAGE,INCQ298A))
+  R_FILE$Race <- factor(R_FILE$RACEETHK, labels = c("Hispanic", "WhiteNH", "BlackNH", "Other"))
+  R_FILE$Race <- relevel(R_FILE$Race, ref="BlackNH")
+  R_FILE$Race <- relevel(R_FILE$Race, ref="Hispanic")
+  R_FILE$Race <- relevel(R_FILE$Race, ref="WhiteNH")
+
+  R_FILE$married[R_FILE$MARITAL2==1] <- 1
+  R_FILE$married[R_FILE$MARITAL2==2] <- 0
+  R_FILE$married <- factor(R_FILE$married)
+
+  R_FILE$HSgrad[R_FILE$EDUC1==1] <- 0
+  R_FILE$HSgrad[which(is.element(R_FILE$EDUC1,c(2,3,4)))] <- 1
+
+  R_FILE$Primary_language[R_FILE$LANGUAGE==1] <- "English"
+  R_FILE$Primary_language[R_FILE$LANGUAGE==2] <- "Spanish"
+  R_FILE$Primary_language[R_FILE$LANGUAGE==3] <- "Other"
+  R_FILE$language <- factor(R_FILE$Primary_language)
+
+  R_FILE$HSgrad <- factor(R_FILE$HSgrad)
+
+  R_FILE$income_recode[R_FILE$INCQ298A==3] <- 1
+  R_FILE$income_recode[which(is.element(R_FILE$INCQ298A, c(4,5,6)))] = 2        # Binning 7500-20000/year together in both sets
+  R_FILE$income_recode[which(is.element(R_FILE$INCQ298A, c(7,8)))] = 4          # Binning 20k-30k as in NFP
+  R_FILE$income_recode[which(is.element(R_FILE$INCQ298A, c(9,10)))] = 5         # Binning 30k-40k as in NFP 
+  R_FILE$income_recode[which(is.element(R_FILE$INCQ298A, c(11,12,13,14)))] = 6  # Binning 40k+ as in NFP
+
+  R_FILE <- na.omit(R_FILE)
+
+
+
+
+## Prepare full population sample for general comparison
+### Notes about NSCH:
+########### Strata: STATE and SAMPLE
+########### PSU: ID
+########### Weight: NSCHWT
+#http://faculty.washington.edu/tlumley/survey/example-design.html
+
+
+
+#-- HERE'S THE NIS CODE -- #
+
+# Specify survey design
+svydsg <- svydesign(id=~SEQNUMHH, strata=~ESTIAP10, weights=~PROVWT, data=R_FILE)  
+
+# NIS estimates and standard errors
+r_nation <- svymean(~P_UTD431, svydsg)
+PERCENT_UTD <- round(r_nation*100,2) #CONVERT INTO PERCENT ESTIMATES(MEAN)
+SE_UTD <- round(SE(r_nation)*100,2) #CONVERT INTO PERCENT ESTIMATES(SE)
+cbind(PERCENT_UTD, SE_UTD)
+
+
+##### Comparing NSCH and NFP Populations
+
+# Race
+par(mfrow = c(1,2), cex.main=2.8,cex.axis=2.8,cex.lab=2.8)
+barplot(svymean(~Race, svydsg, na.rm = TRUE), names.arg = c('White', 'Hispanic', 'Black', 'Other'), 
+        main = "Mother's Race - NIS Population", col = "navy blue", border = 'navy blue', ylim = c(0,0.55))
+barplot(prop.table(table(immunizations$Race[immunizations$treatment==1], row.names = revalue(immunizations$Race, c('WhiteNH' = 'White', 
+        'BlackNH' = 'Black'))[immunizations$treatment==1])), main = "Mother's Race - NFP Population", col = 'dark red', border = 'dark red', ylim = c(0,0.55))
+
+
+# Income
+par(mfrow = c(1,2))
+barplot(svymean(~income_recode, svydsg, na.rm = TRUE), #names.arg = c('White', 'Hispanic', 'Black', 'Other'), 
+        main = "Mother's Race - NIS Population", col = "navy blue", border = 'navy blue', ylim = c(0,0.55))
+barplot(prop.table(table(immunizations$Race[immunizations$treatment==1], row.names = revalue(immunizations$Race, c('WhiteNH' = 'White', 
+                                                                                                                   'BlackNH' = 'Black'))[immunizations$treatment==1])), main = "Mother's Race - NFP Population", col = 'dark red', border = 'dark red', ylim = c(0,0.55))
+
+
+# Mother's Age
+par(mfrow = c(1,2))
+svyhist(~Race, NISPUF, main = "Mother's Age at Birth - NIS Population", xlab = "Mother's Age", col = "navy blue", 
+        border = 'navy blue', ylim = c(0,0.12), breaks = seq(10, 60, by = 2))
+hist(breast$momsage[breast$treatment==1], freq = FALSE, main = "Mother's Age at Birth - NFP Population", 
+     xlab = "Mother's Age", col = 'dark red', border = 'dark red', ylim = c(0,0.12), breaks = seq(10, 60, by =2))
+
 
 
 
@@ -268,7 +359,9 @@ apply(bootstrap_genpop_immunizations,2,sd)
 
 ###############################
 ## Propensity score model
-PSM_Matching <- immunizations[complete.cases(immunizations),]
+PSM_Matching <- subset(immunizations, select=c(treatment, income_recode, language, Race, married, HSgrad, PDAT6, PDAT12, PDAT18, PDAT24,
+                                               Immunizations_UptoDate_6, Immunizations_UptoDate_12, Immunizations_UptoDate_18, Immunizations_UptoDate_24))   
+PSM_Matching <- PSM_Matching[complete.cases(PSM_Matching),]
 
 summary(PSM_Matching)
 # lots of the treatments dropped
@@ -332,23 +425,34 @@ summary(rr24)
 
 
 
-
+NISPUF <- read.csv("NISPUF.csv", header=TRUE)
 
 
 
 ############################
 # Plot immunization rates
 
+
+
+
 setwd("/mnt/data/NIS/")
 png("Meetup_two_immunizations.png", width=13.3, height=7.5, units="in", res=100)
-y.coord <- c(mean(PSM_Matching$Immunizations_UptoDate_6[PSM_Matching$treatment==1 & PSM_Matching$PDAT6==1],na.rm=T),
-             mean(PSM_Matching$Immunizations_UptoDate_12[PSM_Matching$treatment==1 & PSM_Matching$PDAT12==1],na.rm=T),
-             mean(PSM_Matching$Immunizations_UptoDate_18[PSM_Matching$treatment==1 & PSM_Matching$PDAT18==1],na.rm=T),
-             mean(PSM_Matching$Immunizations_UptoDate_24[PSM_Matching$treatment==1 & PSM_Matching$PDAT24==1],na.rm=T))
-par(mar=c(4.5,5.5,4,1.5), cex.main=2, cex.axis=1.5, cex.lab=2, las=1)
-plot(c(6,12,18,24), 100*c(), pch=19, 
+
+Immunizations_UptoDate_6 <- sum(NISPUF$PDAT==1 & NISPUF$DTaP6==1 & NISPUF$Polio6==1 & NISPUF$MMR6==1) / sum(NISPUF$PDAT==1)
+Immunizations_UptoDate_12 <- sum(NISPUF$PDAT==1 & NISPUF$DTaP12==1 & NISPUF$Polio12==1 & NISPUF$MMR12==1) / sum(NISPUF$PDAT==1)
+Immunizations_UptoDate_18 <- sum(NISPUF$PDAT==1 & NISPUF$DTaP18==1 & NISPUF$Polio18==1 & NISPUF$MMR18==1) / sum(NISPUF$PDAT==1)
+Immunizations_UptoDate_24 <- sum(NISPUF$PDAT==1 & NISPUF$DTaP24==1 & NISPUF$Polio24==1 & NISPUF$MMR24==1) / sum(NISPUF$PDAT==1)
+
+y.coord <- c(Immunizations_UptoDate_6,
+             Immunizations_UptoDate_12,
+             Immunizations_UptoDate_18,
+             Immunizations_UptoDate_24)
+
+
+par(mar=c(4.5,10.5,4,1.5), cex.main=2.8, cex.axis=2.8, cex.lab=2.8, las=1)
+plot(c(6,12,18,24), 100*c(y.coord), pch=19, 
      xlim=c(6,24), ylim=c(0,100), 
-     axes=F, col='blue',
+     axes=F, 
      type='l', lwd=4,
      main='Up-to-Date Vaccination Rates',
      xlab='months since birth', 
@@ -356,13 +460,19 @@ plot(c(6,12,18,24), 100*c(), pch=19,
 axis(1,at=c(6,12,18,24))
 axis(2,at=c(0,25,50,75,100))
 box()
-points(c(6,12,18,24), 100*(y.coord-c()), 
-       pch=19, col='red', type='l', lwd=4)
-#points(c(6,12,18,24), 100*c(), 
-#       pch=19, col='blue', type='l', lwd=4)
 
-legend('bottomright', lty=1, lwd=4, col=c("blue","red"),#,"blue"), 
-       legend=c("General Population","Matched Group"),cex=1.5)#,"General Population"),cex=1.5)
+y.coord <- c(mean(PSM_Matching$Immunizations_UptoDate_6[PSM_Matching$treatment==1 & PSM_Matching$PDAT6==1],na.rm=T),
+             mean(PSM_Matching$Immunizations_UptoDate_12[PSM_Matching$treatment==1 & PSM_Matching$PDAT12==1],na.rm=T),
+             mean(PSM_Matching$Immunizations_UptoDate_18[PSM_Matching$treatment==1 & PSM_Matching$PDAT18==1],na.rm=T),
+             mean(PSM_Matching$Immunizations_UptoDate_24[PSM_Matching$treatment==1 & PSM_Matching$PDAT24==1],na.rm=T))
+
+points(c(6,12,18,24), 100*(y.coord-c(0.32563, 0.062674, 0.2865, 0.17554)), 
+       pch=19, col='red', type='l', lwd=4)
+points(c(6,12,18,24), 100*c(y.coord), 
+       pch=19, col='blue', type='l', lwd=4)
+
+legend('bottomright', lty=1, lwd=4, col=c("blue","black","red"), 
+       legend=c("NFP","General Population","Matched Group"),cex=1.5)
 dev.off()
 
 
