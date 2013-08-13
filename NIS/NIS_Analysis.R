@@ -7,7 +7,12 @@
 ##################################
 
 
-load("/mnt/data/NIS/immunizations_analysis.RData")
+require(ggplot2)
+
+setwd("/mnt/data/NIS/")
+
+immunizations <- read.csv("/mnt/data/NIS/modified_data/immunizations_analysis.csv")
+
 
 
 
@@ -20,7 +25,7 @@ m <- map("state", interior = FALSE, plot=FALSE)
 m$my.colors <- 0
 m$names
 m$my.colors[m$names %in% c("alabama","arizona","california","colorado","delaware",
-                           "florida","iowa","illinois","kentucky","louisiana",
+                           "florida","iowa","illinois","kansas","kentucky","louisiana",
                            "maryland","michigan:north","michigan:south",
                            "minnesota","missouri","north carolina:main",
                            "north carolina:knotts","north carolina:spit",
@@ -33,7 +38,7 @@ m$my.colors[m$names %in% c("alabama","arizona","california","colorado","delaware
                            "washington:san juan island","washington:orcas island",
                            "washington:whidbey island","wisconsin","wyoming")] <- "gray50"
 m$my.colors[m$names %in% c("arkansas","connecticut","district of columbia",
-                           "georgia","idaho","indiana","kansas","maine",
+                           "georgia","idaho","indiana","maine",
                            "massachusetts:main","massachusetts:martha's vineyard",
                            "massachusetts:nantucket","mississippi","montana",
                            "nebraska","new hampshire","new mexico","vermont",
@@ -58,6 +63,11 @@ legend("topright", legend=c("NFP state", "Not an NFP state"), pch=15,
 ## EXPLORATORY ANALYSIS
 
 summary(immunizations)
+dim(immunizations)
+
+# Lots of missing income_recode from the NFP data.  We can impute.
+sum(is.na(immunizations$income_recode[immunizations$treatment==1]))
+sum(!is.na(immunizations$income_recode[immunizations$treatment==1])) / sum(immunizations$treatment==1)
 
 
 
@@ -109,26 +119,27 @@ text(.635,.075,results[2,2],cex=.75)
 
 
 
+
+
 # Comparing NIS/NFP mother's age
+# Estimate probability that mother is in the correct category?
+
 results <- table(immunizations$MothersAge, immunizations$treatment)
 colnames(results) <- c("~NFP", "NFP")
+results[,1] / sum(results[,1])
 
-# NOT BELIEVABLE.  NUMBERS DO NOT MATCH NATIONAL VITAL STATISTICS REPORTS
+
+# These numbers do not match the National Vital Statistics reports.
 # In 2010, about 300,000 first-time births for mothers under 20 years old
-# out of a total of 1.6 million first-time births, or about 19%
+# out of a total of 1.6 million first-time births, or about 19%.  This appears 
+# to be because the NIS is recording the mother's age at the time
+# of the interview, not at the time of birth.  If 19% of first-time mothers are
+# under 20 at the time of birth, and if 66% are 18-19 and 94% are 16-19, then 
+# it makes sense that only 2-3% would be 19 years old or younger when their
+# children are 19-35 months old.  Furthermore, if 26% of mothers are at least 30
+# at the time of birth and if 52% are at least 25 at the time of birth, then 
+# it makes sense that 56% of mothers would be at least 30 19-35 months later.
 
-# Using Provider weights does not help much
-names(NISPUF)
-head(NISPUF)
-table(NISPUF$MothersAge[NISPUF$PDAT==1]) / sum(NISPUF$PDAT==1)
-table(NISPUF$MothersAge) / length(NISPUF$PDAT)
-sum(NISPUF$PROVWT[NISPUF$MothersAge=="<=19 Years"], na.rm=TRUE) / sum(NISPUF$PROVWT, na.rm=TRUE)
-sum(NISPUF$PROVWT[NISPUF$MothersAge=="20-29 Years"], na.rm=TRUE) / sum(NISPUF$PROVWT, na.rm=TRUE)
-sum(NISPUF$PROVWT[NISPUF$MothersAge==">=30 Years"], na.rm=TRUE) / sum(NISPUF$PROVWT, na.rm=TRUE)
-
-# Maybe if we just use NISPUF10
-table(NISPUF10$M_AGEGRP[NISPUF10$PDAT==1]) / sum(NISPUF10$PDAT==1)
-table(NISPUF10$M_AGEGRP) / length(NISPUF10$PDAT)
 
 
 
@@ -139,12 +150,24 @@ results <- table(immunizations$married, immunizations$treatment)
 rownames(results) <- c("~married","married")
 colnames(results) <- c("~NFP", "NFP")
 
+par(las=3, mar=c(2.2,3,2,1))
+mosaicplot(results,
+           color = c("gray60", "gray80"),
+           main="Matching: Mother's Marriage Status",
+           xlab="whether mother is currently married",
+           ylab="NFP enrollment")
+text(.2,.65,"10947", cex=.75)
+text(.2,.18,"9351", cex=.75)
+text(.6,.5,"91560", cex=.75)
+text(.6,.025,"11109",cex=.75)
+
+
+
 
 
 
 # Comparing NIS/NFP male child
 results <- table(immunizations$male, immunizations$treatment)
-rownames(results) <- c("Hispanic", "White", "Black", "Other")
 colnames(results) <- c("~NFP", "NFP")
 
 
@@ -168,101 +191,224 @@ colnames(results) <- c("~NFP", "NFP")
 
 # Comparing NIS/NFP 6-month immunization rate
 results <- table(immunizations$Immunizations_UptoDate_6, immunizations$treatment)
-rownames(results) <- c("Hispanic", "White", "Black", "Other")
+rownames(results) <- c("~UTD at 6 mo", "UTD at 6 mo")
 colnames(results) <- c("~NFP", "NFP")
 
 
-names(immunizations)
-# Mother Married
-results <- table(immunizations$married, immunizations$treatment)
-rownames(results) <- c("~married", "married")
-colnames(results) <- c("not NFP", "NFP")
-par(las=3, mar=c(2.2,3,2,1))
-mosaicplot(results,
-           color = c("gray60", "gray80"),
-           main="Matching: Mother's Marriage Status",
-           xlab="whether mother is currently married",
-           ylab="NFP enrollment")
-text(.2,.65,"10947", cex=.75)
-text(.2,.18,"9351", cex=.75)
-text(.6,.5,"91560", cex=.75)
-text(.6,.025,"11109",cex=.75)
-
-
-names(immunizations)
 
 
 
 
+###############################
+## Unmatched NIS immunization rates
+
+bootstrap_genpop_immunizations <- matrix(NA, 10000, 4)
+for(i in 1:10000){
+  temp <- NISPUF[sample(1:nrow(NISPUF), nrow(NISPUF), replace=TRUE),]
+  
+  
+NIS_2008_6 <- sum(temp$PROVWT[temp$YEAR==2008 & temp$Immunizations_UptoDate431_6==1], na.rm=T) /
+  sum(temp$PROVWT[temp$YEAR==2008], na.rm=T)
+NIS_2009_6 <- sum(temp$PROVWT[temp$YEAR==2009 & temp$Immunizations_UptoDate431_6==1], na.rm=T) /
+  sum(temp$PROVWT[temp$YEAR==2009], na.rm=T)
+NIS_2010_6 <- sum(temp$PROVWT[temp$YEAR==2010 & temp$Immunizations_UptoDate431_6==1], na.rm=T) /
+  sum(temp$PROVWT[temp$YEAR==2010], na.rm=T)
+NIS_2011_6 <- sum(temp$PROVWT[temp$YEAR==2011 & temp$Immunizations_UptoDate431_6==1], na.rm=T) /
+  sum(temp$PROVWT[temp$YEAR==2011], na.rm=T)
+NIS_6 <- NIS_2008_6*mean(temp$YEAR==2008) + NIS_2009_6*mean(temp$YEAR==2009) + 
+  NIS_2010_6*mean(temp$YEAR==2010) + NIS_2011_6*mean(temp$YEAR==2011) 
+
+NIS_2008_12 <- sum(temp$PROVWT[temp$YEAR==2008 & temp$Immunizations_UptoDate431_12==1], na.rm=T) /
+  sum(temp$PROVWT[temp$YEAR==2008], na.rm=T)
+NIS_2009_12 <- sum(temp$PROVWT[temp$YEAR==2009 & temp$Immunizations_UptoDate431_12==1], na.rm=T) /
+  sum(temp$PROVWT[temp$YEAR==2009], na.rm=T)
+NIS_2010_12 <- sum(temp$PROVWT[temp$YEAR==2010 & temp$Immunizations_UptoDate431_12==1], na.rm=T) /
+  sum(temp$PROVWT[temp$YEAR==2010], na.rm=T)
+NIS_2011_12 <- sum(temp$PROVWT[temp$YEAR==2011 & temp$Immunizations_UptoDate431_12==1], na.rm=T) /
+  sum(temp$PROVWT[temp$YEAR==2011], na.rm=T)
+NIS_12 <- NIS_2008_12*mean(temp$YEAR==2008) + NIS_2009_12*mean(temp$YEAR==2009) + 
+  NIS_2010_12*mean(temp$YEAR==2010) + NIS_2011_12*mean(temp$YEAR==2011) 
+
+NIS_2008_18 <- sum(temp$PROVWT[temp$YEAR==2008 & temp$Immunizations_UptoDate431_18==1], na.rm=T) /
+  sum(temp$PROVWT[temp$YEAR==2008], na.rm=T)
+NIS_2009_18 <- sum(temp$PROVWT[temp$YEAR==2009 & temp$Immunizations_UptoDate431_18==1], na.rm=T) /
+  sum(temp$PROVWT[temp$YEAR==2009], na.rm=T)
+NIS_2010_18 <- sum(temp$PROVWT[temp$YEAR==2010 & temp$Immunizations_UptoDate431_18==1], na.rm=T) /
+  sum(temp$PROVWT[temp$YEAR==2010], na.rm=T)
+NIS_2011_18 <- sum(temp$PROVWT[temp$YEAR==2011 & temp$Immunizations_UptoDate431_18==1], na.rm=T) /
+  sum(temp$PROVWT[temp$YEAR==2011], na.rm=T)
+NIS_18 <- NIS_2008_18*mean(temp$YEAR==2008) + NIS_2009_18*mean(temp$YEAR==2009) + 
+  NIS_2010_18*mean(temp$YEAR==2010) + NIS_2011_18*mean(temp$YEAR==2011) 
+
+NIS_2008_24 <- sum(temp$PROVWT[temp$YEAR==2008 & temp$Immunizations_UptoDate431_24==1], na.rm=T) /
+  sum(temp$PROVWT[temp$YEAR==2008], na.rm=T)
+NIS_2009_24 <- sum(temp$PROVWT[temp$YEAR==2009 & temp$Immunizations_UptoDate431_24==1], na.rm=T) /
+  sum(temp$PROVWT[temp$YEAR==2009], na.rm=T)
+NIS_2010_24 <- sum(temp$PROVWT[temp$YEAR==2010 & temp$Immunizations_UptoDate431_24==1], na.rm=T) /
+  sum(temp$PROVWT[temp$YEAR==2010], na.rm=T)
+NIS_2011_24 <- sum(temp$PROVWT[temp$YEAR==2011 & temp$Immunizations_UptoDate431_24==1], na.rm=T) /
+  sum(temp$PROVWT[temp$YEAR==2011], na.rm=T)
+NIS_24 <- NIS_2008_24*mean(temp$YEAR==2008) + NIS_2009_24*mean(temp$YEAR==2009) + 
+  NIS_2010_24*mean(temp$YEAR==2010) + NIS_2011_24*mean(temp$YEAR==2011) 
+
+  bootstrap_genpop_immunizations[i,] <- c(NIS_6, NIS_12, NIS_18, NIS_24)
+}
+
+apply(bootstrap_genpop_immunizations,2,mean)
+apply(bootstrap_genpop_immunizations,2,sd)
 
 
 
 
+
+
+
+
+
+
+###############################
+## Propensity score model
+PSM_Matching <- immunizations[complete.cases(immunizations),]
+
+summary(PSM_Matching)
+# lots of the treatments dropped
+
+# Complete provider data only
+PSM_Matching <- subset(PSM_Matching, subset=c(PDAT6==1 & PDAT12==1 & PDAT18==1 & PDAT24==1))
+
+
+# PSM
+# Do I need to account for NIS weights?
 reg <- glm(treatment ~ factor(income_recode) + factor(language) + 
-             factor(MAge) + factor(RE) + male + married + HSgrad, 
-           data=temp, family=binomial)
+             factor(Race) + married + HSgrad, 
+           data=PSM_Matching, family=binomial(link='logit'))
+summary(reg)
+# match on poverty ratio instead of income buckets
 
-p <- reg$fitted
-p.t <- p[temp$treatment==1& p>.05]
-p.c <- p[temp$treatment==0& p>.05]
-
-#SHOW WITH MATCHES
-par(mfrow=c(2,1))
-plot1 <- hist(p[temp$treatment==1],prob=TRUE,xlim=c(0,1), ylim=c(0,15),plot=F)
-plot2 <- hist(p[temp$treatment==0],prob=TRUE,xlim=c(0,1), ylim=c(0,15),plot=F)
-
-plot3 <- hist(p[temp$treatment==1 & p>.05],prob=TRUE,xlim=c(0,1), ylim=c(0,6),plot=F)
-plot4 <- hist(p[temp$treatment==0 & p>.05],prob=TRUE, xlim=c(0,1), ylim=c(0,6),plot=F)
+# Separation plot
+library(separationplot)
+separationplot(predict.glm(reg, type='response'), PSM_Matching$treatment)
 
 
-load("/mnt/data/NIS/modified_data/NISPUF.RData")
-# Overall immunizations up to date
-sort(names(NISPUF))
 
-Immunizations_UptoDate_6 <- sum(NISPUF$PDAT==1 & NISPUF$DTaP6==1 & NISPUF$Polio6==1 & NISPUF$MMR6==1) / sum(NISPUF$PDAT==1)
-Immunizations_UptoDate_12 <- sum(NISPUF$PDAT==1 & NISPUF$DTaP12==1 & NISPUF$Polio12==1 & NISPUF$MMR12==1) / sum(NISPUF$PDAT==1)
-Immunizations_UptoDate_18 <- sum(NISPUF$PDAT==1 & NISPUF$DTaP18==1 & NISPUF$Polio18==1 & NISPUF$MMR18==1) / sum(NISPUF$PDAT==1)
-Immunizations_UptoDate_24 <- sum(NISPUF$PDAT==1 & NISPUF$DTaP24==1 & NISPUF$Polio24==1 & NISPUF$MMR24==1) / sum(NISPUF$PDAT==1)
+## Six-month rate
+library(Matching)
+rr6 <- Match(Y=PSM_Matching$Immunizations_UptoDate_6, Tr=PSM_Matching$treatment, X=reg$fitted.values)
+MatchBalance(treatment ~ factor(income_recode) + factor(language) + 
+               factor(Race) + married + HSgrad, data=PSM_Matching, match.out=rr6, 
+             nboots=1000)
+summary(rr6)
 
-y.coord <- c(Immunizations_UptoDate_6,
-             Immunizations_UptoDate_12,
-             Immunizations_UptoDate_18,
-             Immunizations_UptoDate_24)
-plot(c(6,12,18,24), y.coord, pch=19, xlim=c(6,24), ylim=c(0,1), axes=F,
-     main='Up-to-Date Vaccination Rates (MMR, DTaP, Polio)',
+
+
+
+## Twelve-month rate
+rr12 <- Match(Y=PSM_Matching$Immunizations_UptoDate_12, Tr=PSM_Matching$treatment, X=reg$fitted.values)
+MatchBalance(treatment ~ factor(income_recode) + factor(language) + 
+               factor(Race) + married + HSgrad, data=PSM_Matching, match.out=rr12, 
+             nboots=1000)
+summary(rr12)
+
+
+
+
+
+## Eighteen-month rate
+rr18 <- Match(Y=PSM_Matching$Immunizations_UptoDate_18, Tr=PSM_Matching$treatment, X=reg$fitted.values)
+MatchBalance(treatment ~ factor(income_recode) + factor(language) + 
+               factor(Race) + married + HSgrad, data=PSM_Matching, match.out=rr18, 
+             nboots=1000)
+summary(rr18)
+
+
+
+
+## Twenty-four-month rate
+rr24 <- Match(Y=PSM_Matching$Immunizations_UptoDate_24, Tr=PSM_Matching$treatment, X=reg$fitted.values)
+MatchBalance(treatment ~ factor(income_recode) + factor(language) + 
+               factor(Race) + married + HSgrad, data=PSM_Matching, match.out=rr24, 
+             nboots=1000)
+summary(rr24)
+
+
+
+
+
+
+
+############################
+# Plot immunization rates
+
+setwd("/mnt/data/NIS/")
+png("Meetup_two_immunizations.png", width=13.3, height=7.5, units="in", res=100)
+y.coord <- c(mean(PSM_Matching$Immunizations_UptoDate_6[PSM_Matching$treatment==1 & PSM_Matching$PDAT6==1],na.rm=T),
+             mean(PSM_Matching$Immunizations_UptoDate_12[PSM_Matching$treatment==1 & PSM_Matching$PDAT12==1],na.rm=T),
+             mean(PSM_Matching$Immunizations_UptoDate_18[PSM_Matching$treatment==1 & PSM_Matching$PDAT18==1],na.rm=T),
+             mean(PSM_Matching$Immunizations_UptoDate_24[PSM_Matching$treatment==1 & PSM_Matching$PDAT24==1],na.rm=T))
+par(mar=c(4.5,5.5,4,1.5), cex.main=2, cex.axis=1.5, cex.lab=2, las=1)
+plot(c(6,12,18,24), 100*c(), pch=19, 
+     xlim=c(6,24), ylim=c(0,100), 
+     axes=F, col='blue',
+     type='l', lwd=4,
+     main='Up-to-Date Vaccination Rates',
      xlab='months since birth', 
-     ylab='proportion of children up to date')
+     ylab='% of children UTD    ')
 axis(1,at=c(6,12,18,24))
-axis(2)
+axis(2,at=c(0,25,50,75,100))
 box()
+points(c(6,12,18,24), 100*(y.coord-c()), 
+       pch=19, col='red', type='l', lwd=4)
+#points(c(6,12,18,24), 100*c(), 
+#       pch=19, col='blue', type='l', lwd=4)
 
-nfp.data <- read.csv("/mnt/data/csv_data/growth_immunization_outcomes.csv",
-                     header=TRUE)
-names(nfp.data)
-y2.coord <- c(sum(nfp.data$final_immun_1=='Yes') / sum(nfp.data$final_immun_1=='Yes' | nfp.data$final_immun_1=='No'),
-              sum(nfp.data$final_immun_2=='Yes') / sum(nfp.data$final_immun_2=='Yes' | nfp.data$final_immun_2=='No'),
-              sum(nfp.data$final_immun_3=='Yes') / sum(nfp.data$final_immun_3=='Yes' | nfp.data$final_immun_3=='No'),
-              sum(nfp.data$final_immun_4=='Yes') / sum(nfp.data$final_immun_4=='Yes' | nfp.data$final_immun_4=='No'))
-points(c(6,12,18,24), y2.coord, pch=19, col='red')
-legend('bottomright', lty=1, col=c("red","black"), legend=c("NFP","NIS"))
+legend('bottomright', lty=1, lwd=4, col=c("blue","red"),#,"blue"), 
+       legend=c("General Population","Matched Group"),cex=1.5)#,"General Population"),cex=1.5)
+dev.off()
 
 
 
-# Compare mother's education levels, etc.
-#MOSAICPLOT
-
-# Child variables: whether child is first born, age, WIC, 
-
-# Household-reported vaccination rates
-# NFP
-# NIS
-
-names(immunizations)
-mean(immunizations$Immunizations_UptoDate_6,na.rm=T)
-
-table(immunizations$Immunizations_UptoDate_6,immunizations$treatment)
 
 
+
+
+##############################
+## Motivation
+## Motivation could be a confounder.  If motivation increases the probability 
+## that a woman enrolls and that a child receives immunizations / goes to the
+## doctor / etc, then it is a confounder and its effect needs to be accounted 
+## for.  
+##
+## One piece of evidence that suggests motivation is not a big issue is the
+## stability of the NFP immunization rates across 6, 12, 18, and 24 months.
+## NFP has a high attrition rate -- they lose over half their clients before 
+## the children turn two -- so the women who remain in the program are 
+## probably the most motivated.  Yet the immunization rate for kids (as 
+## verified with records) remains flat over time.  It should increase if
+## motivation is a cause.
+##
+## Perhaps I'm wrong to assume that the women still in the program when their 
+## child turns two are more motivated than the women in the program when
+## their child turns two.  It could be that women either drop quickly, perhaps
+## before the kid is even born, or not at all.  Then the women enrolled at 6 
+## months and 24 months would be the same.  We can check this when we get dates
+## for add/drop dates for each client from Bill.
+##
+## We can do another test to help reduce the bias that motivation introduces:
+## stratify by drop-out date.  We can look at the six-month immunization
+## rate for children who drop out a month or two later, which biases the test
+## against NFP in two ways: it reduces the sample size, thereby reducing the 
+## power of the test, and it drops the clients who are most likely to be immunized.
+
+
+
+
+
+
+##############################
+##  How accurate are self-reported immunization rates?
+##
+## First, who has shot cards?
+names()
 
 
 # What proportion of those who gave permission had adequate provider records?
@@ -281,80 +427,29 @@ unique(NISPUF$AGEGRP)
 
 
 
-# How many shots of each vaccine are kids receiving?
+# Do the analysis with complete data and with probability distributions for the missing data
 
 
 
 
 
-# Examine results for 6-month vaccinations
-mean(HepB6==1)
-mean(DTaP6==1)
-mean(Hib6==1)
-mean(Polio6==1) 
-mean(PCV6==1)
-mean(MMR6==1)
-mean(Varicella6==1)
-mean(HepA6==1)
-mean(Rotavirus6==1)
-
-
-# Examine results for 6-month vaccinations
-mean(HepB6==1)
-mean(DTaP6==1)
-mean(Hib6==1)
-mean(Polio6==1) 
-mean(PCV6==1)
-mean(MMR6==1)
-mean(Varicella6==1)
-mean(HepA6==1)
-mean(Rotavirus6==1)
 
 
 
 
 
-##################################
-## MATCHING
 
-# Install and import packages.
-install.packages("Matching", repo="http://cran.rstudio.com")
-library(Matching)
 
-setwd("/mnt/data/NIS")
-load("immunizations_analysis.RData")
 
-# Define D, X, Y, and Z.
-# D is an indicator of whether the observation came from the NFP data set.
-# X are controls for the independent variables in the regression of Y on D.
-# Y is the outcome of interest.
-# Z include all X and the other variables that may impact likelihood of treatment, but do not independently impact the outcome.
+#############################
+## Breastfeeding rates
+summary(NISPUF08$CBF_01)
 
-D <- immunizations$treatment
-X <- subset(immunizations, select = c(income_recode, state, language, MAg, RE, male, married, HSgrad))
-Y <- immunizations$Immunizations_UptoDate_6
-Z <- subset(immunizations, select = c())
+NISPUF08$CBF_01[NISPUF08$CBF_01==99] <- NA
+NISPUF08$CBF_01[NISPUF08$CBF_01==77] <- NA
+NISPUF08$CBF_01[NISPUF08$CBF_01==2] <- 0
 
-# Regress D on Z to create propensity scores (probit model)
+mean(NISPUF08$CBF_01,na.rm=TRUE)
+mean(NISPUF08$CBF_01[NISPUF08$INCPORAR<=2],na.rm=TRUE)
 
-probit <- glm(D ~ ., family = binomial(link = "probit"), data = Z)
-summary(probit)
-
-psm <- predict(probit, data = Z, type = "response")
-
-# Create M, a vector of covariates on which to match, including (but not limited to) propensity score
-
-M <- cbind(Z, ps)
-
-# Complete matching!
-k <- [insert desired number of matches for each observation]
-
-match <- Match(Y = Y, Tr = D, X = M, M = k, caliper = ? (will we want one?))
-summary(match) 
- 
-##Add "CommonSupport=TRUE" argument to limit to areas of common support , though R documentation recommends setting a caliper instead
-## Consider using the GenMatch method - determines weights for each of M in matching with the goal of minimizing the maximum observed discrepancy between paired observations
-## Use MatchBalance() to check balance before and after matching with Match (GenMatch automatically finds balance)
-## Note that Matchby() function may be useful for stratified matching?
-
-# Calculate weighted average across centers
+length(NISPUF08$MARITAL[NISPUF08$MARITAL==3 & NISPUF08$INCPORAR<=2]) / length(NISPUF08$MARITAL[NISPUF08$INCPORAR<=2])

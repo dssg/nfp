@@ -1,15 +1,8 @@
 # Set workspace
-setwd("/Users/Fishface/Documents/DSSG/nfp/CPS")
+setwd("~/nfp/CPS")
 
 # Import Raw Data
-cps.raw <- read.table("cps.csv", sep = ',', header = TRUE)
-
-# The variables we are including (for March of 2008, 2009, and 2010) are:
-### "YEAR"     "SERIAL"   "HWTSUPP"  "METRO"    "HHINCOME" "PUBHOUS"  "RENTSUB"  "FOODSTMP"
-### "STAMPVAL" "MONTH"    "PERNUM"   "WTSUPP"   "MOMLOC"   "STEPMOM"  "POPLOC"   "SPLOC"   
-### "NCHILD"   "ASPOUSE"  "RELATE"   "AGE"      "SEX"      "RACE"     "MARST"    "BPL"     
-### "EDUC"     "EMPSTAT"  "OCCLY"    "UHRSWORK" "HIMCAID"  "GOTWIC"   "PERID"    "SPID"    
-### "POPID"    "MOMID"    "OLDEST"   "EMPLOY"   "HSGED"    "HSGED"   
+cps.raw <- read.table("cps.csv", sep = ',', header = TRUE)  
 
 # Report which statistics are available in which time periods and partition
 ## dataset into time period groups
@@ -32,7 +25,7 @@ march.2010 <- cps.raw[cps.raw$YEAR == 2010 & cps.raw$MONTH == 3,][,march.2010.la
 
 # Remove households that have no children under 3
 no.young.child <- function(data) {
-  young.serials <- unique(data[data$AGE<3,]$SERIAL)
+  young.serials <- unique(data[data$AGE<=2,]$SERIAL)
   KeepData <- data[which(is.element(data$SERIAL, young.serials)),]
   return(KeepData)
 }
@@ -161,6 +154,20 @@ march.2009 <- mark.oldest(march.2009)
 march.2010.labels <- c(march.2010.labels,"OLDEST")
 march.2010 <- mark.oldest(march.2010)
 
+# Remove from 2008 dataset those families that are in their second year as CPS participants
+march.2008 = march.2008[march.2008$MISH <= 4,]
+
+# Remove from the 2010 dataset those families in their first year as CPS participants
+march.2010 = march.2010[march.2010$MISH >= 5,]
+
+
+combined_data <- rbind(march.2008, march.2009, march.2010)
+summarized_data <- ddply(combined_data, .(SERIAL), summarize, sd = sd(YEAR))
+keep_serials <- summarized_data[summarized_data$sd != 0,]$SERIAL
+
+# Hmmm there are only 123 eligible serial numbers...
+
+
 #Note that we can access the mothers of these kids [eligible mothers in the program]
 ### using the lines:
 
@@ -218,6 +225,6 @@ EMPLOY <- work.code(march.2010)
 march.2010 <- cbind(march.2010, EMPLOY)
 
 
-write.table(march.2008, file = "cps.march.2008.csv", append = FALSE, quote = FALSE, sep = ',', row.names = FALSE)
-write.table(march.2009, file = "cps.march.2009.csv", append = FALSE, quote = FALSE, sep = ',', row.names = FALSE)
-write.table(march.2010, file = "cps.march.2010.csv", append = FALSE, quote = FALSE, sep = ',', row.names = FALSE)
+#write.table(march.2008, file = "cps.march.2008.csv", append = FALSE, quote = FALSE, sep = ',', row.names = FALSE)
+#write.table(march.2009, file = "cps.march.2009.csv", append = FALSE, quote = FALSE, sep = ',', row.names = FALSE)
+#write.table(march.2010, file = "cps.march.2010.csv", append = FALSE, quote = FALSE, sep = ',', row.names = FALSE)
