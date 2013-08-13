@@ -191,30 +191,45 @@ cemmatch_coarsest
 ##cemmatch$breaks$momsage
 ##cemmatch$breaks$english
 
-estimate1_1_finea <- att(cemmatch_fine, breastfed ~ treatment + male + premature + lbw, data = ever_breast)
-estimate1_1_fineb <- att(cemmatch_fine, breastfed ~ treatment + male + premature + lbw, data = ever_breast, model = 'logistic')
-estimate1_1_coarse <- att(cemmatch_coarse, breastfed ~ treatment, data = ever_breast)
-estimate1_1_coarsest <- att(cemmatch_coarsest, breastfed ~ treatment, data = ever_breast)
+estimate1_1_fine <- att(cemmatch_fine, breastfed ~ treatment + male + premature + lbw, data = ever_breast)
+# This is a linear regression.  Could also add "model = 'logistic'" option to change reg type.
+# (Linear is conventionally acceptable for small percentile measurements in econometrics.)
+estimate1_1_coarse <- att(cemmatch_coarse, breastfed ~ treatment + male + premature + lbw, data = ever_breast)
+estimate1_1_coarsest <- att(cemmatch_coarsest, breastfed ~ treatment + male + premature + lbw, data = ever_breast)
 summary(estimate1_1_fine)
 summary(estimate1_1_coarse)
 summary(estimate1_1_coarsest)
 # trade off between # of unmatched obs and precision of match (i.e. how perfectly obs match
 # but estimates are generally hovering around the same point
 
-# Test with weighted means:
-treat_mean <- weighted.mean(ever_breast$breastfed[ever_breast$treatment==1], cemmatch_fine$w[ever_breast$treatment==1])
-control_mean <- weighted.mean(ever_breast$breastfed[ever_breast$treatment==0], cemmatch_fine$w[ever_breast$treatment==0])
-impact <- treat_mean - control_mean # Duplicates 
+# These results can be duplicated with weighted means, using the weights created by CEM:
+treat_mean1_1 <- weighted.mean(ever_breast$breastfed[ever_breast$treatment==1], cemmatch_coarse$w[ever_breast$treatment==1])
+control_mean1_1 <- weighted.mean(ever_breast$breastfed[ever_breast$treatment==0], cemmatch_coarse$w[ever_breast$treatment==0])
+impact1_1 <- treat_mean1_1 - control_mean1_1
 
-matched1_1 <- ever_breast[cemmatch_fine$w>0,]
+# Identify which observations were used in matching
+matched1_1 <- ever_breast[cemmatch_coarse$w>0,]
 table(matched1_1$treatment)
-mean(matched1_1$breastfed[matched1_1$treatment == 1])
-mean(matched1_1$breastfed[matched1_1$treatment == 0])
 
-barplot(prop.table(table(breast$breastfed[breast$treatment==1], row.names = revalue(breast$breastfed, c('0' = 'Never Breastfed', 
-	'1' = 'Ever Breastfed'))[breast$treatment==1])), main = "Breastfeeding - NFP Population", col = 'dark red', 
-	border = 'dark red', ylim = c(0,1))
+# Plot the results
+pop_mean1 <- svymean(~breastfed, popcomp, na.rm = TRUE)
+means1_1 <- rbind(pop_mean1[2], control_mean1_1, treat_mean1_1)
+rownames(means1_1) <- c("General Population", "Matched Group", "NFP Participants")
+means1_1 <- as.data.frame(means1_1)
+ggplot(means1_1, aes(x = rownames(means1_1), y = breastfed1)) + 
+	geom_bar(stat='identity', fill = 'dark green', border = 'dark green', width = 0.5) +
+	scale_y_continuous(limits=c(0,1)) +
+	ylab("Percent of Children Ever Breastfed") +
+	xlab(NULL) +
+	ggtitle('Breastfeeding Rates across Populations') +
+	theme(axis.title.y = element_text(size = rel(1.5), angle = 90, vjust = -0.25),
+		axis.title.x = element_text(size = rel(1.5), vjust = 0.5),	axis.text = element_text(size = rel(1.25)), 
+		axis.text.x = element_text(color = 'black'), 
+		plot.title = element_text(size = rel(3), vjust = 1.5), 
+		plot.margin = unit(c(1.25,1,1,1.5), 'cm'))
 
+	
+	
 ##### Outcome 1: Child was ever breastfed (still)
 ### Approach 2 - drop higher ed indicator (lots of NAs), THEN use all complete cases
 ### Repeat CEM using same approach as above
