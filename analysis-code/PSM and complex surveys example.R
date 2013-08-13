@@ -23,19 +23,19 @@ stratum1 <- data.frame(subset(data, p.hat<strata.cutoffs[1]))
   sum(stratum1$d==1); sum(stratum1$d==0)
   ate1 <- mean(stratum1$y[stratum1$d==1]) - mean(stratum1$y[stratum1$d==0])
 
-  term.a <- (stratum1$y[stratum1$d==1] - mean(stratum1$y[stratum1$d==1]))^2 / sum(stratum1$d==1)
-  term.b <- (stratum1$y[stratum1$d==0] - mean(stratum1$y[stratum1$d==0]))^2 / sum(stratum1$d==0)
-  sd.part1 <- sum(stratum1$d==0)^2 / sum(d==0)^2 * (sum(term.a) + sum(term.b))
-  
+  term.a <- sum(stratum1$y[stratum1$d==1] - mean(stratum1$y[stratum1$d==1]))^2
+  term.b <- sum(stratum1$y[stratum1$d==0] - mean(stratum1$y[stratum1$d==0]))^2
+  sd.part1 <- sum(stratum1$d==0)^2 / sum(d==0)^2 * (term.a + term.b)
+
 stratum2 <- data.frame(subset(data, p.hat>=strata.cutoffs[1] & p.hat<strata.cutoffs[2]))
   mean(stratum2$x1[stratum2$d==1]) - mean(stratum2$x1[stratum2$d==0])
   mean(stratum2$x2[stratum2$d==1]) - mean(stratum2$x2[stratum2$d==0])
   sum(stratum2$d==1); sum(stratum2$d==0)
   ate2 <- mean(stratum2$y[stratum2$d==1]) - mean(stratum2$y[stratum2$d==0])
 
-  term.a <- (stratum2$y[stratum2$d==1] - mean(stratum2$y[stratum2$d==1]))^2 / sum(stratum2$d==1)
-  term.b <- (stratum2$y[stratum2$d==0] - mean(stratum2$y[stratum2$d==0]))^2 / sum(stratum2$d==0)
-  sd.part2 <- sum(stratum2$d==0)^2 / sum(d==0)^2 * (sum(term.a) + sum(term.b))
+  term.a <- sum(stratum2$y[stratum2$d==1] - mean(stratum2$y[stratum2$d==1]))^2
+  term.b <- sum(stratum2$y[stratum2$d==0] - mean(stratum2$y[stratum2$d==0]))^2
+  sd.part2 <- sum(stratum2$d==0)^2 / sum(d==0)^2 * (term.a + term.b)
 
 stratum3 <- data.frame(subset(data, p.hat>=strata.cutoffs[2] & p.hat<strata.cutoffs[3]))
   mean(stratum3$x1[stratum3$d==1]) - mean(stratum3$x1[stratum3$d==0])
@@ -43,9 +43,9 @@ stratum3 <- data.frame(subset(data, p.hat>=strata.cutoffs[2] & p.hat<strata.cuto
   sum(stratum3$d==1); sum(stratum3$d==0)
   ate3 <- mean(stratum3$y[stratum3$d==1]) - mean(stratum3$y[stratum3$d==0])
 
-  term.a <- (stratum3$y[stratum3$d==1] - mean(stratum3$y[stratum3$d==1]))^2 / sum(stratum3$d==1)
-  term.b <- (stratum3$y[stratum3$d==0] - mean(stratum3$y[stratum3$d==0]))^2 / sum(stratum3$d==0)
-  sd.part3 <- sum(stratum3$d==0)^2 / sum(d==0)^2 * (sum(term.a) + sum(term.b))
+  term.a <- sum(stratum3$y[stratum3$d==1] - mean(stratum3$y[stratum3$d==1]))^2
+  term.b <- sum(stratum3$y[stratum3$d==0] - mean(stratum3$y[stratum3$d==0]))^2
+  sd.part3 <- sum(stratum3$d==0)^2 / sum(d==0)^2 * (term.a + term.b)
 
 stratum4 <- data.frame(subset(data, p.hat>=strata.cutoffs[3] & p.hat<strata.cutoffs[4]))
   mean(stratum4$x1[stratum4$d==1]) - mean(stratum4$x1[stratum4$d==0])
@@ -53,9 +53,9 @@ stratum4 <- data.frame(subset(data, p.hat>=strata.cutoffs[3] & p.hat<strata.cuto
   sum(stratum4$d==1); sum(stratum4$d==0)
   ate4 <- mean(stratum4$y[stratum4$d==1]) - mean(stratum4$y[stratum4$d==0])
 
-  term.a <- (stratum4$y[stratum4$d==1] - mean(stratum4$y[stratum4$d==1]))^2 / sum(stratum4$d==1)
-  term.b <- (stratum4$y[stratum4$d==0] - mean(stratum4$y[stratum4$d==0]))^2 / sum(stratum4$d==0)
-  sd.part4 <- sum(stratum4$d==0)^2 / sum(d==0)^2 * (sum(term.a) + sum(term.b))
+  term.a <- sum(stratum4$y[stratum4$d==1] - mean(stratum4$y[stratum4$d==1]))^2
+  term.b <- sum(stratum4$y[stratum4$d==0] - mean(stratum4$y[stratum4$d==0]))^2
+  sd.part4 <- sum(stratum4$d==0)^2 / sum(d==0)^2 * (term.a + term.b)
 
 stratum5 <- data.frame(subset(data, p.hat>=strata.cutoffs[4]))
   mean(stratum5$x1[stratum5$d==1]) - mean(stratum5$x1[stratum5$d==0])
@@ -63,9 +63,9 @@ stratum5 <- data.frame(subset(data, p.hat>=strata.cutoffs[4]))
   sum(stratum5$d==1); sum(stratum5$d==0)
   ate5 <- mean(stratum5$y[stratum5$d==1]) - mean(stratum5$y[stratum5$d==0])
 
-  term.a <- (stratum5$y[stratum5$d==1] - mean(stratum5$y[stratum5$d==1]))^2 / sum(stratum5$d==1)
-  term.b <- (stratum5$y[stratum5$d==0] - mean(stratum5$y[stratum5$d==0]))^2 / sum(stratum5$d==0)
-  sd.part5 <- sum(stratum5$d==0)^2 / sum(d==0)^2 * (sum(term.a) + sum(term.b))
+  term.a <- sum(stratum5$y[stratum5$d==1] - mean(stratum5$y[stratum5$d==1]))^2
+  term.b <- sum(stratum5$y[stratum5$d==0] - mean(stratum5$y[stratum5$d==0]))^2
+  sd.part5 <- sum(stratum5$d==0)^2 / sum(d==0)^2 * (term.a + term.b)
 
 ate <- ate1*dim(stratum1)[1]/n + 
        ate2*dim(stratum2)[1]/n + 
