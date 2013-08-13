@@ -64,11 +64,11 @@ svymean(~RE, popcomp, na.rm = TRUE)
 prop.table(table(breast$RE[breast$treatment==1]))
 	
 # Marital Status
-par(mfrow = c(1,2))
+par(mfrow = c(1,2), cex.axis = 2.8, cex.main = 2.8, cex.lab = 2.8)
 barplot(svymean(~married, popcomp, na.rm = TRUE), names.arg = c('Unmarried', 'Married'), 
-	main = "Marital Status- NCHS Population", col = "navy blue", border = 'navy blue', ylim = c(0,1))
+	main = "Marital Status- NCHS Population", col = "forest green", border = 'forest green', ylim = c(0,1))
 barplot(prop.table(table(breast$married[breast$treatment==1], row.names = revalue(breast$married, c('0' = 'Unmarried', 
-	'1' = 'married'))[breast$treatment==1])), main = "Marital Status - NFP Population", col = 'dark red', border = 'dark red', ylim = c(0,1))
+	'1' = 'Married'))[breast$treatment==1])), main = "Marital Status - NFP Population", col = 'dark red', border = 'dark red', ylim = c(0,1))
 
 svymean(~married, popcomp, na.rm = TRUE)
 prop.table(table(breast$married[breast$treatment==1]))
@@ -119,7 +119,7 @@ prop.table(table(breast$breastfed[breast$treatment == 1]))
 
 # Weeks Breastfed	
 par(mfrow = c(1,2))
-svyhist(~week_end_breast, popcomp, main = "Weeks Breastfed - NCHS Population", xlab = "Weeks Breastfed", col = "navy blue", 
+svyhist(~week_end_breast, popcomp, main = "Weeestimateks Breastfed - NCHS Population", xlab = "Weeks Breastfed", col = "navy blue", 
 	border = 'navy blue', ylim = c(0,.09))
 hist(breast$week_end_breast[breast$treatment==1], freq = FALSE, main = "Weeks Breastfed - NFP Population",
 	xlab = "Weeks Breastfed", col = 'dark red', border = 'dark red', ylim = c(0, .09))
@@ -166,7 +166,6 @@ MatchBalance(treatment ~ highschool + married + highered + momsage + RE + englis
 ## COARSENED EXACT MATCHING - http://gking.harvard.edu/files/gking/files/cem.pdf
 ## Create strata to "coarsen" data (not requiring exact matches, but exact matches within broadened strata).
 ## Our data naturally contains some coarse strata, so is amenable to this technique.
-matchvars <- c("highschool", "highered", "married", "momsage", "RE", "english")
 imbalance(group = ever_breast$treatment, data = ever_breast[matchvars]) # Data are similar, but not balanced
 
 # RE is already grouped as finely as we would like (WhiteNH, BlackNH, Hispanic, Other), and 1/0 factors are natural strata.
@@ -175,11 +174,11 @@ agecut_fine <- c(0,12,14,15,16,17,18,19,20,23,26,30,35,40)
 agecut_coarser <- c(0,12,15,18,21,25,35)
 agecut_coarsest <- c(0,15,18,25)
 cemmatch_fine <- cem(treatment = "treatment", data = ever_breast[c("highschool", "highered", "married", "momsage", "RE", "english", 
-		"treatment")], eval.imbalance = TRUE, cutpoints = list(momsage = agecut_fine))
+		"treatment")], eval.imbalance = TRUE, cutpoints = list(momsage = agecut_fine), verbose = 10)
 cemmatch_coarse <- cem(treatment = "treatment", data = ever_breast[c("highschool", "highered", "married", "momsage", "RE", "english", 
-		"treatment")], eval.imbalance = TRUE, cutpoints = list(momsage = agecut_coarser))
+		"treatment")], eval.imbalance = TRUE, cutpoints = list(momsage = agecut_coarser), verbose = 10)
 cemmatch_coarsest <- cem(treatment = "treatment", data = ever_breast[c("highschool", "highered", "married", "momsage", "RE", "english", 
-		"treatment")], eval.imbalance = TRUE, cutpoints = list(momsage = agecut_coarsest))
+		"treatment")], eval.imbalance = TRUE, cutpoints = list(momsage = agecut_coarsest), verbose = 10)
 cemmatch_fine
 cemmatch_coarse
 cemmatch_coarsest
@@ -192,21 +191,25 @@ cemmatch_coarsest
 ##cemmatch$breaks$momsage
 ##cemmatch$breaks$english
 
-estimate1_1_fine <- att(cemmatch_fine, breastfed ~ treatment, data = ever_breast)
+estimate1_1_finea <- att(cemmatch_fine, breastfed ~ treatment + male + premature + lbw, data = ever_breast)
+estimate1_1_fineb <- att(cemmatch_fine, breastfed ~ treatment + male + premature + lbw, data = ever_breast, model = 'logistic')
 estimate1_1_coarse <- att(cemmatch_coarse, breastfed ~ treatment, data = ever_breast)
 estimate1_1_coarsest <- att(cemmatch_coarsest, breastfed ~ treatment, data = ever_breast)
-estimate1_1_fine
-estimate1_1_coarse
-estimate1_1_coarsest
+summary(estimate1_1_fine)
+summary(estimate1_1_coarse)
+summary(estimate1_1_coarsest)
 # trade off between # of unmatched obs and precision of match (i.e. how perfectly obs match
 # but estimates are generally hovering around the same point
 
-## Need to think about introducing controls for lbw, premature, male, etc. to the estimation process
+# Test with weighted means:
+treat_mean <- weighted.mean(ever_breast$breastfed[ever_breast$treatment==1], cemmatch_fine$w[ever_breast$treatment==1])
+control_mean <- weighted.mean(ever_breast$breastfed[ever_breast$treatment==0], cemmatch_fine$w[ever_breast$treatment==0])
+impact <- treat_mean - control_mean # Duplicates 
 
-
-# Accessing paired dataset
-matched1_1 <- pair(cemmatch_fine, ever_breast)
-
+matched1_1 <- ever_breast[cemmatch_fine$w>0,]
+table(matched1_1$treatment)
+mean(matched1_1$breastfed[matched1_1$treatment == 1])
+mean(matched1_1$breastfed[matched1_1$treatment == 0])
 
 barplot(prop.table(table(breast$breastfed[breast$treatment==1], row.names = revalue(breast$breastfed, c('0' = 'Never Breastfed', 
 	'1' = 'Ever Breastfed'))[breast$treatment==1])), main = "Breastfeeding - NFP Population", col = 'dark red', 
