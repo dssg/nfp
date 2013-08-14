@@ -132,7 +132,7 @@ mean(breast$week_end_breast[breast$treatment == 1], na.rm = TRUE)
 ### Approach 1 - using all complete cases
 ######## note: matching on complete cases assumes there is no systemic difference btwn nulls and non-nulls
 
-ever_breast1 <- breast[,c(3:13, 15:16)] # Omit data for other outcome measure, also IDs
+ever_breast1 <- breast[,c(3:8,11:13,15:16)] # Omit data for other outcome measure, also IDs
 ever_breast <- subset(ever_breast1, complete.cases(ever_breast1))
 matchvars <- c("highschool", "highered", "married", "momsage", "RE", "english")
 
@@ -230,38 +230,144 @@ ggplot(means1_1, aes(x = rownames(means1_1), y = breastfed1)) +
 
 	
 	
-##### Outcome 1: Child was ever breastfed (still)
+##### Outcome 1: Child was ever breastfed
 ### Approach 2 - drop higher ed indicator (lots of NAs), THEN use all complete cases
 ### Repeat CEM using same approach as above
 
-############ Needs to be cleaned up, troubleshoot data sets.
-
-ever_breast2 <- breast[,c(3:6,8:13,15)]
+ever_breast2 <- breast[,c(3:6,8,11:13,15:16)]
 ever_breast_restricted <- subset(ever_breast2, complete.cases(ever_breast2))
-
 matchvars1_2 <- c("highschool", "married", "momsage", "RE", "english")
-imbalance(group = ever_breast_restricted$treatment, data = ever_breast_restricted[matchvars]) # Data are similar, but not balanced
+imbalance(group = ever_breast_restricted$treatment, data = ever_breast_restricted[matchvars1_2]) 
 
 # Same three types of age cut points
-cemmatch_fine2 <- cem(treatment = "treatment", data = ever_breast_restricted[c("highschool", "married", "momsage", "RE", "english", 
+cemmatch_fine1_2 <- cem(treatment = "treatment", data = ever_breast_restricted[c("highschool", "married", "momsage", "RE", "english", 
 		"treatment")], eval.imbalance = TRUE, cutpoints = list(momsage = agecut_fine))
-cemmatch_coarse2 <- cem(treatment = "treatment", data = ever_breast_restricted[c("highschool", "married", "momsage", "RE", "english", 
+cemmatch_coarse1_2 <- cem(treatment = "treatment", data = ever_breast_restricted[c("highschool", "married", "momsage", "RE", "english", 
 		"treatment")], eval.imbalance = TRUE, cutpoints = list(momsage = agecut_coarser))
-cemmatch_coarsest2 <- cem(treatment = "treatment", data = ever_breast_restricted[c("highschool", "married", "momsage", "RE", "english", 
+cemmatch_coarsest1_2 <- cem(treatment = "treatment", data = ever_breast_restricted[c("highschool", "married", "momsage", "RE", "english", 
 		"treatment")], eval.imbalance = TRUE, cutpoints = list(momsage = agecut_coarsest))
-cemmatch_fine2
-cemmatch_coarse2
-cemmatch_coarsest2
+cemmatch_fine1_2
+cemmatch_coarse1_2
+cemmatch_coarsest1_2
 
-estimate1_2_fine <- att(cemmatch_fine2, breastfed ~ treatment, data = ever_breast)
-estimate1_2_coarse <- att(cemmatch_coarse2, breastfed ~ treatment, data = ever_breast)
-estimate1_2_coarsest <- att(cemmatch_coarsest2, breastfed ~ treatment, data = ever_breast)
-estimate1_2_fine
-estimate1_2_coarse
-estimate1_2_coarsest
+estimate1_2_fine <- att(cemmatch_fine1_2, breastfed ~ treatment + male + premature + lbw, data = ever_breast_restricted)
+estimate1_2_coarse <- att(cemmatch_coarse1_2, breastfed ~ treatment + male + premature +lbw, data = ever_breast_restricted)
+estimate1_2_coarsest <- att(cemmatch_coarsest1_2, breastfed ~ treatment + male + premature + lbw, data = ever_breast_restricted)
+summary(estimate1_2_fine)
+summary(estimate1_2_coarse)
+summary(estimate1_2_coarsest)
+
+# Identifying and plotting means:
+treat_mean1_2 <- weighted.mean(ever_breast_restricted$breastfed[ever_breast_restricted$treatment==1], 
+	cemmatch_coarse1_2$w[ever_breast_restricted$treatment==1])
+control_mean1_2 <- weighted.mean(ever_breast_restricted$breastfed[ever_breast_restricted$treatment==0], 
+	cemmatch_coarse1_2$w[ever_breast_restricted$treatment==0])
+means1_2 <- rbind(pop_mean1[2], control_mean1_2, treat_mean1_2)
+rownames(means1_2) <- c("General Population", "Matched Group", "NFP Participants")
+means1_2 <- as.data.frame(means1_2)
+ggplot(means1_2, aes(x = rownames(means1_2), y = breastfed1)) + 
+	geom_bar(stat='identity', fill = 'dark green', border = 'dark green', width = 0.5) +
+	scale_y_continuous(limits=c(0,1)) +
+	ylab("Percent of Children Ever Breastfed") +
+	xlab(NULL) +
+	ggtitle('Breastfeeding Rates across Populations') +
+	theme(axis.title.y = element_text(size = rel(1.5), angle = 90, vjust = -0.25),
+		axis.title.x = element_text(size = rel(1.5), vjust = 0.5),	axis.text = element_text(size = rel(1.25)), 
+		axis.text.x = element_text(color = 'black'), 
+		plot.title = element_text(size = rel(3), vjust = 1.5), 
+		plot.margin = unit(c(1.25,1,1,1.5), 'cm'))
 
 
+
+
+		
+		
+# Outcome 2: Weeks child was breastfed
+# Approach 1: including higher ed
+weeks_breast <- breast[,c(3:8,11:12,14:16)]
+weeks_breast1 <- subset(weeks_breast, complete.cases(weeks_breast))
+matchvars2 <- c("highschool", "highered", "married", "momsage", "RE", "english")
+imbalance(group = weeks_breast1$treatment, data = weeks_breast1[matchvars2]) 
+
+# Same three types of age cut points
+cemmatch_fine2_1 <- cem(treatment = "treatment", data = weeks_breast1[c("highschool", "highered", "married", "momsage", "RE", "english", 
+		"treatment")], eval.imbalance = TRUE, cutpoints = list(momsage = agecut_fine))
+cemmatch_coarse2_1 <- cem(treatment = "treatment", data = weeks_breast1[c("highschool", "highered", "married", "momsage", "RE", "english", 
+		"treatment")], eval.imbalance = TRUE, cutpoints = list(momsage = agecut_coarser))
+cemmatch_coarsest2_1 <- cem(treatment = "treatment", data = weeks_breast1[c("highschool", "highered", "married", "momsage", "RE", "english", 
+		"treatment")], eval.imbalance = TRUE, cutpoints = list(momsage = agecut_coarsest))
+cemmatch_fine2_1
+cemmatch_coarse2_1
+cemmatch_coarsest2_1
+
+estimate2_1_fine <- att(cemmatch_fine2_1, week_end_breast ~ treatment + male + premature + lbw, data = weeks_breast1)
+estimate2_1_coarse <- att(cemmatch_coarse2_1, week_end_breast ~ treatment + male + premature +lbw, data = weeks_breast1)
+estimate2_1_coarsest <- att(cemmatch_coarsest2_1, week_end_breast ~ treatment + male + premature + lbw, data = weeks_breast1)
+summary(estimate2_1_fine)
+summary(estimate2_1_coarse)
+summary(estimate2_1_coarsest)
+
+# Identifying means:
+pop_mean2 <- svymean(~week_end_breast, popcomp, na.rm = TRUE) 
+treat_mean2_1 <- weighted.mean(weeks_breast1$week_end_breast[weeks_breast1$treatment==1], 
+	cemmatch_coarse2_1$w[weeks_breast1$treatment==1])
+control_mean2_1 <- weighted.mean(weeks_breast1$week_end_breast[weeks_breast1$treatment==0], 
+	cemmatch_coarse2_1$w[weeks_breast1$treatment==0])
+means2_1 <- rbind(pop_mean2[1], control_mean2_1, treat_mean2_1)
+rownames(means2_1) <- c("General Population", "Matched Group", "NFP Participants")
+means2_1 <- as.data.frame(means2_1)
+means2_1		
+
+# Plotting results:
+par(mfrow = c(1,3))
+svyhist(~week_end_breast, popcomp, main = "Weeks Breastfed - NCHS Population", xlab = "Weeks Breastfed", col = "navy blue", 
+	border = 'navy blue', ylim = c(0,.09))
+hist(weeks_breast1$week_end_breast[cemmatch_coarse2_1$w>0 & weeks_breast1$treatment==0], freq = FALSE, main = "Weeks Breastfed - Matched Population",
+	xlab = "Weeks Breastfed", breaks = seq(0,110, by = 5), col = "dark green", border = "dark green", ylim = c(0,.09))
+hist(weeks_breast1$week_end_breast[weeks_breast1$treatment==1], freq = FALSE, main = "Weeks Breastfed - NFP Population",
+	xlab = "Weeks Breastfed", col = 'dark red', border = 'dark red', ylim = c(0, .09))
 
 
 # Outcome 2: Weeks child was breastfed
-weeks_breast <- complete.cases(breast[,c(1:12, 14:15)])
+# Approach 2: exclude higher ed
+weeks_breast2 <- breast[,c(3:6,8,11:12,14:16)]
+weeks_breast2 <- subset(weeks_breast2, complete.cases(weeks_breast2))
+matchvars2_2 <- c("highschool", "married", "momsage", "RE", "english")
+imbalance(group = weeks_breast2$treatment, data = weeks_breast2[matchvars2_2]) 
+
+# Same three types of age cut points
+cemmatch_fine2_2 <- cem(treatment = "treatment", data = weeks_breast2[c("highschool", "married", "momsage", "RE", "english", 
+		"treatment")], eval.imbalance = TRUE, cutpoints = list(momsage = agecut_fine))
+cemmatch_coarse2_2 <- cem(treatment = "treatment", data = weeks_breast2[c("highschool", "married", "momsage", "RE", "english", 
+		"treatment")], eval.imbalance = TRUE, cutpoints = list(momsage = agecut_coarser))
+cemmatch_coarsest2_2 <- cem(treatment = "treatment", data = weeks_breast2[c("highschool", "married", "momsage", "RE", "english", 
+		"treatment")], eval.imbalance = TRUE, cutpoints = list(momsage = agecut_coarsest))
+cemmatch_fine2_2
+cemmatch_coarse2_2
+cemmatch_coarsest2_2
+
+estimate2_2_fine <- att(cemmatch_fine2_2, week_end_breast ~ treatment + male + premature + lbw, data = weeks_breast2)
+estimate2_2_coarse <- att(cemmatch_coarse2_2, week_end_breast ~ treatment + male + premature +lbw, data = weeks_breast2)
+estimate2_2_coarsest <- att(cemmatch_coarsest2_2, week_end_breast ~ treatment + male + premature + lbw, data = weeks_breast2)
+summary(estimate2_2_fine)
+summary(estimate2_2_coarse)
+summary(estimate2_2_coarsest)
+
+# Identifying means:
+treat_mean2_2 <- weighted.mean(weeks_breast2$week_end_breast[weeks_breast2$treatment==1], 
+	cemmatch_coarse2_2$w[weeks_breast2$treatment==1])
+control_mean2_2 <- weighted.mean(weeks_breast2$week_end_breast[weeks_breast2$treatment==0], 
+	cemmatch_coarse2_2$w[weeks_breast2$treatment==0])
+means2_2 <- rbind(pop_mean2[1], control_mean2_2, treat_mean2_2)
+rownames(means2_2) <- c("General Population", "Matched Group", "NFP Participants")
+means2_2 <- as.data.frame(means2_2)
+means2_2		
+
+# Plotting results:
+par(mfrow = c(1,3))
+svyhist(~week_end_breast, popcomp, main = "Weeks Breastfed - NCHS Population", xlab = "Weeks Breastfed", col = "navy blue", 
+	border = 'navy blue', ylim = c(0,.09))
+hist(weeks_breast2$week_end_breast[cemmatch_coarse2_2$w>0 & weeks_breast2$treatment==0], freq = FALSE, main = "Weeks Breastfed - Matched Population",
+	xlab = "Weeks Breastfed", breaks = seq(0,110, by = 5), col = "dark green", border = "dark green", ylim = c(0,.09))
+hist(weeks_breast2$week_end_breast[weeks_breast2$treatment==1], freq = FALSE, main = "Weeks Breastfed - NFP Population",
+	xlab = "Weeks Breastfed", col = 'dark red', border = 'dark red', ylim = c(0, .09))
