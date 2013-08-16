@@ -2,7 +2,9 @@
  
 ## Overview
 
-The Nurse-Family Partnership has lots of data for the women and children enrolled in the program, but it does not have a lot of data for women and children not in
+The Nurse-Family Partnership (NFP; http://www.nursefamilypartnership.org) would like to know what effect it has on several birth outcomes, child health and development outcomes, mother's life course outcomes, and abuse outcomes.  This GitHub section contains code that modifies data from the National Immunization Survey, merges it with NFP's data; creates a matched group for comparison; and estimates NFP's impact on 6-, 12-, 18-, and 24-month immunization rates.
+
+section helps address  has lots of data for the women and children enrolled in the program, but it does not have a lot of data for women and children not in
  
 
 
