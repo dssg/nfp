@@ -110,7 +110,7 @@ prop.table(table(breast$english[breast$treatment==1]))
 par(mfrow = c(1,2))
 barplot(svymean(~breastfed, popcomp, na.rm = TRUE), names.arg = c('Never Breastfed', 'Ever Breastfed'), 
 	main = "Breastfeeding - NCHS Population", col = "navy blue", border = 'navy blue', ylim = c(0,1))
-barplot(prop.table(table(breast$breastfed[breast$treatment==1], row.names = revalue(breast$breastfed, c('0' = 'Never Breastfed', 
+barplot(prop.table(table(breast$breastfed[breast$treatment==1], row.names = revalue(breast$breastfed_factor, c('0' = 'Never Breastfed', 
 	'1' = 'Ever Breastfed'))[breast$treatment==1])), main = "Breastfeeding - NFP Population", col = 'dark red', 
 	border = 'dark red', ylim = c(0,1))
 
@@ -369,5 +369,8 @@ svyhist(~week_end_breast, popcomp, main = "Weeks Breastfed - NCHS Population", x
 	border = 'navy blue', ylim = c(0,.09))
 hist(weeks_breast2$week_end_breast[cemmatch_coarse2_2$w>0 & weeks_breast2$treatment==0], freq = FALSE, main = "Weeks Breastfed - Matched Population",
 	xlab = "Weeks Breastfed", breaks = seq(0,110, by = 5), col = "dark green", border = "dark green", ylim = c(0,.09))
-hist(weeks_breast2$week_end_breast[weeks_breast2$treatment==1], freq = FALSE, main = "Weeks Breastfed - NFP Population",
+test <- hist(weeks_breast2$week_end_breast[weeks_breast2$treatment==1], freq = FALSE, main = "Weeks Breastfed - NFP Population",
 	xlab = "Weeks Breastfed", col = 'dark red', border = 'dark red', ylim = c(0, .09))
+
+matches2_2 <- weeks_breast2[cemmatch_coarse2_2$w>0,]
+ggplot(matches2_2, aes(week_end_breast, color = as.factor(treatment))) + stat_ecdf(geom = 'smooth')
