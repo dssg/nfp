@@ -1181,6 +1181,39 @@ NISPUF$PDAT24 <- NISPUF$PDAT
 ############################################
 # CHOOSE NIS IMMUNIZATION SOURCE (SELF REPORT, SHOTCARD, PROVIDER) FOR COMPARISON
 
+# How do provider records compare with shotcards and household reports?
+# Use 4 DTaP, 3 polio, and 1 MMR standard.  I use the "at least one" shot standard
+# rather than the "all" shots standard for household reports because using "all"
+# gives an incredibly low number (less than 30%).  The "at least one" standard
+# gives estimates closer to what we see from provider records.
+#
+# The majority of households not UTD reported being UTD.  Also, around 10% of
+# households that were UTD reported not being UTD.  
+#
+# Shotcards are much less reliable than provider reports.  For example, over 25% 
+# of UTD households had shotcards that suggested they were behind the recommended
+# immunization schedule.  NIS uses provider records to estimate the national UTD
+# rate.
+
+NISPUF$HH_431 <- 0
+  NISPUF$HH_431[NISPUF$HH_DTaP_UTD>=1 & NISPUF$HH_MMR_UTD>=1 & NISPUF$HH_POL>=1] <- 1
+
+NISPUF$SC_431[NISPUF$SC_431==77] <- NA
+NISPUF$SC_431[NISPUF$SC_431==88] <- NA
+NISPUF$SC_431[NISPUF$SC_431==99] <- NA
+NISPUF$SC_431[NISPUF$SC_431==2] <- 0
+
+NISPUF$HH_431[NISPUF$HH_431==77] <- NA
+NISPUF$HH_431[NISPUF$HH_431==88] <- NA
+NISPUF$HH_431[NISPUF$HH_431==99] <- NA
+NISPUF$HH_431[NISPUF$HH_431==2] <- 0
+
+library(gmodels)
+CrossTable(NISPUF$P_UTD431, NISPUF$HH_431, prop.t=FALSE, prop.chisq=FALSE, chisq=TRUE)
+CrossTable(NISPUF$P_UTD431, NISPUF$SC_431, prop.t=FALSE, prop.chisq=FALSE, chisq=TRUE)
+CrossTable(NISPUF$HH_431, NISPUF$SC_431, prop.t=FALSE, prop.chisq=FALSE, chisq=TRUE)
+
+
 # The NFP dataset asks the the nurse the following: "Based on your local immunization
 # schedule, (regardless of vaccine brand or manufacturer) is (child's name) up to date
 # on all vaccinations?"  This question does not make explicit which vaccines the children 
