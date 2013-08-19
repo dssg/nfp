@@ -2,19 +2,14 @@
  
 ## Introduction
  
-As part of the Data Science for Social Good Fellowship (http://dssg.io), we are evaluating the effectiveness of the Nurse-Family Partnership (NFP), a home-visitation program that pairs a nurse with an at-risk first-time mother for the duration of her pregnancy and the first two years of her child's life.  Numerous studies have documented NFP's positive benefits for the mothers, children, and society, including three randomized controlled trials (RCT) (http://scholar.google.com/scholar?hl=en&q=%22nurse+family+partnership%22).  However, most of those studies focus on a single state or locality, and NFP has been scaled to a national effort operating in diverse communities.  The cost of conducting an RCT at the national level may be prohibitive.
+As part of the Data Science for Social Good Fellowship (http://dssg.io), we are evaluating the effectiveness of the Nurse-Family Partnership (NFP), a home-visitation program that pairs a nurse with an at-risk first-time mother for the duration of her pregnancy and the first two years of her child's life.  To do so, we are comparing administrative data from NFP to several public national datasets with the goal of identifying women who are similar on all observable characteristics (such as demographics) in the two datasets and comparing their outcomes.  More information about the challenges that shaped our project and methodology are available in our wiki [here] <https://github.com/dssg/nfp/wiki/Problem>.
 
-DSSG is comparing administrative data from NFP to several public national datasets.  Our goal is to identify women who are similar on all 
-observable characteristics (such as demographics) in the two datasets and compare their outcomes.  (Although we cannot know whether the women in our comparison group participated in NFP, assuming that they are non-participants biases our results toward zero, making it less likely that we find impact.)
-
-Our project has three goals:
+Our project has two goals:
 
 1) To provide a rough evaluation of NFP's impact at a national level (although this will not be a rigorous program evaluation, it will provide
 an educated estimate of NFP's effectiveness).
 
 2) To develop a methodology for basic impact evaluation of nonprofit programs where resource limitations and program size make traditional experimental evaluations impractical or impossible.
-
-3) To explore correlations in NFP's data between outcomes and other characteristics of the mothers, with the goal of helping NFP identify high-risk situations and techniques that seem to reduce those risks.  This knowledge will inform NFP's ongoing quality improvement processes.
 
 
 ## Methodology
