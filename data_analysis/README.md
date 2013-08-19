@@ -1,8 +1,8 @@
-# DSSG Nurse Family Partnership Study -- Data Analysis
+# Data Analysis
  
 ## Overview
 
-The Nurse-Family Partnership (NFP; http://www.nursefamilypartnership.org) would like to know what effect it has on several birth outcomes, child health and development outcomes, mother's life course outcomes, and abuse outcomes.  As part of the Eric and Wendy Schmidt Data Science for Social Good summer fellowship (http://dssg.io), we used data from NFP and nationally representative datasets to estimate the effect NFP has on immunization and breastfeeding rates.  More information about our motivation and our process are available in our project [wiki] (https://github.com/dssg/nfp/wiki).
+The [Nurse-Family Partnership] (http://www.nursefamilypartnership.org) (NFP) would like to know what effect it has on several birth outcomes, child health and development outcomes, mother's life course outcomes, and abuse outcomes.  We used data from NFP and nationally representative datasets to estimate the effect NFP has on immunization and breastfeeding rates.  More information about our motivation and our process are available in our project [wiki] (https://github.com/dssg/nfp/wiki).
 
 This directory contains the R code used to explore and analyze our data.  The datasets input into this analysis generally contained datasets we created by combining proprietary NFP data with data from national datasets.  See the data_preparation directory for the more information about this process.
 
@@ -34,4 +34,6 @@ The NSCH_Analysis.R script works with data output from [NSCH_Prep.R] (https://gi
 
 The first and second sections of the NSCH_Analysis.R script explore the data and compare means across the NFP and NSCH populations, looking first at the demographics used for matching (Section 1) and then at the outcomes in question (Section 2).
 
-Section 3 is the core of the matching analysis.
+Section 3 is the core of the matching analysis.  It is divided into four different analyses.  The first two look at breastfeeding incidence (i.e., was the infant ever breastfed) while the second two look at breastfeeding duration (age of infant in weeks when breastfeeding stopped).  Within each outcome, the first analysis includes all available demographic variables for matching and the second analysis does not include the indicator for whether or not the mother had any post-high school education.  Because our data included scattered null values and our analyses required complete cases, each analysis begins with limiting the dataset to only the variables required for that analysis and then to only observations that were not null for any of those variables.  The most significant number of nulls were found in the higher education indicator variable, and each analysis was conducted with and without this variable to see whether the omitted observations biased the results.  For both outcomes, our estimates were robust to the change (i.e. including or omit the higher education variable and the additional observations did not meaningfully impact our estimates).
+
+The first analysis in Section 3 is conducted using propensity score matching, as we did with immunizations.  However, because we were unable to match on income (as discussed in the [data preparation readme] (https://github.com/dssg/nfp/tree/master/data_preparation)), our treatment and control observations were very similar demographically, and PSM matching was unable to improve balance between the two groups.  We switched to Coarsened Exact Matching (CEM) to correct this problem.  More information about this problem and CEM is available in [our wiki's methodology section] (https://github.com/dssg/nfp/wiki/Methodology).

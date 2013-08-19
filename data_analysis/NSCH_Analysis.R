@@ -6,17 +6,34 @@ library(hexbin)
 library(plyr)
 
 # Import data: 
-## one dataset for breastfeeding analysis (includes treatment and control obs)
+## one dataset for breastfeeding analysis (includes treatment and control observations)
 ## one dataset includes the full NSCH dataset and weights (for general population statistics)
 
 setwd("/mnt/data/NSCH/data")
-breast <- read.csv("breastfeeding_data.csv")
-pop <- read.csv("breast_pop_comparison.csv")
+breast <- read.csv("breastfeeding_data.csv") # treatment/control obs for analysis
+pop <- read.csv("breast_pop_comparison.csv") # full survey dataset for gen population stats
 
+# A few more data updates for ease of analysis
 breast$RE <- relevel(breast$RE, ref = "WhiteNH") # change racial reference category for ease of analysis
-breast$momsage <- floor(breast$MomsAgeBirth) # simplify age decimal - decimal reporting may have differed between treatment and control
 pop$RE <- relevel(pop$RE, ref = "WhiteNH")
+breast$momsage <- floor(breast$MomsAgeBirth) # simplify age decimal - decimal reporting may have differed between treatment and control
 pop$momsage <- floor(pop$MomsAgeBirth)
+
+# NSCH has a complex survey design, so in order to run any population level statistics we need to "teach" r about the survey design (see methodology wiki)
+## More information about complex surveys in R is available at http://faculty.washington.edu/tlumley/survey/example-design.html
+## Notes about NSCH design: Strata = STATE and SAMPLE (stratified on two levels); PSU = ID; Weight = NSCHWT.  See NSCH documentation for more detail.
+
+popsvy <- svydesign(id = ~ID, strata = ~State + SAMPLE, weights = ~NSCHWT, data = pop) 
+
+# Once complex design is acknowledged, we can subset to first time mothers
+## SUBSETTING WITHOUT ACKNOWLEDGING SURVEY DESIGN WILL LEAD TO INCORRECT STANDARD ERRORS (see resources described above)
+
+popcomp <- subset(popsvy, AGEYR_CHILD <= 4 & AGEPOS4<=2 & (!is.element(FAM_MAR_COHAB, c(7,8,9))))
+
+
+
+
+# SECTION 1: General demographic plots -- how do the NFP and NSCH populations compare?
 
 # Need factor values for plotting:
 pop$highschool <- factor(pop$highschool)
@@ -30,20 +47,7 @@ breast$english <- factor(breast$english)
 breast$highered <- factor(breast$highered)
 breast$breastfed_factor <- factor(breast$breastfed) # need to keep primary breastfed variable numeric for models
 
-## Prepare full population sample for general comparison
-### Notes about NSCH:
-########### Strata: STATE and SAMPLE
-########### PSU: ID
-########### Weight: NSCHWT
-#http://faculty.washington.edu/tlumley/survey/example-design.html
-
-popsvy <- svydesign(id = ~ID, strata = ~State + SAMPLE, weights = ~NSCHWT, data = pop) 
-popcomp <- subset(popsvy, AGEYR_CHILD <= 4 & AGEPOS4<=2 & (!is.element(FAM_MAR_COHAB, c(7,8,9))))
-# Limited to the population of first time moms
-
-##### Comparing NSCH and NFP Populations
-
-# Mother's Age
+## Mother's Age
 par(mfrow = c(1,2))
 svyhist(~momsage, popcomp, main = "Mother's Age at Birth - NCHS Population", xlab = "Mother's Age", col = "navy blue", 
 	border = 'navy blue', ylim = c(0,0.12), breaks = seq(10, 60, by = 2))
@@ -53,7 +57,7 @@ hist(breast$momsage[breast$treatment==1], freq = FALSE, main = "Mother's Age at 
 svymean(~momsage, popcomp, na.rm = TRUE) # Full population of first time moms
 mean(breast$momsage[breast$treatment==1], na.rm = TRUE)  # NFP mothers
 
-# Race
+## Race
 par(mfrow = c(1,2))
 barplot(svymean(~RE, popcomp, na.rm = TRUE), names.arg = c('White', 'Black', 'Hispanic', 'Other'), 
 	main = "Mother's Race - NCHS Population", col = "navy blue", border = 'navy blue', ylim = c(0,0.55))
@@ -63,7 +67,7 @@ barplot(prop.table(table(breast$RE[breast$treatment==1], row.names = revalue(bre
 svymean(~RE, popcomp, na.rm = TRUE)
 prop.table(table(breast$RE[breast$treatment==1]))
 	
-# Marital Status
+## Marital Status
 par(mfrow = c(1,2), cex.axis = 2.8, cex.main = 2.8, cex.lab = 2.8)
 barplot(svymean(~married, popcomp, na.rm = TRUE), names.arg = c('Unmarried', 'Married'), 
 	main = "Marital Status- NCHS Population", col = "forest green", border = 'forest green', ylim = c(0,1))
@@ -74,7 +78,7 @@ svymean(~married, popcomp, na.rm = TRUE)
 prop.table(table(breast$married[breast$treatment==1]))
 
 
-# High School Attendance
+## High School Attendance
 par(mfrow = c(1,2))
 barplot(svymean(~highschool, popcomp, na.rm = TRUE), names.arg = c('No HS Degree', 'HS Degree'), 
 	main = "Education - NCHS Population", xlab = "Education", col = "navy blue", border = 'navy blue', ylim = c(0,1))
@@ -84,7 +88,7 @@ barplot(prop.table(table(breast$highschool[breast$treatment==1], row.names = rev
 svymean(~highschool, popcomp, na.rm = TRUE)
 prop.table(table(breast$highschool[breast$treatment==1]))
 
-# Higher Education
+## Higher Education
 par(mfrow = c(1,2))
 barplot(svymean(~highered, popcomp, na.rm = TRUE), names.arg = c('No Post-HS Education', 'Some Post-HS Education'), 
 	main = "Higher Education - NCHS Population", col = "navy blue", border = 'navy blue', ylim = c(0,1))
@@ -95,7 +99,7 @@ barplot(prop.table(table(breast$highered[breast$treatment==1], row.names = reval
 svymean(~highered, popcomp, na.rm = TRUE)
 prop.table(table(breast$highered[breast$treatment==1]))
 
-# English Language Household
+## English Language Household
 par(mfrow = c(1,2))
 barplot(svymean(~english, popcomp, na.rm = TRUE), names.arg = c('Non-English Household', 'English Household'), 
 	main = "English Language Status - NCHS Population", col = "navy blue", border = 'navy blue', ylim = c(0,1))
@@ -106,7 +110,12 @@ barplot(prop.table(table(breast$english[breast$treatment==1], row.names = revalu
 svymean(~english, popcomp, na.rm = TRUE)
 prop.table(table(breast$english[breast$treatment==1]))
 
-# Ever Breastfed
+
+
+
+# SECTION 2: Simple means comparison of outcomes between NFP and NSCH populations
+
+## Ever Breastfed
 par(mfrow = c(1,2))
 barplot(svymean(~breastfed, popcomp, na.rm = TRUE), names.arg = c('Never Breastfed', 'Ever Breastfed'), 
 	main = "Breastfeeding - NCHS Population", col = "navy blue", border = 'navy blue', ylim = c(0,1))
@@ -117,7 +126,7 @@ barplot(prop.table(table(breast$breastfed[breast$treatment==1], row.names = reva
 svymean(~breastfed, popcomp, na.rm = TRUE)
 prop.table(table(breast$breastfed[breast$treatment == 1]))
 
-# Weeks Breastfed	
+## Weeks Breastfed	
 par(mfrow = c(1,2))
 svyhist(~week_end_breast, popcomp, main = "Weeestimateks Breastfed - NCHS Population", xlab = "Weeks Breastfed", col = "navy blue", 
 	border = 'navy blue', ylim = c(0,.09))
@@ -126,6 +135,10 @@ hist(breast$week_end_breast[breast$treatment==1], freq = FALSE, main = "Weeks Br
 
 svymean(~week_end_breast, popcomp, na.rm = TRUE) 
 mean(breast$week_end_breast[breast$treatment == 1], na.rm = TRUE)
+
+
+
+# SECTION 3: 
 
 
 ##### Outcome 1: Child was ever breastfed
