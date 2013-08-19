@@ -1,77 +1,57 @@
-Current Population Survey
--------------------------
-
-The Current Population Survey (CPS) is a monthly surey of households in the United States that is jointly conducted by the U.S. Census Bureau and U.S. Bureau of Labor Statistics. The CPS has been conducted since 1962, allowing for a means to compare long-term trends in household composition, demographics, labor force participation, earnings, education, involvement in public programs, and more across time. At present, the CPS reaches out to approximately 76,000 households each month, representing approximately 200,000 individuals (counting from our 2010 March CPS data set obtained from IPUMS; see description below). Each survey contains a core questionnaire and, in certain months, supplementary questionnaires on topics such as computer usage, detailed school enrollment questions, and public program participation (see http://www.census.gov/cps/about/supplemental.html).
-
-The sampling structure of the CPS permits longitudinal analysis across short timeframes. Once a household is first reached by the CPS, they are surveyed in four consecutive months, are then not reapproached for eight following months, and then are surveyed in four months. This means that information is available for each household in the equivalent month across consecutive calendar years, which both respects any seasonal variation in behavior or response, and ensures that the household will respond to the same supplemental survey questions in each of the two calendar years in which they are enrolled.
-
-### Use of CPS Data in Evaluating NFP
-
-In the context of an evaluation study for NFP, the March Annual Social and Economic Supplmenet (ASEC) CPS data include measures of:
-* household composition in terms of household composition, e.g. identifying ages of children, adults, and relationships between adults); 
-* demographic information in terms of mother's age, race, baseline education, household income, marital status, and state of residence; and
-* employment and educational outcomes for mothers of young children.
-
-Because of the longitudinal structure of the CPS, women's improvement in education, employment, and reliance on other public programs can be assessed across a single year. However, note that no health information is available specific to child health in their first two years, and the age of children is not reported with enough detail to be able to determine time until second pregnancy.
-
-Of the 76,000-some households that are surveyed in each month, just over 2,250 represent households in which the oldest child is two years old or younger. Although this is a small percentage and a relatively small absolute number, especially when looking to identify mothers from disadvantaged backgrounds, pooling across multiple administrations of the CPS would obtain a large sample for comparison. This can be done by pooling across years and, conditional on the core CPS questionnaire having information on all controls and outcomes of interest, across months which would significantly increase the available sample size.
-
-### Sources of CPS Data
-
-Although the Census Bureau (see http://www.census.gov/cps/) and Bureau of Labor Statistics (see http://www.bls.gov/cps/tables.htm) administer the CPS, there are several other groups that maintain historical CPS data files and documentation that can be used for retrospective analysis and comparison for research purposes. 
-
-* 
-
-<Multiple sources from which the data can be obtained>
-
-<Where to find out more about the CPS>
-<How we proceed>
-
-### CPS Data Selected for this Study
-
-This is the folder that contains information of and/or related to the current population survey dataset.
-This data can be freely downloaded from [IPUMS](http://cps.ipums.org). When downloading this dataset, be careful to choose the correct variables to download. The ones we used are:
-
-| Variable Name | Description | Other Details |
-|:---:|:---:|:---:|
-| YEAR | Year surveyed | *preselected* |
-| SERIAL | Household serial number | *preselected* |
-| HWTSUPP |Household-level weight necessary to generate statistics using March Annual Social and Economic (ASEC) Supplement data | *preselected* |
-| METRO | Indicates whether the location of the household is in a metro area |
-| HHINCOME | Household income |
-| PUBHOUS | Indicates whether the household was in a public housing project |
-| RENTSUB | Indicates whether the household's rent is federally subsidized |
-| FOODSTMP | Indicates whether one or more members of the household are on foodstamps |
-| STAMPVAL | Total value of foodstamps received by the household over the previous year |
-| MONTH | Month surveyed | *preselected* |
-| PERNUM | Person's number in the household |
-| WTSUPP | Person-level weight necessary for analyses of individual-level CPS supplement data | *preselected* |
-| MOMLOC | Indicates whether a person's mother lived in the household and, if so, gives her person number |
-| STEPMOM | Presence of a stepmother in the household |
-| POPLOC | Indicates whether a person's father lived in the household and, if so, gives his person number |
-| SPLOC | Spouse's person number |
-| NCHILD | Number of a person's own children, including step and adopted children, living in the household |
-| ASPOUSE | Indicates whether a person's spouse lived in the household and, if so, gives his/her person number |
-| RELATE | Relationship to head of household |
-| AGE | Person's age at his/her last birthday |
-| SEX | Person's sex |
-| RACE | Person's race |
-| MARST | Person's marital status |
-| BPL | Indicates whether a person was born in the USA and, if not, gives his/her birth country |
-| EDUC | Highest level of education attained |
-| EMPSTAT | Person's employment status |
-| OCCLY | Person's primary occupation during the previous calendar year |
-| UHRSWORK | Usual number of hours worked per week)
-| HIMCAID | Indicates whether the respondent was covered by Medicaid during the previous calendar year |
-| GOTWIC | Indicates whether, during the previous calendar year, the respondent received benefits from WIC, the Special Supplemental Nutrition Program for Women, Infants and Children |
+# Nurse Family Partnership Impact Evaluation
+ 
+## Data Preparation
+ 
+To analyze the effectiveness of the Nurse-Family Partnership, we need data on NFP's clients as well as women and children not enrolled in the program.  We used nationally representative survey datasets to construct groups of mothers who are not enrolled in NFP but are on average the same as NFP mothers on a range of observable characteristics.  This required a lot of sifting 
 
 
-Preprocessing
---------
+The Nurse-Family Partnership 
 
-We selected data for March and June of 2008-2010 (inclusive). 
-We first removed all households without a child under the age of three.
-We then removed all households where all of the children under the age of three had a sibling over the age of three.
-We then removed all households where every eligible child has a stepmother living in the house.
-We added extra codes for Employment status, whether full time, part time, or unemployed. 
-We also added extra unique codes for person, mother, father, and spouse (rather than just a number within the household)
+As part of the Data Science for Social Good Fellowship (http://dssg.io), we are evaluating the effectiveness of the Nurse-Family Partnership (NFP), a home-visitation program that pairs a nurse with an at-risk first-time mother for the duration of her pregnancy and the first two years of her child's life.  Numerous studies have documented NFP's positive benefits for the mothers, children, and society, including three randomized controlled trials (RCT) (http://scholar.google.com/scholar?hl=en&q=%22nurse+family+partnership%22).  However, most of those studies focus on a single state or locality, and NFP has been scaled to a national effort operating in diverse communities.  The cost of conducting an RCT at the national level may be prohibitive.
+
+DSSG is comparing administrative data from NFP to several public national datasets.  Our goal is to identify women who are similar on all 
+observable characteristics (such as demographics) in the two datasets and compare their outcomes.  (Although we cannot know whether the women in our comparison group participated in NFP, assuming that they are non-participants biases our results toward zero, making it less likely that we find impact.)
+
+Our project has three goals:
+
+1) To provide a rough evaluation of NFP's impact at a national level (although this will not be a rigorous program evaluation, it will provide
+an educated estimate of NFP's effectiveness).
+
+2) To develop a methodology for basic impact evaluation of nonprofit programs where resource limitations and program size make traditional experimental evaluations impractical or impossible.
+
+3) To explore correlations in NFP's data between outcomes and other characteristics of the mothers, with the goal of helping NFP identify high-risk situations and techniques that seem to reduce those risks.  This knowledge will inform NFP's ongoing quality improvement processes.
+
+
+## Methodology
+
+We intend to conduct an impact evaluation using propensity score matching (PSM) (e.g. http://faculty.smu.edu/Millimet/classes/eco7377/papers/rosenbaum%20rubin%2083a.pdf).  PSM is a form of matching where cases are paired by their estimated probability of selection into treatment.  For example, income, age, and educational background plausibly affect whether a pregnant woman enrolls in NFP.  If we estimated the probability that each woman enrolls in NFP based on these characteristics (using, say, probit regression), then we could match an NFP enrollee with a 70% chance of enrolling with a non-enrollee with a 70% chance of enrolling.  Assuming we account for all the relevant factors that determine NFP enrollment, then the differences we observe between women in the program and women not in the program will on average be a good estimate of the program's effectiveness.  matching_examples.R demonstrates matching using an example where the explanatory variables are independent, another where they are not, and a third where the treatment effect varies and selection into treatment depends on the treatment effect.  The script demonstrates ordinary linear regression, stratification (a generalization of matching), exact matching, and propensity-score matching and includes explanations for each step.  The last part, where the treatment effect varies, is not complete, but the first two parts are.  
+
+PSM_Script.R contains the beginning of our matching algorithm.  We will modify and merge its contents into separate scripts for each set of outcomes, e.g. a script for immunization outcomes.
+
+NFP intends to evaluate outcomes at birth; in child health and development; in mother's life course development; and in intimate partner violence, child abuse, and neglect.  They have asked that we particularly consider child development and mother's life course outcomes.  These outcomes include the following:
+
+Child Development and Health:
+- Immunization rates
+- Breastfeeding rates
+- Language, cognitive, behavioral, and emotional development (as measured by the Ages and Stages Questionnaire)
+- Physical growth, including height and weight
+
+Mother's Life Course:
+- Educational attainment
+- Employment
+- Governmental and community assistance
+- Pregnancy interval
+- Smoking/substance abuse
+
+Note that we have included a script to convert the National Vital Statistics Survey from a fixed width format into a comma-separated value (CSV) format. While we are not using this code in our analysis, it would be helpful in evaluating the outcomes at birth.
+
+## Comparison Data Sets
+
+We have identified the following comparison datasets:
+
+1. Current Population Survey (CPS): The CPS is a joint venture between the Census Bureau and the Bureau of Labor Statistics. As such, it includes extensive information about American households. Participating households are followed over a sixteen month period. They are interviewed monthly for the first four months and for the last four months. The households followed represent physical addresses that may or may not change residents during the period in sample. For information, see the README in the cps folder.
+
+2. National Survey of Children's Health (NSCH): The NSCH is conducted by the National Center for Health Statistics at the Centers for Disease Control.  It includes information on breastfeeding and child weight (though height is not available for children under age 10).  It also includes a variety of demographic data points that can be used to match individuals in the survey to comparable individuals in NFP's data set.  To read more about the NSCH and request a copy of the data, visit www.childhealthdata.org.  More detail about which variables we are using from the NSCH and how we are recoding them is available in the cleaning script, NSCH_Prep.R.
+
+3. National Immunization Survey (NIS): The NIS is conducted jointly by the National Center for Immunizations and Respiratory Diseases and the National Center for Health Statistics.  It includes provider-reported immunizations for several vaccines and thousands of people each year.  It also includes demographic and socioeconomic variables that we can use to match with individuals in the NFP dataset.  To read more about the NIS and to download a copy of the data, visit www.cdc.gov/nchs/nis.htm.  More detail about which variables we are using from NIS and how we are recoding them is available in the cleaning script, NIS_Prep.R.
+

@@ -8,3 +8,6 @@ matching_examples.R demonstrates average treatment effect (ATE) estimation using
 
 PSM and complex surveys example.R contains the beginning of code that can help determine whether Zanutto's (2006) (http://www.jds-online.com/v4-1) point about the necessity of using survey weights post-PSM is valid when only one group -- in this case the control group -- comes from a complex survey.  This part of the analysis is unifinished.
 
+
+
+PSM_Script.R contains the beginning of our matching algorithm.  
