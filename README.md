@@ -2,7 +2,7 @@
  
 ## Introduction
  
-As part of the Data Science for Social Good Fellowship (http://dssg.io), we are evaluating the effectiveness of the Nurse-Family Partnership (NFP), a home-visitation program that pairs a nurse with an at-risk first-time mother for the duration of her pregnancy and the first two years of her child's life.  To do so, we are comparing administrative data from NFP to several public national datasets with the goal of identifying women who are similar on all observable characteristics (such as demographics) in the two datasets and comparing their outcomes.  More information about the challenges that shaped our project and methodology are available in our wiki [here] <https://github.com/dssg/nfp/wiki/Problem>.
+As part of the Data Science for Social Good Fellowship (http://dssg.io), we are evaluating the effectiveness of the Nurse-Family Partnership (NFP), a home-visitation program that pairs a nurse with an at-risk first-time mother for the duration of her pregnancy and the first two years of her child's life.  To do so, we are comparing administrative data from NFP to several public national datasets with the goal of identifying women who are similar on all observable characteristics (such as demographics) in the two datasets and comparing their outcomes.  More information about the challenges that shaped our project and methodology are available in our wiki [here] (https://github.com/dssg/nfp/wiki/Problem).
 
 Our project has two goals:
 
