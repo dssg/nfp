@@ -13,6 +13,10 @@ library("car")
 
 
 # Import Raw Data
+# These raw data were pulled from https://cps.ipums.org/ for the March CPS samples of 2008 to 2010.
+  # Note: This pull was specific to the March survey to take advantage the March supplement survey
+  # questions on employment. In on-going investigations, other CPS survey months may also be included to
+  # increase sample size with an acceptable change of focus to less detailed employment questions.
 cps.raw <- read.table("cps.csv", sep = ',', header = TRUE)
 
 names(cps.raw)
