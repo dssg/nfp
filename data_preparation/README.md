@@ -1,20 +1,30 @@
 # Nurse Family Partnership Impact Evaluation
  
-## Introduction
+## Data Preparation
  
-As part of the Data Science for Social Good Fellowship (http://dssg.io), we are evaluating the effectiveness of the Nurse-Family Partnership (NFP), a home-visitation program that pairs a nurse with an at-risk first-time mother for the duration of her pregnancy and the first two years of her child's life.  To do so, we are comparing administrative data from NFP to several public national datasets with the goal of identifying women who are similar on all observable characteristics (such as demographics) in the two datasets and comparing their outcomes.  More information about the challenges that shaped our project and methodology are available in our wiki [here] <https://github.com/dssg/nfp/wiki/Problem>.
+To analyze the effectiveness of the Nurse-Family Partnership, we need data on NFP's clients as well as women and children not enrolled in the program.  We used nationally representative survey datasets to construct groups of mothers who are not enrolled in NFP but are on average the same as NFP mothers on a range of observable characteristics.  This required a lot of sifting 
 
-Our project has two goals:
+
+The Nurse-Family Partnership 
+
+As part of the Data Science for Social Good Fellowship (http://dssg.io), we are evaluating the effectiveness of the Nurse-Family Partnership (NFP), a home-visitation program that pairs a nurse with an at-risk first-time mother for the duration of her pregnancy and the first two years of her child's life.  Numerous studies have documented NFP's positive benefits for the mothers, children, and society, including three randomized controlled trials (RCT) (http://scholar.google.com/scholar?hl=en&q=%22nurse+family+partnership%22).  However, most of those studies focus on a single state or locality, and NFP has been scaled to a national effort operating in diverse communities.  The cost of conducting an RCT at the national level may be prohibitive.
+
+DSSG is comparing administrative data from NFP to several public national datasets.  Our goal is to identify women who are similar on all 
+observable characteristics (such as demographics) in the two datasets and compare their outcomes.  (Although we cannot know whether the women in our comparison group participated in NFP, assuming that they are non-participants biases our results toward zero, making it less likely that we find impact.)
+
+Our project has three goals:
 
 1) To provide a rough evaluation of NFP's impact at a national level (although this will not be a rigorous program evaluation, it will provide
 an educated estimate of NFP's effectiveness).
 
 2) To develop a methodology for basic impact evaluation of nonprofit programs where resource limitations and program size make traditional experimental evaluations impractical or impossible.
 
+3) To explore correlations in NFP's data between outcomes and other characteristics of the mothers, with the goal of helping NFP identify high-risk situations and techniques that seem to reduce those risks.  This knowledge will inform NFP's ongoing quality improvement processes.
+
 
 ## Methodology
 
-We intend to conduct an impact evaluation using propensity score matching (PSM) (e.g. http://faculty.smu.edu/Millimet/classes/eco7377/papers/rosenbaum%20rubin%2083a.pdf).  PSM is a form of matching where cases are paired by their estimated probability of selection into treatment.  For example, income, age, and educational background plausibly affect whether a pregnant woman enrolls in NFP.  If we estimated the probability that each woman enrolls in NFP based on these characteristics (using, say, probit regression), then we could match an NFP enrollee with a 70% chance of enrolling with a non-enrollee with a 70% chance of enrolling.  Assuming we account for all the relevant factors that determine NFP enrollment, then the differences we observe between women in the program and women not in the program will on average be a good estimate of the program's effectiveness.  matching_examples.R demonstrates matching using an example where the explanatory variables are independent, another where they are not, and a third where the treatment effect varies and selection into treatment depends on the treatment effect.  The script demonstrates ordinary linear regression, stratification (a generalization of matching), exact matching, and propensity-score matching, and it includes explanations for each step.  
+We intend to conduct an impact evaluation using propensity score matching (PSM) (e.g. http://faculty.smu.edu/Millimet/classes/eco7377/papers/rosenbaum%20rubin%2083a.pdf).  PSM is a form of matching where cases are paired by their estimated probability of selection into treatment.  For example, income, age, and educational background plausibly affect whether a pregnant woman enrolls in NFP.  If we estimated the probability that each woman enrolls in NFP based on these characteristics (using, say, probit regression), then we could match an NFP enrollee with a 70% chance of enrolling with a non-enrollee with a 70% chance of enrolling.  Assuming we account for all the relevant factors that determine NFP enrollment, then the differences we observe between women in the program and women not in the program will on average be a good estimate of the program's effectiveness.  matching_examples.R demonstrates matching using an example where the explanatory variables are independent, another where they are not, and a third where the treatment effect varies and selection into treatment depends on the treatment effect.  The script demonstrates ordinary linear regression, stratification (a generalization of matching), exact matching, and propensity-score matching and includes explanations for each step.  The last part, where the treatment effect varies, is not complete, but the first two parts are.  
 
 PSM_Script.R contains the beginning of our matching algorithm.  We will modify and merge its contents into separate scripts for each set of outcomes, e.g. a script for immunization outcomes.
 

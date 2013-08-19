@@ -4,20 +4,26 @@ nfp <- read.csv("Full_NFP_Data_Child_Development_Outcomes.csv")
 setwd("/mnt/data/NSCH/data")
 nsch <- read.csv("DRC_2011_2012_NSCH.csv")
 
-# Recoding sex, prematurity, low birthweight, education, marital status variables from NSCH to match NFP
-nsch$ID <- nsch$IDNUMR
+# Recoding sex, prematurity, low birthweight, education, marital status, language variables from NSCH to match NFP
+nsch$ID <- factor(nsch$IDNUMR)
 nsch$male[nsch$SEX==2] <- 0 # Male binary = 0 if child is female; null if DK/refused
 nsch$male[nsch$SEX==1] <- 1 
 nsch$premature[nsch$K2Q05==0] <- 0 # Indicator for prematurity; null if DK/refused or missing
 nsch$premature[nsch$K2Q05==1] <- 1
-nsch$lbw[nsch$ind1_8_11==1] <- 1 # Indicator for low birthweight; null if DK/refused
-nsch$lbw[nsch$ind1_8_11==2] <- 0
-nsch$highschool[nsch$EDUC_MOMR >= 3] <- 1 # Indicator for whether mother graduated from high school
-nsch$highschool[nsch$EDUC_MOMR <= 2] <- 0
-nsch$highered[nsch$EDUC_MOMR >= 5] <- 1
-nsch$highered[nsch$EDUC_MOMR < 5] <- 0
-nsch$marital_status[nsch$FAM_MAR_COHAB<=4] <- 1 # Not quite marital status - actually indicates whether child lives with two parents: biological, adopted, or step
-nsch$marital_status[nsch$FAM_MAR_COHAB>=5] <- 0
+nsch$lbw[nsch$K2Q04R<=88] <- 1 # Indicator for low birthweight; null if DK/refused
+nsch$lbw[89<=nsch$K2Q04R] <- 0
+nsch$married[!is.na(nsch$FAM_MAR_COHAB)] <- 0
+nsch$married[which(is.element(nsch$FAM_MAR_COHAB,c(1,3,5)))] <- 1 # Not quite marital status - mother is married or child lives with married step family (could be married father)
+nsch$english[nsch$PLANGUAGE==1] <- 1 # Indicator for English speaking household
+nsch$english[nsch$PLANGUAGE==2] <- 0
+
+nsch$highschool[nsch$EDUC_MOMR >= 2] <- 1 # Indicator for whether mother graduated from high school
+nsch$highschool[nsch$EDUC_MOMR <= 1] <- 0
+nsch$highschool[nsch$EDUC_MOMR>=6] <- NA # Get rid of DK, etc values
+nsch$highered[nsch$EDUC_MOMR == 3] <- 1
+nsch$highered[nsch$EDUC_MOMR < 3] <- 0
+
+
 
 # Recoding age from NSCH to match NFP
 nsch$MomsAge <- nsch$K9Q16R 
@@ -80,14 +86,18 @@ nsch$State[nsch$STATE==48] <- "WA"
 nsch$State[nsch$STATE==49] <- "WV"
 nsch$State[nsch$STATE==50] <- "WI"
 nsch$State[nsch$STATE==51] <- "WY"
+nsch$State <- factor(nsch$State)
 
-# Recoding ID, higher ed, sex from NFP
-nfp$ID <- nfpdemo$CL_EN_GEN_ID
+# Recoding ID, higher ed, sex, language from NFP
+nfp$ID <- factor(nfp$CL_EN_GEN_ID)
 nfp$highered <- 1 # Binary 1/0 for any post-HS education (original variable specifies kind of degree/schooling)
 nfp$highered[nfp$Client_Higher_Educ_1=="No"] <- 0
 nfp$highered[nfp$Client_Higher_Educ_1==""] <- NA
 nfp$male[nfp$Childgender=="Female"] <- 0 # Recode factor variable
 nfp$male[nfp$Childgender=="Male"] <- 1 
+nfp$english <- 1*(nfp$Primary_language=="English")
+nfp$english[nfp$Primary_language==''] <- NA
+nfp$married <- nfp$marital_status
 
 # Race recodes: note that NSCH has only child's race and NFP has only mother's race.
 # Must assume for matching purposes that they are the same.
@@ -100,20 +110,46 @@ nsch$RE[nsch$HISPANIC==1] <- "Hispanic"
 nsch$RE[nsch$HISPANIC==0 & nsch$RACER==1] <- "WhiteNH"
 nsch$RE[nsch$HISPANIC==0 & nsch$RACER==2] <- "BlackNH"
 nsch$RE[nsch$HISPANIC==0 & nsch$RACER==3] <- "Other"
+nsch$RE <- factor(nsch$RE)
 
-nfpdemo$RE <- as.character(nfp$MomsRE) # Renaming variable
-nfpdemo$RE[nfp$RE=="Hispanic or Latina"] <- "Hispanic" # Shortening description
-nfpdemo$RE[nfp$RE=="Declined or msg"] <- NA 
-nfpdemo$RE <- factor(nfp$RE) # Return to factor format with adjusted levels
+nfp$RE <- as.character(nfp$MomsRE) # Renaming variable
+nfp$RE[nfp$RE=="Hispanic or Latina"] <- "Hispanic" # Shortening description
+nfp$RE[nfp$RE=="Declined or msg"] <- NA 
+nfp$RE <- factor(nfp$RE) # Return to factor format with adjusted levels
 
-# Remove extra NSCH columns, obs for families with no children < age 2, families making more than 200% of FPL
-# (WIC/NFP criteria is generally 100-185% FPL, so these mothers are not valid matches)
-NSCH_Final <- subset(nsch, nsch$POVLEVEL_I <= 2 & nsch$AGEYR_CHILD <= 4, 
-	select = c(ID, male, premature, lbw, highschool, highered, marital_status, MomsAgeBirth, State, RE))
+
+# Dependent variables!  Need a common set of outcomes.
+nsch$breastfed <- nsch$K6Q40 # Indicator variable for whether the child has ever been breastfed
+nsch$breastfed[which(is.element(nsch$breastfed, c(6, 7)))] <- NA
+
+nfp$breastfed[nfp$ever_breastfed=="Yes"] <- 1
+nfp$breastfed[nfp$ever_breastfed=="No"] <- 0
+
+nsch$days_breast <- nsch$K6Q41R
+nsch$days_breast[nsch$K6Q41R >= 9995] <- NA # Drop DK/other codes
+nsch$week_end_breast <- (nsch$days_breast/7)
+# Although NFP collects data for whether child is still breastfed at 6, 12, 18, and 24 months,
+#  the question "How old was your baby when s/he stopped getting breast milk?" most closely parallels
+#  NSCH's "How old was he/she when he/she completely stopped breastfeeding or being fed breast milk?"
+# Note: some inconsistency in respondents' answers between the interval questions and the final estimate.
+
+nsch$week_end_breast[nsch$week_end_breast>104] <- NA
+# Omit NSCH responses for which we have no comparable from NFP
+nfp$week_end_breast[nfp$week_end_breast>104] <- NA
+# Eliminate a couple data anomalies in NFP data
+
+# Remove extra NSCH columns and ineligible observations including:
+	## Children > age 4
+	## Children who are not the oldest (note AGEPOS 1 = only child, 2 = oldest)
+	## Children from HH making more than 200% of FPL WIC/NFP criteria is generally 100-185% FPL)
+	## Children who do not live with their biological mother (however, keeping children who live in a two-parent step HH - unclear whether live with mother or father)
+NSCH_Final <- subset(nsch, nsch$POVLEVEL_I <= 2 & nsch$AGEYR_CHILD <= 4 & nsch$AGEPOS4<=2 & (!is.element(nsch$FAM_MAR_COHAB, c(7,8,9))), 
+	select = c(ID, male, premature, lbw, highschool, highered, married, MomsAgeBirth, 
+	State, RE, english, breastfed, week_end_breast))
 	
 # Remove extra NFP columns.
 NFP_Final <- subset(nfp, select = c(ID, male, premature, lbw, highschool, highered, 
-	marital_status, MomsAgeBirth, State, RE))
+	married, MomsAgeBirth, State, RE, english, breastfed, week_end_breast))
 
 # Add treatment indicator
 NSCH_Final$treatment <- 0
@@ -121,3 +157,10 @@ NFP_Final$treatment <- 1
 
 # Combine final datasets to create analysis dataset.
 breastfeeding <- rbind(NSCH_Final, NFP_Final)
+write.csv(breastfeeding, "breastfeeding_data.csv")
+
+
+# Creating one dataset without dropping any NSCH obs and keeping weights/strata, to get general population statistics.
+NSCH_Full <- subset(nsch, select = c(ID, male, premature, lbw, highschool, highered, married, 
+			MomsAgeBirth, State, RE, english, breastfed, week_end_breast, NSCHWT, SAMPLE, AGEYR_CHILD, AGEPOS4, FAM_MAR_COHAB, POVLEVEL_I))
+write.csv(NSCH_Full, file = "breast_pop_comparison.csv")

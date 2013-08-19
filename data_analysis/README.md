@@ -1,20 +1,22 @@
-# Nurse Family Partnership Impact Evaluation
+# Nurse Family Partnership Immunization Study -- Data Analysis
  
-## Introduction
+## Overview
+
+The Nurse-Family Partnership (NFP; http://www.nursefamilypartnership.org) would like to know what effect it has on several birth outcomes, child health and development outcomes, mother's life course outcomes, and abuse outcomes.  As part of the Eric and Wendy Schmidt Data Science for Social Good summer fellowship (http://dssg.io), we used data from NFP and nationally representative datasets to estimate the effect NFP has on immunization and breastfeeding rates.  The data_analysis directory contains the R code we used to do that.
+
+
+## example_simulations
+
+This directory contains two scripts.  The first script, matching_examples.R, demonstrates the behavior of OLS, stratification, exact matching, and propensity-score matching on three increasingly complex datasets.  The second, PSM and complex surveys example.R, contains the beginnings of code that help determine whether Zanutto's (2006) (http://www.jds-online.com/v4-1) point about the necessity of using survey weights applies when the treatment group does not come from the complex survey.  This part of the analysis is not complete.
+
+
+## Exploratory Analysis
+
+NIS_graphs.R 
  
-As part of the Data Science for Social Good Fellowship (http://dssg.io), we are evaluating the effectiveness of the Nurse-Family Partnership (NFP), a home-visitation program that pairs a nurse with an at-risk first-time mother for the duration of her pregnancy and the first two years of her child's life.  To do so, we are comparing administrative data from NFP to several public national datasets with the goal of identifying women who are similar on all observable characteristics (such as demographics) in the two datasets and comparing their outcomes.  More information about the challenges that shaped our project and methodology are available in our wiki [here] <https://github.com/dssg/nfp/wiki/Problem>.
-
-Our project has two goals:
-
-1) To provide a rough evaluation of NFP's impact at a national level (although this will not be a rigorous program evaluation, it will provide
-an educated estimate of NFP's effectiveness).
-
-2) To develop a methodology for basic impact evaluation of nonprofit programs where resource limitations and program size make traditional experimental evaluations impractical or impossible.
 
 
-## Methodology
-
-We intend to conduct an impact evaluation using propensity score matching (PSM) (e.g. http://faculty.smu.edu/Millimet/classes/eco7377/papers/rosenbaum%20rubin%2083a.pdf).  PSM is a form of matching where cases are paired by their estimated probability of selection into treatment.  For example, income, age, and educational background plausibly affect whether a pregnant woman enrolls in NFP.  If we estimated the probability that each woman enrolls in NFP based on these characteristics (using, say, probit regression), then we could match an NFP enrollee with a 70% chance of enrolling with a non-enrollee with a 70% chance of enrolling.  Assuming we account for all the relevant factors that determine NFP enrollment, then the differences we observe between women in the program and women not in the program will on average be a good estimate of the program's effectiveness.  matching_examples.R demonstrates matching using an example where the explanatory variables are independent, another where they are not, and a third where the treatment effect varies and selection into treatment depends on the treatment effect.  The script demonstrates ordinary linear regression, stratification (a generalization of matching), exact matching, and propensity-score matching, and it includes explanations for each step.  
+We intend to conduct an impact evaluation using propensity score matching (PSM) (e.g. http://faculty.smu.edu/Millimet/classes/eco7377/papers/rosenbaum%20rubin%2083a.pdf).  PSM is a form of matching where cases are paired by their estimated probability of selection into treatment.  For example, income, age, and educational background plausibly affect whether a pregnant woman enrolls in NFP.  If we estimated the probability that each woman enrolls in NFP based on these characteristics (using, say, probit regression), then we could match an NFP enrollee with a 70% chance of enrolling with a non-enrollee with a 70% chance of enrolling.  Assuming we account for all the relevant factors that determine NFP enrollment, then the differences we observe between women in the program and women not in the program will on average be a good estimate of the program's effectiveness.  matching_examples.R demonstrates matching using an example where the explanatory ve ariables are independent, another where they are not, and a third where the treatment effect varies and selection into treatment depends on the treatment effect.  The script demonstrates ordinary linear regression, stratification (a generalization of matching), exact matching, and propensity-score matching and includes explanations for each step.  The last part, where the treatment effect varies, is not complete, but the first two parts are.  
 
 PSM_Script.R contains the beginning of our matching algorithm.  We will modify and merge its contents into separate scripts for each set of outcomes, e.g. a script for immunization outcomes.
 
@@ -44,4 +46,5 @@ We have identified the following comparison datasets:
 2. National Survey of Children's Health (NSCH): The NSCH is conducted by the National Center for Health Statistics at the Centers for Disease Control.  It includes information on breastfeeding and child weight (though height is not available for children under age 10).  It also includes a variety of demographic data points that can be used to match individuals in the survey to comparable individuals in NFP's data set.  To read more about the NSCH and request a copy of the data, visit www.childhealthdata.org.  More detail about which variables we are using from the NSCH and how we are recoding them is available in the cleaning script, NSCH_Prep.R.
 
 3. National Immunization Survey (NIS): The NIS is conducted jointly by the National Center for Immunizations and Respiratory Diseases and the National Center for Health Statistics.  It includes provider-reported immunizations for several vaccines and thousands of people each year.  It also includes demographic and socioeconomic variables that we can use to match with individuals in the NFP dataset.  To read more about the NIS and to download a copy of the data, visit www.cdc.gov/nchs/nis.htm.  More detail about which variables we are using from NIS and how we are recoding them is available in the cleaning script, NIS_Prep.R.
+
 
