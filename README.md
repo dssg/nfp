@@ -62,7 +62,7 @@ All of our data analysis, impact estimation, and exhibit generation code is writ
 * Books tailored to one's programming background, such as [R for SAS and SPSS Users](http://www.amazon.com/SAS-SPSS-Users-Statistics-Computing/dp/1461406846/ref=sr_1_1?s=books&ie=UTF8&qid=1376955179&sr=1-1) by Robert Muenchen or  [R for Stata Users](http://www.amazon.com/R-Stata-Users-Statistics-Computing/dp/1461425964/ref=sr_1_2?s=books&ie=UTF8&qid=1376955179&sr=1-2) by Robert Muenchen and Joseph Hilbe
  * Note that these books have excellent, and freely available, code samples for many common operations in R, with comparisons to the equivalent commands in SAS, SPSS and Stata.
 * [R in a Nutshell](http://web.udl.es/Biomath/Bioestadistica/R/Manuals/r_in_a_nutshell.pdf) by Joseph Adler, published by O'Reilly
-* A number of freely available "quick reference" sheets such as ones by [Tom Short](http://cran.r-project.org/doc/contrib/Short-refcard.pdf), staff at the [University of Auckland](https://www.stat.auckland.ac.nz/~stat380/downloads/QuickReference.pdf), 
+* A number of freely available "quick reference" sheets such as ones by [Tom Short](http://cran.r-project.org/doc/contrib/Short-refcard.pdf), and staff at the [University of Auckland](https://www.stat.auckland.ac.nz/~stat380/downloads/QuickReference.pdf).
  
 Searching the internet is also an excellent way to understand the commands that we used or to search for methods of interest to you, due to the large and active community of R users.
 
