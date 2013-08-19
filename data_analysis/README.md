@@ -10,10 +10,19 @@ The Nurse-Family Partnership (NFP; http://www.nursefamilypartnership.org) would 
 This directory contains two scripts.  The first script, matching_examples.R, demonstrates the behavior of OLS, stratification, exact matching, and propensity-score matching on three increasingly complex datasets.  The second, PSM and complex surveys example.R, contains the beginnings of code that help determine whether Zanutto's (2006) (http://www.jds-online.com/v4-1) point about the necessity of using survey weights applies when the treatment group does not come from the complex survey.  This part of the analysis is not complete.
 
 
-## Exploratory Analysis
+## PSM_Script.R
 
-NIS_graphs.R 
+PSM_Script.R is a script that outlines how to implement propensity score matching.  The variables are left blank so that the script can be adapted to the needs of the user.  We used a modified version of PSM_Script.R in NIS_Analysis.R.
+
+
+## NIS_graphs.R
+
+NIS_graphs.R create plots that contrast mothers enrolled in NFP to mothers from the general population using the National Immunization Survey.  The variables examined include income, race, mother's age, language, child's sex, mother's marital status, and mother's education.
+
+
+## NIS_Analysis.R
  
+
 
 
 We intend to conduct an impact evaluation using propensity score matching (PSM) (e.g. http://faculty.smu.edu/Millimet/classes/eco7377/papers/rosenbaum%20rubin%2083a.pdf).  PSM is a form of matching where cases are paired by their estimated probability of selection into treatment.  For example, income, age, and educational background plausibly affect whether a pregnant woman enrolls in NFP.  If we estimated the probability that each woman enrolls in NFP based on these characteristics (using, say, probit regression), then we could match an NFP enrollee with a 70% chance of enrolling with a non-enrollee with a 70% chance of enrolling.  Assuming we account for all the relevant factors that determine NFP enrollment, then the differences we observe between women in the program and women not in the program will on average be a good estimate of the program's effectiveness.  matching_examples.R demonstrates matching using an example where the explanatory ve ariables are independent, another where they are not, and a third where the treatment effect varies and selection into treatment depends on the treatment effect.  The script demonstrates ordinary linear regression, stratification (a generalization of matching), exact matching, and propensity-score matching and includes explanations for each step.  The last part, where the treatment effect varies, is not complete, but the first two parts are.  
