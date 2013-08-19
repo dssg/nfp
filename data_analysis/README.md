@@ -7,9 +7,7 @@ The Nurse-Family Partnership (NFP; http://www.nursefamilypartnership.org) would 
 
 ## example_simulations
 
-This directory contains two scripts.  The first script demonstrates propensity score matching 
-
-We used propensity score matching to estimate NFP's impact on immunization rates.  
+This directory contains two scripts.  The first script, matching_examples.R, demonstrates the behavior of OLS, stratification, exact matching, and propensity-score matching on three increasingly complex datasets.  The second, PSM and complex surveys example.R, contains the beginnings of code that help determine whether Zanutto's (2006) (http://www.jds-online.com/v4-1) point about the necessity of using survey weights applies when the treatment group does not come from the complex survey.  This part of the analysis is not complete.
 
 
 ## Exploratory Analysis
