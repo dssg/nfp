@@ -2,10 +2,12 @@
  
 ## Overview
 
-The Nurse-Family Partnership (NFP; http://www.nursefamilypartnership.org) would like to know what effect it has on several birth outcomes, child health and development outcomes, mother's life course outcomes, and abuse outcomes.  As part of the Eric and Wendy Schmidt Data Science for Social Good summer fellowship, we used data from NFP and nationally representative datasets to estimate the effect NFP has on immunization and breastfeeding rates.  The data_analysis directory contains R code to do that.
+The Nurse-Family Partnership (NFP; http://www.nursefamilypartnership.org) would like to know what effect it has on several birth outcomes, child health and development outcomes, mother's life course outcomes, and abuse outcomes.  As part of the Eric and Wendy Schmidt Data Science for Social Good summer fellowship (http://dssg.io), we used data from NFP and nationally representative datasets to estimate the effect NFP has on immunization and breastfeeding rates.  The data_analysis directory contains the R code we used to do that.
 
 
-## Methodology
+## example_simulations
+
+This directory contains two scripts.  The first script demonstrates propensity score matching 
 
 We used propensity score matching to estimate NFP's impact on immunization rates.  
 
