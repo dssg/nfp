@@ -341,7 +341,7 @@ hist(weeks_breast1$week_end_breast[weeks_breast1$treatment==1], freq = FALSE, ma
 
 matches2_1 <- weeks_breast2[cemmatch_coarse2_1$w>0,]
 ggplot(matches2_1, aes(week_end_breast, color = as.factor(treatment))) + stat_ecdf(geom = 'smooth')
-	xlab("Weeks Breastfed") + ggtitle('Cumulative Density - Weeks Breastfed') +
+	xlab("Weeks Breastfed") + ggtitle('Cumulative Density - Weeks Breastfed')
 
 
 	
@@ -392,7 +392,4 @@ test <- hist(weeks_breast2$week_end_breast[weeks_breast2$treatment==1], freq = F
 
 matches2_2 <- weeks_breast2[cemmatch_coarse2_2$w>0,]
 ggplot(matches2_2, aes(week_end_breast, color = as.factor(treatment))) + stat_ecdf(geom = 'smooth')
-	xlab("Weeks Breastfed") + ggtitle('Cumulative Density - Weeks Breastfed') +
-
-
-#### Explore on 8/19: six month measures, distributions at 0.
+	xlab("Weeks Breastfed") + ggtitle('Cumulative Density - Weeks Breastfed')
