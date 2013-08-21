@@ -640,6 +640,9 @@ NISPUF$Immunizations_UptoDate_24 <- 0
 #   Up to Date on Vaccinations      #
 #    as Reported by Household       #
 #   (from memory, no shotcard)      #
+#     1 means child received        #
+#   at least one shot; 50 means     #
+#     child received all shots      #
 #                                   #
 #####################################
 #####################################

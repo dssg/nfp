@@ -107,6 +107,8 @@ table(cps.raw[,c("YEAR", "MONTH")])
 ## Previously-developed code to establish employment status
 #----------------------------------------------------------
 
+# Recodes hours worked per week into whether a person is part-time or full-time.
+
 ## Codes (EMPLOY):
 ######## 0 = Unemployed
 ######## 1 = Part-time
@@ -122,6 +124,8 @@ work.code.row <- function(row,n,m) {
     } else {return(NA)}
   } else return(0)
 }
+
+# Checks whether the right columns are in the dataset
 
 work.code <- function(data) {
   if("EMPSTAT" %in% names(data)){

@@ -138,22 +138,21 @@ mean(breast$week_end_breast[breast$treatment == 1], na.rm = TRUE)
 
 
 
+
 # SECTION 3: 
 
+## Outcome 1: Child was ever breastfed
+## Approach 1 - including higher education indicator
 
-##### Outcome 1: Child was ever breastfed
-### Approach 1 - using all complete cases
-######## note: matching on complete cases assumes there is no systemic difference btwn nulls and non-nulls
-
-ever_breast1 <- breast[,c(3:8,11:13,15:16)] # Omit data for other outcome measure, also IDs
-ever_breast <- subset(ever_breast1, complete.cases(ever_breast1))
+ever_breast1 <- breast[,c(3:8,11:13,15:16)] # Omit variables that aren't needed for this analysis
+ever_breast <- subset(ever_breast1, complete.cases(ever_breast1)) # Note: matching on complete cases assumes there is no systemic difference btwn nulls and non-nulls
 matchvars <- c("highschool", "highered", "married", "momsage", "RE", "english")
 
-## PROPENSITY SCORE MATCHING
+### PROPENSITY SCORE MATCHING
 
 probit1_1 <- glm(treatment ~ (highschool + married + highered + momsage + RE + english), 
 	data = ever_breast, family = binomial(link = "probit"))
-# Drop state - too few obs in each state leading to near-perfect separation
+# Dropped state - too few obs in each state leading to near-perfect separation
 summary(probit1_1)
 
 ever_breast$ps <- predict(probit1_1, data = ever_breast, type = "response")
@@ -169,19 +168,19 @@ summary(ever_match1)
 MatchBalance(treatment ~ highschool + married + highered + momsage + RE + english, 
 	data = ever_breast, match.out=ever_match1, nboots=1000) # Check balance before and after match.
 	
-#### Propensity matching appears to make balance WORSE in many cases and does not consistently help.  
-#### Different models only help when very simple (simple enough that matches are basically exact).
-#### See Gary King, Richard Nielsen, Carter Coberley, James E. Pope, and Aaron Wells'
-####    "Comparative Effectiveness of Matching Methods for Causal Inference" (12/9/2011, 
-####     http://gking.harvard.edu/files/gking/files/psparadox.pdf) for ideas about why.
+# Propensity matching appears to make balance WORSE in many cases and does not consistently help.  
+# Different PSM models (different calipers, kernal, etc.) only help when very simple (simple enough that matches are basically exact).
+# See Gary King, Richard Nielsen, Carter Coberley, James E. Pope, and Aaron Wells'
+#    "Comparative Effectiveness of Matching Methods for Causal Inference" (12/9/2011, 
+#     http://gking.harvard.edu/files/gking/files/psparadox.pdf) for ideas about why.
 
 
 ## COARSENED EXACT MATCHING - http://gking.harvard.edu/files/gking/files/cem.pdf
 ## Create strata to "coarsen" data (not requiring exact matches, but exact matches within broadened strata).
-## Our data naturally contains some coarse strata, so is amenable to this technique.
+## Our data naturally contains some coarse strata, so is particularly amenable to this technique.
 imbalance(group = ever_breast$treatment, data = ever_breast[matchvars]) # Data are similar, but not balanced
 
-# RE is already grouped as finely as we would like (WhiteNH, BlackNH, Hispanic, Other), and 1/0 factors are natural strata.
+# RE is already grouped as coarsely as we would like (WhiteNH, BlackNH, Hispanic, Other), and 1/0 factors are natural strata.
 # Mom's age is very important at low values, but less important as mother ages - create manual cutpoints
 agecut_fine <- c(0,12,14,15,16,17,18,19,20,23,26,30,35,40)
 agecut_coarser <- c(0,12,15,18,21,25,35)
@@ -198,11 +197,11 @@ cemmatch_coarsest
 # balance is much improved by all models
 
 # How to see how data points were stratified, if we hadn't set the cutoffs/groups ourselves:
-##cemmatch$breaks$highschool
-##cemmatch$breaks$highered
-##cemmatch$breaks$married
-##cemmatch$breaks$momsage
-##cemmatch$breaks$english
+##cemmatch_fine$breaks$highschool
+##cemmatch_fine$breaks$highered
+##cemmatch_fine$breaks$married
+##cemmatch_fine$breaks$momsage
+##cemmatch_fine$breaks$english
 
 estimate1_1_fine <- att(cemmatch_fine, breastfed ~ treatment + male + premature + lbw, data = ever_breast)
 # This is a linear regression.  Could also add "model = 'logistic'" option to change reg type.
@@ -212,7 +211,7 @@ estimate1_1_coarsest <- att(cemmatch_coarsest, breastfed ~ treatment + male + pr
 summary(estimate1_1_fine)
 summary(estimate1_1_coarse)
 summary(estimate1_1_coarsest)
-# trade off between # of unmatched obs and precision of match (i.e. how perfectly obs match
+# trade off between # of unmatched obs and precision of match (i.e. how perfectly obs match) between different models
 # but estimates are generally hovering around the same point
 
 # These results can be duplicated with weighted means, using the weights created by CEM:
@@ -226,10 +225,10 @@ table(matched1_1$treatment)
 
 # Plot the results
 pop_mean1 <- svymean(~breastfed, popcomp, na.rm = TRUE)
-means1_1 <- rbind(pop_mean1[2], control_mean1_1, treat_mean1_1)
+means1_1 <- rbind(pop_mean1, control_mean1_1, treat_mean1_1)
 rownames(means1_1) <- c("General Population", "Matched Group", "NFP Participants")
 means1_1 <- as.data.frame(means1_1)
-ggplot(means1_1, aes(x = rownames(means1_1), y = breastfed1)) + 
+ggplot(means1_1, aes(x = rownames(means1_1), y = breastfed)) + 
 	geom_bar(stat='identity', fill = 'dark green', border = 'dark green', width = 0.5) +
 	scale_y_continuous(limits=c(0,1)) +
 	ylab("Percent of Children Ever Breastfed") +
@@ -243,9 +242,9 @@ ggplot(means1_1, aes(x = rownames(means1_1), y = breastfed1)) +
 
 	
 	
-##### Outcome 1: Child was ever breastfed
-### Approach 2 - drop higher ed indicator (lots of NAs), THEN use all complete cases
-### Repeat CEM using same approach as above
+## Outcome 1: Child was ever breastfed
+## Approach 2 - drop higher ed indicator (lots of NAs), THEN use all complete cases
+## Repeat CEM using same approach as above
 
 ever_breast2 <- breast[,c(3:6,8,11:13,15:16)]
 ever_breast_restricted <- subset(ever_breast2, complete.cases(ever_breast2))
@@ -275,10 +274,10 @@ treat_mean1_2 <- weighted.mean(ever_breast_restricted$breastfed[ever_breast_rest
 	cemmatch_coarse1_2$w[ever_breast_restricted$treatment==1])
 control_mean1_2 <- weighted.mean(ever_breast_restricted$breastfed[ever_breast_restricted$treatment==0], 
 	cemmatch_coarse1_2$w[ever_breast_restricted$treatment==0])
-means1_2 <- rbind(pop_mean1[2], control_mean1_2, treat_mean1_2)
+means1_2 <- rbind(pop_mean1, control_mean1_2, treat_mean1_2)
 rownames(means1_2) <- c("General Population", "Matched Group", "NFP Participants")
 means1_2 <- as.data.frame(means1_2)
-ggplot(means1_2, aes(x = rownames(means1_2), y = breastfed1)) + 
+ggplot(means1_2, aes(x = rownames(means1_2), y = breastfed)) + 
 	geom_bar(stat='identity', fill = 'dark green', border = 'dark green', width = 0.5) +
 	scale_y_continuous(limits=c(0,1)) +
 	ylab("Percent of Children Ever Breastfed") +
@@ -295,8 +294,8 @@ ggplot(means1_2, aes(x = rownames(means1_2), y = breastfed1)) +
 
 		
 		
-# Outcome 2: Weeks child was breastfed
-# Approach 1: including higher ed
+## Outcome 2: Weeks child was breastfed
+## Approach 1: including higher ed
 weeks_breast <- breast[,c(3:8,11:12,14:16)]
 weeks_breast1 <- subset(weeks_breast, complete.cases(weeks_breast))
 matchvars2 <- c("highschool", "highered", "married", "momsage", "RE", "english")
@@ -340,7 +339,12 @@ hist(weeks_breast1$week_end_breast[cemmatch_coarse2_1$w>0 & weeks_breast1$treatm
 hist(weeks_breast1$week_end_breast[weeks_breast1$treatment==1], freq = FALSE, main = "Weeks Breastfed - NFP Population",
 	xlab = "Weeks Breastfed", col = 'dark red', border = 'dark red', ylim = c(0, .09))
 
+matches2_1 <- weeks_breast2[cemmatch_coarse2_1$w>0,]
+ggplot(matches2_1, aes(week_end_breast, color = as.factor(treatment))) + stat_ecdf(geom = 'smooth')
+	xlab("Weeks Breastfed") + ggtitle('Cumulative Density - Weeks Breastfed')
 
+
+	
 # Outcome 2: Weeks child was breastfed
 # Approach 2: exclude higher ed
 weeks_breast2 <- breast[,c(3:6,8,11:12,14:16)]
@@ -365,6 +369,7 @@ estimate2_2_coarsest <- att(cemmatch_coarsest2_2, week_end_breast ~ treatment + 
 summary(estimate2_2_fine)
 summary(estimate2_2_coarse)
 summary(estimate2_2_coarsest)
+	
 
 # Identifying means:
 treat_mean2_2 <- weighted.mean(weeks_breast2$week_end_breast[weeks_breast2$treatment==1], 
@@ -387,3 +392,4 @@ test <- hist(weeks_breast2$week_end_breast[weeks_breast2$treatment==1], freq = F
 
 matches2_2 <- weeks_breast2[cemmatch_coarse2_2$w>0,]
 ggplot(matches2_2, aes(week_end_breast, color = as.factor(treatment))) + stat_ecdf(geom = 'smooth')
+	xlab("Weeks Breastfed") + ggtitle('Cumulative Density - Weeks Breastfed')
