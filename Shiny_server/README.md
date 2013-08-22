@@ -6,4 +6,4 @@ At the beginning of the fellowship, we met local NFP nurses to learn about their
 
 To address this problem, we created a simple [Shiny](http://www.rstudio.com/shiny/) application that does the calculation for the nurses.  The nurses enter the week of gestation into an input box, and the program calculates the minimum number of visits they need to make.  [RStudio](http://www.rstudio.com/) has graciously donated space on a web server to host the application.  You can find it [here](http://spark.rstudio.com/jtwalsh0/NFP/).  
 
-There are two working files in this directory.  The first, server.R, performs the calculations; and the second, ui.R, generates the user interface.  You can employ these scripts on the web with a Linux server and the Shiny Server software.  For more details, please see the Shiny webpage using the link provided above.
+There are two working files in this directory.  The first, `server.R`, performs the calculations; and the second, `ui.R`, generates the user interface.  You can employ these scripts on the web with a Linux server and the Shiny Server software.  For more details, please see the Shiny webpage using the link provided above.
