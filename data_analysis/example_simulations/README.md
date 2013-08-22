@@ -1,6 +1,4 @@
-# Data Analysis
-
-## Example and Simulation Scripts
+# Example and Simulation Scripts
 
 This folder contains scripts that demonstrate some of our methodological questions and challenges more simply.
 
