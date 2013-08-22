@@ -2,7 +2,6 @@
  
 This is a [Data Science for Social Good Fellowship](http://dssg.io) project to help the Nurse-Family Partnership evaluate its effectiveness at promoting healthy child developmental outcomes and stable families.
 
-
 ![NFP](http://dssg.io/img/partners/nfp.jpg)
  
 ## The Problem
@@ -58,9 +57,9 @@ We would love to hear from other individuals using parts of our code, doing the 
 
 ## Using R
 
-All of our data analysis, impact estimation, and exhibit generation code is written in R, a free and widely used statistics software package. 
+All of our data analysis, impact estimation, and data visualization code is written in R, a free and widely-used statistics programming language. 
 
-We made this choice to ensure accessibility of our work to the broad non-profit and research community that might be interested in this work. While R is widely--and increasingly-- used, we recognize that many potential users of this code may not have any, or at least, comfortable acquaintance with programming in R. Several references and tutorials that we highly recommend are:
+We chose R so our work could be widely used by the non-profit and research community. But we recognize that many potential users of this code may not have use R before. Here's a few references and tutorials that we highly recommend are:
 
 * [Code School's free, interactive tutorial in R](http://www.codeschool.com/courses/try-r)
 * Books tailored to one's programming background, such as [R for SAS and SPSS Users](http://www.amazon.com/SAS-SPSS-Users-Statistics-Computing/dp/1461406846/ref=sr_1_1?s=books&ie=UTF8&qid=1376955179&sr=1-1) by Robert Muenchen or  [R for Stata Users](http://www.amazon.com/R-Stata-Users-Statistics-Computing/dp/1461425964/ref=sr_1_2?s=books&ie=UTF8&qid=1376955179&sr=1-2) by Robert Muenchen and Joseph Hilbe
@@ -68,8 +67,6 @@ We made this choice to ensure accessibility of our work to the broad non-profit 
 * [R in a Nutshell](http://web.udl.es/Biomath/Bioestadistica/R/Manuals/r_in_a_nutshell.pdf) by Joseph Adler, published by O'Reilly
 * A number of freely available "quick reference" sheets such as ones by [Tom Short](http://cran.r-project.org/doc/contrib/Short-refcard.pdf), and staff at the [University of Auckland](https://www.stat.auckland.ac.nz/~stat380/downloads/QuickReference.pdf).
 * Researchers interested in using R specifically to work with complex national surveys may be interested in [Anthony D'Amico's usgsd repo](https://github.com/ajdamico/usgsd), which includes sample import and analysis scripts for many popular surveys.
- 
-Searching the internet is also an excellent way to understand the commands that we used or to search for methods of interest to you, due to the large and active community of R users.
 
 
 ## License
