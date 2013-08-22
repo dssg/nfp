@@ -1,6 +1,4 @@
-# Nurse Family Partnership Immunization Study 
-
-## Shiny Server
+# Nurse-Family Partnership Shiny Server
 
 At the beginning of the fellowship, we met local NFP nurses to learn about their experiences and to gain insight into the program.  We learned that one of their tedious tasks involves calculating how many visits they need to make for each client before she gives birth based on the week of her pregnancy.  NFP calls for a visit every week for the first four weeks a woman is enrolled and a visit every other week after that, and to meet NFP standards the nurses need to make at a minimum 80% of those recommended visits.  
 
