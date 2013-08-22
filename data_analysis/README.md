@@ -23,7 +23,7 @@ The file `NIS_graphs.R` contains the code for exploratory analysis we did using 
 
 ## Immunizations Analysis: `NIS_Analysis.R`
 
-The `NIS_Analysis.R` script works with data output from [NIS_Prep.R](https://github.com/dssg/nfp/blob/master/data_preparation/NIS_Prep.R), which combines NFP administrative data with the 2008, 2009, and 2010 National Immunization Surveys.  The script plots the states that NFP operates in, conducts exploratory analysis, and obtains average treatment effects for the treated using propensity-score matching.
+The `NIS_Analysis.R` script works with data output from [NIS_Prep.R](https://github.com/dssg/nfp/blob/master/data_preparation/NIS_Prep.R), which combines NFP administrative data with the 2008, 2009, and 2010 National Immunization Surveys.  The script plots the states that NFP operates in, conducts exploratory analysis, and obtains average treatment effect for the treated using propensity-score matching.
 
 
 ## Breastfeeding Analysis: `NSCH_Analysis.R`
