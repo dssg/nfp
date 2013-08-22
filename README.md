@@ -7,13 +7,20 @@ This is a [Data Science for Social Good Fellowship](http://dssg.io) project to h
  
 ## The Problem
  
-The Nurse-Family Partnership (NFP) is a home-visitation program that pairs a nurse with an at-risk first-time mother for the duration of her pregnancy and the first two years of her child's life. The Affordable Care Act of 2010 made new money available to home visitation programs such as NFP, but also required increased accountability for evidence-based demonstrations of effectiveness. NFP was founded on the basis of multiple randomized controlled trials (which are on-going, in follow-up), and the organization continues to study program outcomes. However, while NFP's formidable information tracking system affords them a large-scale, systematic perspective for reviewing participants' outcomes, they face two principle challenges to performing a large-scale evaluation:
+The [Nurse-Family Partnership](http://www.nursefamilypartnership.org) (NFP) is a nation-wide home-visitation program that pairs a nurse with an at-risk first-time mother for the duration of her pregnancy and the first two years of her child's life. 
 
-1) They do not have data on child and mother outcomes for a comparison population (i.e. which they do not serve);
+The Affordable Care Act of 2010 made new money available to home visitation programs such as NFP, but also required that programs provide evidence of their effectiveness. 
+Although NFP was founded on the basis of several successful randomized controlled trials, these studies were conducted decades ago and in only a handful of states. They need a way to measure their impact across the country using the observational data they have.
 
-2) NFP's program participants differ from the general population on a range of characteristics, including some, like income or educational attainment, that probably impact the outcomes in question.  As a result, a simple comparison of means between the outcomes of NFP participants and the outcomes of the general population does not capture the full story.
+However, while NFP's formidable information tracking system affords them a large-scale, systematic perspective on participants' outcomes, they face two principle challenges to performing a large-scale evaluation of their program:
 
-[More information about the challenges that shaped our project are available in our wiki.](https://github.com/dssg/nfp/wiki/Problem)
+1. NFP's program participants differ from the general population on a range of characteristics, including some, like income or educational attainment, that probably impact the outcomes in question - the wealthier you are, the more likely your kids are to be healthy.
+
+As a result, a simple comparison of means between the outcomes of NFP participants and the outcomes of the general population does not capture the full story - you need to compare apples to apples.
+
+2. To evaluate whether the program is helping participants, then, they would need to compare their outcomes with those of families with similar socioeconomic backgrounds who weren't in the program. But NFP does not track data on child and mother outcomes for families they don't serve.
+
+[Read more about the problem in our wiki.](https://github.com/dssg/nfp/wiki/Problem)
 
 
 ## The Solution
@@ -40,7 +47,11 @@ The `data_analysis` directory contains the scripts used for our actual analysis,
 
 ## Contributing to the Project
 
-Because our project involved working with proprietary health information, much of our data is not accessible for public use.  However, we are making our methodology transparent in hopes that it may be useful for other projects.  We would love to hear from other individuals using parts of our code or just doing the same kind of work.  We can be reached at dssg-nfp@googlegroups.com.
+Because our project involved working with proprietary health information, much of our data is not accessible for public use.  However, we are making our methodology transparent in hopes that it may be useful for other projects. 
+
+We would love to hear from other individuals using parts of our code or just doing the same kind of work.  
+
+Email us at dssg-nfp@googlegroups.com.
 
 
 ## Using R
