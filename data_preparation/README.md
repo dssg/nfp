@@ -7,24 +7,24 @@ More details about each of the datasets used by these scripts is available in [t
 
 ## Preparing NFP Data
 
-Two of these scripts, convert_SAS_to_CSV.R and Merge_NFP_Data.R.  The first is a short script that demonstrates how a SAS dataset can be converted to a CSV.  The second script was written to combine a number of different datasets from NFP using common ID values.
+Two of these scripts, `convert_SAS_to_CSV.R` and `Merge_NFP_Data.R`.  The first is a short script that demonstrates how a SAS dataset can be converted to a CSV.  The second script was written to combine a number of different datasets from NFP using common ID values.
 
 
 ## Preparing Data for Immunizations Analysis
 
-FIPS_codes.py (converts FIPS values in NIS to state abbreviations, as in NIS)
-NIS_Prep.R
+`FIPS_codes.py` (converts FIPS values in NIS to state abbreviations, as in NIS)
+`NIS_Prep.R`
 
 
 ## Preparing Data for Breastfeeding Analysis
 
-The NSCH_Prep.R script shows how we prepared the data for our breastfeeding analysis.  (The next steps of this analysis are available in the [data_analysis directory](https://github.com/dssg/nfp/tree/master/data_analysis) as NSCH_Analysis.R.)  In this script, variables that will be used for matching or to measure the desired outcomes are recoded from their presentation in NSCH to match NFP's formatting.  In some cases, NFP variables are also recoded and new variables are created for the sake of clarity (for example, recoding child gender in both datasets into a binary variable for male).
+The `NSCH_Prep.R` script shows how we prepared the data for our breastfeeding analysis.  (The next steps of this analysis are available in the [data_analysis directory](https://github.com/dssg/nfp/tree/master/data_analysis) as `NSCH_Analysis.R`.)  In this script, variables that will be used for matching or to measure the desired outcomes are recoded from their presentation in NSCH to match NFP's formatting.  In some cases, NFP variables are also recoded and new variables are created for the sake of clarity (for example, recoding child gender in both datasets into a binary variable for male).
 
 After the necessary recodes have been completed, variables that are not shared between the two datasets are dropped, and then the remaining data is merged into a single dataset for analysis.  This final dataset includes a binary variable indicating treatment status (equal to 1 if the observation originally came from the NFP data and 0 if the observation originally came from NSCH).
 
 
 ## Exploratory Analysis: The Current Population Survey and National Vital Statistical System
 
-CPS_Prep.R
+`CPS_Prep.R`
 
-Finally, the NVSS_Prep.py script is designed to convert the National Vital Statistics Survey from a fixed width format into a comma-separated value (CSV) format.
+Finally, the `NVSS_Prep.py` script is designed to convert the National Vital Statistics Survey from a fixed width format into a comma-separated value (CSV) format.
