@@ -68,7 +68,7 @@ svymean(~RE, popcomp, na.rm = TRUE)
 prop.table(table(breast$RE[breast$treatment==1]))
 	
 ## Marital Status
-par(mfrow = c(1,2), cex.axis = 2.8, cex.main = 2.8, cex.lab = 2.8)
+par(mfrow = c(1,2))
 barplot(svymean(~married, popcomp, na.rm = TRUE), names.arg = c('Unmarried', 'Married'), 
 	main = "Marital Status- NCHS Population", col = "forest green", border = 'forest green', ylim = c(0,1))
 barplot(prop.table(table(breast$married[breast$treatment==1], row.names = revalue(breast$married, c('0' = 'Unmarried', 
