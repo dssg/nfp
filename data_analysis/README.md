@@ -1,7 +1,5 @@
 # Data Analysis
 
-Restored.
-
 ## Overview
 
 The [Nurse-Family Partnership] (http://www.nursefamilypartnership.org) (NFP) would like to know what effect it has on several birth outcomes, child health and development outcomes, mother's life course outcomes, and abuse outcomes.  We used data from NFP and nationally representative datasets to estimate the effect NFP has on immunization and breastfeeding rates.  More information about our motivation and our process are available in our project [wiki] (https://github.com/dssg/nfp/wiki).
