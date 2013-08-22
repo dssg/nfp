@@ -1,6 +1,6 @@
 # Nurse Family Partnership Impact Evaluation
  
-This is a [Data Science for Social Good Fellowship](http://dssg.io) project to help the Nurse Family Partnership evaluate its effectiveness at promoting healthy child developmental outcomes and stable families.
+This is a [Data Science for Social Good Fellowship](http://dssg.io) project to help the Nurse-Family Partnership evaluate its effectiveness at promoting healthy child developmental outcomes and stable families.
 
 
 ![NFP](http://dssg.io/img/partners/nfp.jpg)
