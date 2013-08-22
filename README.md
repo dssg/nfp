@@ -1,5 +1,5 @@
 # Nurse Family Partnership Impact Evaluation
- 
+
 This is a [Data Science for Social Good Fellowship](http://dssg.io) project to help the Nurse-Family Partnership evaluate its effectiveness at promoting healthy child developmental outcomes and stable families.
 
 ![NFP](http://dssg.io/img/partners/nfp.jpg)
@@ -47,6 +47,7 @@ The `data_analysis` directory contains the scripts used for our actual analysis,
 
 **Read more detailed documentation in each directory.**
 
+
 ## Contributing to the Project
 
 Because we worked with NFP's private health information, we can't make much of our data public. However, we are opening our code and documenting our methodology so it may be useful for other projects. 
@@ -54,6 +55,12 @@ Because we worked with NFP's private health information, we can't make much of o
 We would love to hear from other individuals using parts of our code, doing the same kind of work, or interested in getting involved.
 
 **Email us at dssg-nfp@googlegroups.com.**
+
+
+## Solving a Day-to-Day Problem for NFP Nurses
+
+At the beginning of the fellowship, we met local NFP nurses to discuss their experiences.  They mentioned that one of their most tedious tasks is calculating the number of home visits they need to make with a new client before she gives birth in order to remain NFP compliant.  We used the R package Shiny to create a webpage that takes the woman's weeks of gestation as input and gives the number of visits required as output.  For more details, see the `Shiny_server` directory.
+
 
 ## Using R
 
