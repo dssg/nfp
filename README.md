@@ -14,9 +14,7 @@ Although NFP was founded on the basis of several successful randomized controlle
 
 However, while NFP's formidable information tracking system affords them a large-scale, systematic perspective on participants' outcomes, they face two principle challenges to performing a large-scale evaluation of their program:
 
-1. NFP's program participants differ from the general population on a range of characteristics, including some, like income or educational attainment, that probably impact the outcomes in question - the wealthier you are, the more likely your kids are to be healthy.
-
-As a result, a simple comparison of means between the outcomes of NFP participants and the outcomes of the general population does not capture the full story - you need to compare apples to apples.
+1. NFP's program participants differ from the general population on a range of characteristics, including some, like income or educational attainment, that probably impact the outcomes in question - the wealthier you are, the more likely your kids are to be healthy. As a result, a simple comparison of means between the outcomes of NFP participants and the outcomes of the general population does not capture the full story - you need to compare apples to apples.
 
 2. To evaluate whether the program is helping participants, then, they would need to compare their outcomes with those of families with similar socioeconomic backgrounds who weren't in the program. But NFP does not track data on child and mother outcomes for families they don't serve.
 
@@ -29,9 +27,9 @@ To assist NFP, we are using matching techniques to identify women in public nati
 
 Our project has two goals:
 
-1) To provide a rough evaluation of NFP's impact at a national level. Although this study will not have validity equivalent to a randomized controlled trial, it represents a significant improvement over the evidence basis that would otherwise be available to current decision processes.
+1. To provide a rough evaluation of NFP's impact at a national level. Although this study will not have validity equivalent to a randomized controlled trial, it represents a significant improvement over the evidence basis that would otherwise be available to current decision processes.
 
-2) To develop a methodology for basic impact evaluation of nonprofit programs where resource limitations and program size make traditional experimental evaluations impractical or impossible.
+2. To develop a methodology for basic impact evaluation of nonprofit programs where resource limitations and program size make traditional experimental evaluations impractical or impossible.
 
 
 ## The Project and The Data 
