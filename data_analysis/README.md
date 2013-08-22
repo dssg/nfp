@@ -14,23 +14,39 @@ Although the data used for these analyses is not public, our code is presented i
 This directory contains scripts that demonstrate some of our methodological questions and challenges more simply through example scripts and simulations.  More information about each of the scripts is available from the folder's README.
 
 
+<<<<<<< HEAD
 ## Exploratory Analysis: `nfp_summary_plots.R` and `NIS_graphs.R`
 
 The file `nfp_summary_plots.R` contains the code for exploratory analysis we did using NFP data only.  We wanted to get a sense for the population that participated in the program.  This analysis shows some of the distributions and correlations we explored.  Its contents also provide examples of charts prepared using R's ggplot2 library.
+=======
+## Exploratory Analysis: `nfp_summary_plots.R` 
+
+The file `nfp_summary_plots.R` contains the code for some basic exploratory analysis we did.  This analysis was conducted only within the data provided by NFP.  We wanted to get a sense for the population that participated in the program.  This analysis shows some of the distributions and correlations we explored.  Its contents also provide examples of charts prepared using R's ggplot2 library.
+>>>>>>> 7d29e38fb8db99cc45d6b2b63fd057b4032f0baa
 
 The file `NIS_graphs.R` contains the code for exploratory analysis we did using data from both NFP and nationally representative surveys.  The script shows some of the distributions and correlations we explored and provide examples of charts prepared using R's ggplot2 library.
 
+<<<<<<< HEAD
+=======
+## Immunizations Analysis: `NIS_graphs.R` and `NIS_Analysis.R`
+>>>>>>> 7d29e38fb8db99cc45d6b2b63fd057b4032f0baa
 
 ## Immunizations Analysis: `NIS_Analysis.R`
 
 The `NIS_Analysis.R` script works with data output from [NIS_Prep.R](https://github.com/dssg/nfp/blob/master/data_preparation/NIS_Prep.R), which combines NFP administrative data with the 2008, 2009, and 2010 National Immunization Surveys.  The script plots the states that NFP operates in, 
 
+<<<<<<< HEAD
 
 ## Breastfeeding Analysis: `NSCH_Analysis.R`
 
 The `NSCH_Analysis.R` script works with data output from [NSCH_Prep.R](https://github.com/dssg/nfp/tree/master/data_prepartion).  The prep script prepared two datasets that are used by `NSCH_Analysis.R`: 
+=======
+## Breastfeeding Analysis: `NSCH_Analysis.R`
 
-1.  **"breastfeeding_data.csv"** (read in as "breast") contains a combined set of observations from NFP and NSCH manipulated to share a common set of variables.  The binary "treatment" variable indicates whether the observation originated in NFP's data (breast$treatment==1) or in the NSCH file (breast$treatment==0).  Only NSCH individuals meeting the eligibility criteria for NFP participation are included (children of first time mothers born in a comparable time period, to families make less than 200% of the federal poverty level), since these are the only valid matches to NFP participants.  This is the primary dataset for matching analysis.
+The `NSCH_Analysis.R` script works with data output from [`NSCH_Prep.R`] (https://github.com/dssg/nfp/tree/master/data_prepartion).  The prep script prepared two datasets that are used by `NSCH_Analysis.R`: 
+>>>>>>> 7d29e38fb8db99cc45d6b2b63fd057b4032f0baa
+
+1.  **"breastfeeding_data.csv"** (read in as "breast") contains a combined set of observations from NFP and NSCH manipulated to share a common set of variables.  The binary "treatment" variable indicates whether the observation originated in NFP's data (`breast$treatment==1`) or in the NSCH file (`breast$treatment==0`).  Only NSCH individuals meeting the eligibility criteria for NFP participation are included (children of first time mothers born in a comparable time period, to families make less than 200% of the federal poverty level), since these are the only valid matches to NFP participants.  This is the primary dataset for matching analysis.
 
 2.  **"breast_pop_comparison.csv"** (read in as "pop") includes the same variables as in "breast", but it includes exclusively NSCH observations, and all NSCH observations (even those that are not eligible to participate in NFP) are included.  This dataset is included for the production of population-level statistics (such as the rate of breastfeeding in the general population).  For more information about working with complex surveys, see our [Methodology wiki] (https://github.com/dssg/nfp/wiki/Methodology).
 

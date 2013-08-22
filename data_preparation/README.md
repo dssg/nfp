@@ -7,11 +7,16 @@ More details about each of the datasets used by these scripts is available in [t
 
 ## Preparing NFP Data
 
+<<<<<<< HEAD
 There are two scripts, `convert_SAS_to_CSV.R` and `Merge_NFP_Data.R`,it  that prepares NFP's data for merging with the survey data.  We received the NFP data in SAS format, so the first script converts those files to CSV format, which R can handle without installing special packages.  The second script combines several NFP datasets into one using common anonymized ID values.
+=======
+Two of these scripts, `convert_SAS_to_CSV.R` and `Merge_NFP_Data.R`.  The first is a short script that demonstrates how a SAS dataset can be converted to a CSV.  The second script was written to combine a number of different datasets from NFP using common ID values.
+>>>>>>> 7d29e38fb8db99cc45d6b2b63fd057b4032f0baa
 
 
 ## Preparing Data for Immunizations Analysis
 
+<<<<<<< HEAD
 Two files bring the NFP and NIS data together.  `FIPS_codes.py` scrapes FIPS codes and converts them to the more natural postal state abbreviations.  `NIS_Prep.R` is more complex.  Here are the general steps:
 
  - Load NIS data for 2009, 2010, and 2011
@@ -25,6 +30,10 @@ NFP
  - Make variables across NIS and NFP compatible
 
 MERGE NIS and NFP data
+=======
+`FIPS_codes.py` (converts FIPS values in NIS to state abbreviations, as in NIS)
+`NIS_Prep.R`
+>>>>>>> 7d29e38fb8db99cc45d6b2b63fd057b4032f0baa
 
 
 ## Preparing Data for Breastfeeding Analysis
@@ -38,4 +47,8 @@ After the necessary recodes have been completed, variables that are not shared b
 
 `CPS_Prep.R`
 
+<<<<<<< HEAD
 Finally, the `NVSS_Prep.py` script is designed to convert the National Vital Statistics Survey from a fixed width format into a comma-separated value (CSV) format.
+=======
+Finally, the `NVSS_Prep.py` script is designed to convert the National Vital Statistics Survey from a fixed width format into a comma-separated value (CSV) format.
+>>>>>>> 7d29e38fb8db99cc45d6b2b63fd057b4032f0baa
