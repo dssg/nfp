@@ -31,9 +31,9 @@ Our project has two goals:
 
 NFP ultimately hopes to assess outcomes across a range of areas, including child development and health, mother's life course, and child welfare/intimate partner violence.  For this project, we focused on two specific outcomes: immunization and breastfeeding rates.  We created our comparison groups from the National Immunization Survey and the National Survey of Children's Health respectively.  We also did some significant exploration in the Current Population Survey as a potential dataset for assessing mother's life outcomes like employment and educational attainment.
 
-The *data_preparation* directory includes all of the scripts we used to clean and reshape our data.  Ultimately, we needed to develop uniform datasets from both the NFP data and the comparison data files, so that we could combine these datasets for analysis.  The code in this directory demonstrates the details of that process.
+The `data_preparation` directory includes all of the scripts we used to clean and reshape our data.  Ultimately, we needed to develop uniform datasets from both the NFP data and the comparison data files, so that we could combine these datasets for analysis.  The code in this directory demonstrates the details of that process.
 
-The *data_analysis* directory contains the scripts used for our actual analysis, including data exploration and matching.  This directory also includes a few sample/simulation scripts we developed while we explored the details of our methodology.
+The `data_analysis` directory contains the scripts used for our actual analysis, including data exploration and matching.  This directory also includes a few sample/simulation scripts we developed while we explored the details of our methodology.
 
 [More information about each of the datasets we used, as well as additional datasets we reviewed and considered is available in our Data wiki.](https://github.com/dssg/nfp/wiki/Data)
 
