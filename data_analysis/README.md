@@ -9,7 +9,7 @@ This directory contains the R code used to explore and analyze our data.  The da
 Although the data used for these analyses is not public, our code is presented in the hope that it might provide a useful guide to anyone doing a similar project with different data.
 
 
-## Sample Simulations: *example_simulations*
+## Sample Simulations: `example_simulations`
 
 This directory contains scripts that demonstrate some of our methodological questions and challenges more simply.  More information about each of the scripts is available from the folder's README.
 
