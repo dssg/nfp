@@ -127,7 +127,7 @@ prop.table(table(breast$breastfed[breast$treatment == 1]))
 
 ## Weeks Breastfed	
 par(mfrow = c(1,2))
-svyhist(~week_end_breast, popcomp, main = "Weeestimateks Breastfed - NCHS Population", xlab = "Weeks Breastfed", col = "navy blue", 
+svyhist(~week_end_breast, popcomp, main = "Weeks Breastfed - NCHS Population", xlab = "Weeks Breastfed", col = "navy blue", 
 	border = 'navy blue', ylim = c(0,.09))
 hist(breast$week_end_breast[breast$treatment==1], freq = FALSE, main = "Weeks Breastfed - NFP Population",
 	xlab = "Weeks Breastfed", col = 'dark red', border = 'dark red', ylim = c(0, .09))
@@ -153,6 +153,7 @@ probit1_1 <- glm(treatment ~ (highschool + married + highered + momsage + RE + e
 	data = ever_breast, family = binomial(link = "probit"))
 # Dropped state - too few obs in each state leading to near-perfect separation
 summary(probit1_1)
+# Note very low pseudo R2: 1-(Residual Deviance/Null Deviance)
 
 ever_breast$ps <- predict(probit1_1, data = ever_breast, type = "response")
 qplot(ever_breast$ps, data = ever_breast, binwidth = .01) + facet_wrap(~treatment)
