@@ -19,6 +19,18 @@ pop$RE <- relevel(pop$RE, ref = "WhiteNH")
 breast$momsage <- floor(breast$MomsAgeBirth) # simplify age decimal - decimal reporting may have differed between treatment and control
 pop$momsage <- floor(pop$MomsAgeBirth)
 
+# Need factor values for plotting:
+pop$highschool <- factor(pop$highschool)
+pop$married <- factor(pop$married)
+pop$english <- factor(pop$english)
+pop$highered <- factor(pop$highered)
+pop$breastfed <- factor(pop$breastfed)
+breast$highschool <- factor(breast$highschool)
+breast$married <- factor(breast$married)
+breast$english <- factor(breast$english)
+breast$highered <- factor(breast$highered)
+breast$breastfed_factor <- factor(breast$breastfed) # need to keep primary breastfed variable numeric for models
+
 # NSCH has a complex survey design, so in order to run any population level statistics we need to "teach" r about the survey design (see methodology wiki)
 ## More information about complex surveys in R is available at http://faculty.washington.edu/tlumley/survey/example-design.html
 ## Notes about NSCH design: Strata = STATE and SAMPLE (stratified on two levels); PSU = ID; Weight = NSCHWT.  See NSCH documentation for more detail.
@@ -32,20 +44,7 @@ popcomp <- subset(popsvy, AGEYR_CHILD <= 4 & AGEPOS4<=2 & (!is.element(FAM_MAR_C
 
 
 
-
 # SECTION 1: General demographic plots -- how do the NFP and NSCH populations compare?
-
-# Need factor values for plotting:
-pop$highschool <- factor(pop$highschool)
-pop$married <- factor(pop$married)
-pop$english <- factor(pop$english)
-pop$highered <- factor(pop$highered)
-pop$breastfed <- factor(pop$breastfed)
-breast$highschool <- factor(breast$highschool)
-breast$married <- factor(breast$married)
-breast$english <- factor(breast$english)
-breast$highered <- factor(breast$highered)
-breast$breastfed_factor <- factor(breast$breastfed) # need to keep primary breastfed variable numeric for models
 
 ## Mother's Age
 par(mfrow = c(1,2))
@@ -157,7 +156,7 @@ summary(probit1_1)
 
 ever_breast$ps <- predict(probit1_1, data = ever_breast, type = "response")
 qplot(ever_breast$ps, data = ever_breast, binwidth = .01) + facet_wrap(~treatment)
-# Looks pretty good - looks like common support
+# Looks like common support
 
 ever_breastX <- cbind(ever_breast$ps, ever_breast$male, ever_breast$premature, ever_breast$lbw) # Vector of covariates for regression
 caliper <- 0.10 # Specify desired caliper for including observations (units are standard deviations)
@@ -225,10 +224,10 @@ table(matched1_1$treatment)
 
 # Plot the results
 pop_mean1 <- svymean(~breastfed, popcomp, na.rm = TRUE)
-means1_1 <- rbind(pop_mean1, control_mean1_1, treat_mean1_1)
+means1_1 <- rbind(pop_mean1[2], control_mean1_1, treat_mean1_1)
 rownames(means1_1) <- c("General Population", "Matched Group", "NFP Participants")
 means1_1 <- as.data.frame(means1_1)
-ggplot(means1_1, aes(x = rownames(means1_1), y = breastfed)) + 
+ggplot(means1_1, aes(x = rownames(means1_1), y = breastfed1)) + 
 	geom_bar(stat='identity', fill = 'dark green', border = 'dark green', width = 0.5) +
 	scale_y_continuous(limits=c(0,1)) +
 	ylab("Percent of Children Ever Breastfed") +
@@ -274,10 +273,10 @@ treat_mean1_2 <- weighted.mean(ever_breast_restricted$breastfed[ever_breast_rest
 	cemmatch_coarse1_2$w[ever_breast_restricted$treatment==1])
 control_mean1_2 <- weighted.mean(ever_breast_restricted$breastfed[ever_breast_restricted$treatment==0], 
 	cemmatch_coarse1_2$w[ever_breast_restricted$treatment==0])
-means1_2 <- rbind(pop_mean1, control_mean1_2, treat_mean1_2)
+means1_2 <- rbind(pop_mean1[2], control_mean1_2, treat_mean1_2)
 rownames(means1_2) <- c("General Population", "Matched Group", "NFP Participants")
 means1_2 <- as.data.frame(means1_2)
-ggplot(means1_2, aes(x = rownames(means1_2), y = breastfed)) + 
+ggplot(means1_2, aes(x = rownames(means1_2), y = breastfed1)) + 
 	geom_bar(stat='identity', fill = 'dark green', border = 'dark green', width = 0.5) +
 	scale_y_continuous(limits=c(0,1)) +
 	ylab("Percent of Children Ever Breastfed") +
@@ -339,9 +338,13 @@ hist(weeks_breast1$week_end_breast[cemmatch_coarse2_1$w>0 & weeks_breast1$treatm
 hist(weeks_breast1$week_end_breast[weeks_breast1$treatment==1], freq = FALSE, main = "Weeks Breastfed - NFP Population",
 	xlab = "Weeks Breastfed", col = 'dark red', border = 'dark red', ylim = c(0, .09))
 
-matches2_1 <- weeks_breast2[cemmatch_coarse2_1$w>0,]
-ggplot(matches2_1, aes(week_end_breast, color = as.factor(treatment))) + stat_ecdf(geom = 'smooth')
-	xlab("Weeks Breastfed") + ggtitle('Cumulative Density - Weeks Breastfed')
+matches2_1 <- weeks_breast1[cemmatch_coarse2_1$w>0,]
+ggplot(matches2_1, aes(week_end_breast, color = as.factor(treatment))) + stat_ecdf(geom = 'smooth') + 
+	xlab("Weeks Breastfed") + 
+	ylab("Cumulative Proportion of Cases") +
+	scale_colour_discrete(name = "Population", labels = c("Matched Population","NFP Population")) +
+	scale_x_continuous(limits=c(0,120)) +
+	ggtitle('Cumulative Density - Weeks Breastfed')
 
 
 	
@@ -391,5 +394,9 @@ test <- hist(weeks_breast2$week_end_breast[weeks_breast2$treatment==1], freq = F
 	xlab = "Weeks Breastfed", col = 'dark red', border = 'dark red', ylim = c(0, .09))
 
 matches2_2 <- weeks_breast2[cemmatch_coarse2_2$w>0,]
-ggplot(matches2_2, aes(week_end_breast, color = as.factor(treatment))) + stat_ecdf(geom = 'smooth')
-	xlab("Weeks Breastfed") + ggtitle('Cumulative Density - Weeks Breastfed')
+ggplot(matches2_2, aes(week_end_breast, color = as.factor(treatment))) + stat_ecdf(geom = 'smooth') +
+	xlab("Weeks Breastfed") + 
+	ylab("Cumulative Proportion of Cases") +
+	scale_colour_discrete(name = "Population", labels = c("Matched Population","NFP Population")) +
+	scale_x_continuous(limits=c(0,120)) +
+	ggtitle('Cumulative Density - Weeks Breastfed')
