@@ -20,10 +20,8 @@ Two files bring the NFP and NIS data together.  `FIPS_codes.py` scrapes FIPS cod
  - Merge the NIS datasets
  - Generate immunization variables we need for analysis
  - Clean NIS data
-
  - Load NFP data
  - Make variables across NIS and NFP compatible
-
  - Merge NIS and NFP data
 
 
