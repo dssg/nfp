@@ -8,7 +8,7 @@ This is a [Data Science for Social Good Fellowship](http://dssg.io) project to h
  
 The [Nurse-Family Partnership](http://www.nursefamilypartnership.org) (NFP) is a nation-wide home-visitation program that pairs a nurse with an at-risk first-time mother for the duration of her pregnancy and the first two years of her child's life. 
 
-The Affordable Care Act of 2010 made new money available to home visitation programs such as NFP, but also required that programs provide evidence of their effectiveness. 
+The Affordable Care Act of 2010 made new money available to home visitation programs such as NFP, but it also required that programs provide evidence of their effectiveness. 
 Although NFP was founded on the basis of several successful randomized controlled trials, these studies were conducted decades ago and in only a handful of states. They need a way to measure their impact across the country using the observational data they have.
 
 However, while NFP's formidable information tracking system affords them a large-scale, systematic perspective on participants' outcomes, they face two principle challenges to performing a large-scale evaluation of their program:
