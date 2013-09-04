@@ -26,7 +26,7 @@ To assist NFP, we are using matching techniques to identify women in public nati
 
 Our project has two goals:
 
-1. To provide a rough evaluation of NFP's impact at a national level. Although this study will not have validity equivalent to a randomized controlled trial, it represents a significant improvement over the evidence basis that would otherwise be available to current decision processes.
+1. To provide a rough evaluation of NFP's impact at a national level. Although this study will not have the same validity as a randomized controlled trial, it represents a significant improvement over the evidence basis that would otherwise be available to current decision processes.
 
 2. To develop a methodology for basic impact evaluation of nonprofit programs where resource limitations and program size make traditional experimental evaluations impractical or impossible.
 
@@ -57,11 +57,6 @@ We would love to hear from other individuals using parts of our code, doing the 
 **Email us at dssg-nfp@googlegroups.com.**
 
 
-## Side Project: Solving a Day-to-Day Problem for NFP Nurses
-
-At the beginning of the fellowship, we met local NFP nurses to discuss their experiences.  They mentioned that one of their most tedious tasks is calculating the number of home visits they need to make with a new client before she gives birth in order to remain NFP compliant.  We used the R package Shiny to create a webpage that takes the woman's weeks of gestation as input and gives the number of visits required as output.  For more details, see the `Shiny_server` directory.
-
-
 ## Using R
 
 All of our data analysis, impact estimation, and data visualization code is written in R, a free and widely-used statistics programming language. 
@@ -74,6 +69,11 @@ We chose R so our work could be widely used by the non-profit and research commu
 * [R in a Nutshell](http://web.udl.es/Biomath/Bioestadistica/R/Manuals/r_in_a_nutshell.pdf) by Joseph Adler, published by O'Reilly
 * A number of freely available "quick reference" sheets such as ones by [Tom Short](http://cran.r-project.org/doc/contrib/Short-refcard.pdf), and staff at the [University of Auckland](https://www.stat.auckland.ac.nz/~stat380/downloads/QuickReference.pdf).
 * Researchers interested in using R specifically to work with complex national surveys may be interested in [Anthony D'Amico's usgsd repo](https://github.com/ajdamico/usgsd), which includes sample import and analysis scripts for many popular surveys.
+
+
+## Side Project: Solving a Day-to-Day Problem for NFP Nurses
+
+At the beginning of the fellowship, we met local NFP nurses to discuss their experiences.  They mentioned that one of their most tedious tasks is calculating the number of home visits they need to make with a new client before she gives birth in order to remain NFP compliant.  We used the R package Shiny to create a webpage that takes the woman's weeks of gestation as input and gives the number of visits required as output.  For more details, see the `Shiny_server` directory.
 
 
 ## License
