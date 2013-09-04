@@ -5,7 +5,7 @@ A statistical analysis of the impact of a nation-wide home visitation program.
 
 This is a 2013 [Data Science for Social Good Fellowship](http://dssg.io) project to help the Nurse-Family Partnership evaluate its effectiveness at promoting healthy child developmental outcomes and stable families.
 
-For a quick and gentle overview of the project, check out our [blog post](http://dssg.io/2013/07/31/the-match-game.html).
+*For a quick and gentle overview of the project, check out our [blog post](http://dssg.io/2013/07/31/the-match-game.html).*
  
 ## The problem: evaluating impact without a randomized controlled trial
  
