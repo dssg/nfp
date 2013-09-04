@@ -22,7 +22,7 @@ However, while NFP's formidable information tracking system affords them a large
 
 ## The solution: statistical matching techniques
 
-To assist NFP, we used [statistical matching techniques](http://en.wikipedia.org/wiki/Matching_(statistics)) to identify women in public national datasets who are similar on all observable characteristics (such as demographics) to the women in NFP's administrative data. We can plausibly estimate NFP's impact as the difference in outcomes between these two groups.
+To assist NFP, we used [statistical matching techniques](http://en.wikipedia.org/wiki/Matching_(statistics\)) to identify women in public national datasets who are similar on all observable characteristics (such as demographics) to the women in NFP's administrative data. We can plausibly estimate NFP's impact as the difference in outcomes between these two groups.
 
 Our project had two goals:
 
@@ -31,6 +31,7 @@ Our project had two goals:
 2. To develop a methodology for basic impact evaluation of nonprofit programs where resource limitations and program size make traditional experimental evaluations impractical or impossible.
 
 For a quick introduction to matching, read our [blog post](http://dssg.io/2013/07/19/the-dark-matter-part-two.html).
+
 **[Read more about our methodology in our wiki.](https://github.com/dssg/nfp/wiki/Methodology)**
 
 
@@ -50,15 +51,6 @@ NFP ultimately hopes to assess outcomes across a range of areas, including child
 **Read more detailed documentation in each directory.**
 
 
-## Contributing to the Project
-
-Because we worked with NFP's private health information, we can't make much of our data public. However, we are opening our code and documenting our methodology so it may be useful for other projects. 
-
-We would love to hear from other individuals using parts of our code, doing the same kind of work, or interested in getting involved.
-
-**Email us at dssg-nfp@googlegroups.com.**
-
-
 ## Using R
 
 All of our data analysis, impact estimation, and data visualization code is written in [R](http://www.r-project.org/), a free and widely-used statistics programming language. 
@@ -71,6 +63,17 @@ We chose R so our work could be widely used by the non-profit and research commu
 * [R in a Nutshell](http://web.udl.es/Biomath/Bioestadistica/R/Manuals/r_in_a_nutshell.pdf) by Joseph Adler, published by O'Reilly
 * A number of freely available "quick reference" sheets such as ones by [Tom Short](http://cran.r-project.org/doc/contrib/Short-refcard.pdf), and staff at the [University of Auckland](https://www.stat.auckland.ac.nz/~stat380/downloads/QuickReference.pdf).
 * Researchers interested in using R specifically to work with complex national surveys may be interested in [Anthony D'Amico's usgsd repo](https://github.com/ajdamico/usgsd), which includes sample import and analysis scripts for many popular surveys.
+
+## Team
+![NFP team](http://dssg.io/img/people/nfp-team.png)
+
+## Contributing to the Project
+
+Because we worked with NFP's private health information, we can't make much of our data public. However, we are opening our code and documenting our methodology so it may be useful for other projects. 
+
+We would love to hear from other individuals using parts of our code, doing the same kind of work, or interested in getting involved.
+
+**Email us at dssg-nfp@googlegroups.com.**
 
 
 ## License
