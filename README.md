@@ -11,9 +11,9 @@ The [Nurse-Family Partnership](http://www.nursefamilypartnership.org) (NFP) is a
 The Affordable Care Act of 2010 made new money available to home visitation programs such as NFP, but it also required that programs provide evidence of their effectiveness. 
 Although NFP was founded on the basis of several successful randomized controlled trials, these studies were conducted decades ago and in only a handful of states. They need a way to measure their impact across the country using the observational data they have.
 
-However, while NFP's formidable information tracking system affords them a large-scale, systematic perspective on participants' outcomes, they face two principle challenges to performing a large-scale evaluation of their program:
+However, while NFP's formidable information tracking system affords them a large-scale, systematic perspective on participants' outcomes, they face two principal challenges to performing a large-scale evaluation of their program:
 
-1. NFP's program participants differ from the general population on a range of characteristics, including some, like income or educational attainment, that probably impact the outcomes in question - the wealthier you are, the more likely your kids are to be healthy. As a result, a simple comparison of means between the outcomes of NFP participants and the outcomes of the general population does not capture the full story - you need to compare apples to apples.
+1. NFP's program participants differ from the general population on a range of characteristics, including some, like income or educational attainment, that probably impact the outcomes in question - for example, the wealthier you are, the more likely your kids are to be healthy. As a result, a simple comparison of means between the outcomes of NFP participants and the outcomes of the general population reflects not just NFP's impact but the impact of those factors too.  You need to compare apples to apples.
 
 2. To evaluate whether the program is helping participants, then, they would need to compare their outcomes with those of families with similar socioeconomic backgrounds who weren't in the program. But NFP does not track data on child and mother outcomes for families they don't serve.
 
