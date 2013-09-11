@@ -52,7 +52,6 @@ NFP ultimately hopes to assess outcomes across a range of areas, including child
 
 **Read more detailed documentation in each directory.**
 
-
 ## Using R
 
 All of our data analysis, impact estimation, and data visualization code is written in [R](http://www.r-project.org/), a free and widely-used statistics programming language. 
@@ -65,6 +64,26 @@ We chose R so our work could be widely used by the non-profit and research commu
 * [R in a Nutshell](http://web.udl.es/Biomath/Bioestadistica/R/Manuals/r_in_a_nutshell.pdf) by Joseph Adler, published by O'Reilly
 * A number of freely available "quick reference" sheets such as ones by [Tom Short](http://cran.r-project.org/doc/contrib/Short-refcard.pdf), and staff at the [University of Auckland](https://www.stat.auckland.ac.nz/~stat380/downloads/QuickReference.pdf).
 * Researchers interested in using R specifically to work with complex national surveys may be interested in [Anthony D'Amico's usgsd repo](https://github.com/ajdamico/usgsd), which includes sample import and analysis scripts for many popular surveys.
+
+## Installation Guide
+
+R is available for free via the [R Project website](http://www.r-project.org) or, with a slightly friendlier user interface, as [RStudio](http://www.rstudio.com).
+
+Much of R's functionality comes not from the base installation but from additional packages.  Details about how to install packages are available [here](http://www.r-bloggers.com/installing-r-packages).  Our code makes use of the following packages:
+
+* Matching
+* cem
+* survey
+* ggplot2
+* plyr
+* maps
+* hexbin
+* mvtnorm
+* sas7bdat
+* car
+* Hmisc
+* shiny
+* datasets
 
 ## Team
 ![NFP team](http://dssg.io/img/people/nfp-team.png)
