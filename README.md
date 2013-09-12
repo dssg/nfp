@@ -52,6 +52,7 @@ NFP ultimately hopes to assess outcomes across a range of areas, including child
 
 [![calculator](https://raw.github.com/dssg/nfp/master/for_wiki/home_visits_calculator.gif?login=jtwalsh0&token=9632ea5bbc422ac576ed019c0f655786)](http://spark.rstudio.com/jtwalsh0/NFP/)
 
+- The `for_wiki` directory contains image files for our GitHub READMEs and wiki pages.
 
 **Read more detailed documentation in each directory.**
 
