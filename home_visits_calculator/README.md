@@ -4,11 +4,6 @@ At the beginning of the fellowship, [we met local NFP nurses to learn about thei
 
 To address this problem, we created a simple [Shiny](http://www.rstudio.com/shiny/) application that does the calculation for the nurses.  The nurses enter the week of gestation into an input box, and the program calculates the minimum number of visits they need to make.  
 
-![logo](https://raw.github.com/dssg/nfp/master/for_wiki/home_visits_calculator.gif)
-
-
-<img src="https://github.com/dssg/nfp/blob/master/for_wiki/home_visits_calculator.gif" align="center">
-
 [![NFP](http://spark.rstudio.com/jtwalsh0/ShinyApps/NFP/home_visits_calculator.png)](http://spark.rstudio.com/jtwalsh0/NFP/)
 
 [RStudio](http://www.rstudio.com/) has graciously donated space on a web server to host the application.  You can find the application [here](http://spark.rstudio.com/jtwalsh0/NFP/).  
