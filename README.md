@@ -48,7 +48,7 @@ NFP ultimately hopes to assess outcomes across a range of areas, including child
 
 - The `data_analysis` directory contains the scripts used for the actual statistical analysis, including data exploration and matching.  This directory also includes a few sample/simulation scripts we developed while exploring our methodology.
 
-- At the beginning of the fellowship, we met local NFP nurses to discuss their experiences. They mentioned that one of their most tedious tasks is calculating the number of home visits they need to make with a new client before she gives birth in order to remain NFP compliant. We used the R package [Shiny](http://www.rstudio.com/shiny/) to create a webpage that takes the woman's weeks of gestation as input and gives the number of visits required as output. For more details, see the `Shiny_server` directory.
+- At the beginning of the fellowship, we met local NFP nurses to discuss their experiences. They mentioned that one of their most tedious tasks is calculating the number of home visits they need to make with a new client before she gives birth in order to remain NFP compliant. We used the R package [Shiny](http://www.rstudio.com/shiny/) to create a webpage that takes the woman's weeks of gestation as input and gives the number of visits required as output. For more details, see the `home_visits_calculator` directory.
 
 **Read more detailed documentation in each directory.**
 

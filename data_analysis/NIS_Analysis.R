@@ -7,10 +7,9 @@
 ##################################
 
 
-require(ggplot2)
+library(ggplot2)
 library(maps)
 library(Matching)
-library(ggplot2)
 library(cem)
 library(survey)
 library(hexbin)
@@ -370,6 +369,13 @@ summary(PSM_Matching)
 PSM_Matching <- subset(PSM_Matching, subset=c(PDAT6==1 & PDAT12==1 & PDAT18==1 & PDAT24==1))
 
 
+
+
+#################
+## Models
+
+
+
 # PSM
 # Do I need to account for NIS weights?
 reg <- glm(treatment ~ factor(income_recode) + factor(language) + 
@@ -381,6 +387,7 @@ summary(reg)
 # Separation plot
 library(separationplot)
 separationplot(predict.glm(reg, type='response'), PSM_Matching$treatment)
+
 
 
 
