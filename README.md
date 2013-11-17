@@ -1,5 +1,5 @@
 # Nurse Family Partnership Impact Evaluation
-[![NFP](http://dssg.io/img/partners/nfp.jpg)](http://www.nursefamilypartnership.org)
+[<img src="http://dssg.io/img/partners/nfp.jpg" width="300" align="right">](http://www.nursefamilypartnership.org)
 
 A statistical analysis of the impact of a nation-wide home visitation program.
 
