@@ -24,7 +24,7 @@ However, while NFP's formidable information tracking system affords them a large
 
 ## The solution: statistical matching techniques
 
-To assist NFP, we used [statistical matching techniques](http://en.wikipedia.org/wiki/Matching_(statistics\)) to identify women in public national datasets who are similar on all observable characteristics (such as demographics) to the women in NFP's administrative data. We can plausibly estimate NFP's impact as the difference in outcomes between these two groups.
+To assist NFP, we used [statistical matching techniques](http://en.wikipedia.org/wiki/Matching_(statistics)) to identify women in public national datasets who are similar on all observable characteristics (such as demographics) to the women in NFP's administrative data. We can plausibly estimate NFP's impact as the difference in outcomes between these two groups.
 
 Our project had two goals:
 
